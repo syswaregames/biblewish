@@ -1,0 +1,499 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 56;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		96A32B7A2F1BC78B0053CD0D /* BibleWishApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 96A32B792F1BC78B0053CD0D /* BibleWishApp.swift */; };
+		96A32B7C2F1BC78B0053CD0D /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 96A32B7B2F1BC78B0053CD0D /* ContentView.swift */; };
+		96A32B892F1BCD050053CD0D /* BibleBook.swift in Sources */ = {isa = PBXBuildFile; fileRef = 96A32B882F1BCD050053CD0D /* BibleBook.swift */; };
+		96A32B8B2F1BCD250053CD0D /* Chapter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 96A32B8A2F1BCD250053CD0D /* Chapter.swift */; };
+		96A32B8D2F1BCD390053CD0D /* Verse.swift in Sources */ = {isa = PBXBuildFile; fileRef = 96A32B8C2F1BCD390053CD0D /* Verse.swift */; };
+		96A32B8F2F1BCDFA0053CD0D /* BibleViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 96A32B8E2F1BCDFA0053CD0D /* BibleViewModel.swift */; };
+		96A32B932F1BCF250053CD0D /* ChapterListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 96A32B922F1BCF250053CD0D /* ChapterListView.swift */; };
+		96A32B952F1BCF440053CD0D /* VerseListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 96A32B942F1BCF440053CD0D /* VerseListView.swift */; };
+		96A32B972F1BCFE70053CD0D /* bible.json in Resources */ = {isa = PBXBuildFile; fileRef = 96A32B962F1BCFE70053CD0D /* bible.json */; };
+		96A32B992F1BD1EE0053CD0D /* MainTabView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 96A32B982F1BD1EE0053CD0D /* MainTabView.swift */; };
+		96A32B9B2F1BD3950053CD0D /* SearchView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 96A32B9A2F1BD3950053CD0D /* SearchView.swift */; };
+		96A32B9D2F1BD3BA0053CD0D /* BookmarksView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 96A32B9C2F1BD3BA0053CD0D /* BookmarksView.swift */; };
+		96A32B9F2F1BD3DA0053CD0D /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 96A32B9E2F1BD3DA0053CD0D /* SettingsView.swift */; };
+		96A32BA12F1BD5680053CD0D /* BookListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 96A32BA02F1BD5680053CD0D /* BookListView.swift */; };
+		96A32BA42F1BD78F0053CD0D /* BibleData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 96A32BA32F1BD78F0053CD0D /* BibleData.swift */; };
+		96A32BA62F1BD8AD0053CD0D /* SearchResult.swift in Sources */ = {isa = PBXBuildFile; fileRef = 96A32BA52F1BD8AD0053CD0D /* SearchResult.swift */; };
+		96A32BA82F1BD91B0053CD0D /* VerseDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 96A32BA72F1BD91B0053CD0D /* VerseDetailView.swift */; };
+		96A32BAA2F1BDAB20053CD0D /* Bookmark.swift in Sources */ = {isa = PBXBuildFile; fileRef = 96A32BA92F1BDAB20053CD0D /* Bookmark.swift */; };
+		96A32BAC2F1BDAE40053CD0D /* BookmarkManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 96A32BAB2F1BDAE40053CD0D /* BookmarkManager.swift */; };
+		96A32BAE2F1BDB620053CD0D /* BookmarkDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 96A32BAD2F1BDB620053CD0D /* BookmarkDetailView.swift */; };
+		96A32BB22F1BDE920053CD0D /* HighlightColor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 96A32BB12F1BDE920053CD0D /* HighlightColor.swift */; };
+		96A32BB42F1BDECC0053CD0D /* Highlight.swift in Sources */ = {isa = PBXBuildFile; fileRef = 96A32BB32F1BDECC0053CD0D /* Highlight.swift */; };
+		96A32BB62F1BDEF20053CD0D /* HighlightManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 96A32BB52F1BDEF20053CD0D /* HighlightManager.swift */; };
+		96A32BB82F1BE2D10053CD0D /* VerseTextView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 96A32BB72F1BE2D10053CD0D /* VerseTextView.swift */; };
+		96A32BBC2F1BE6AB0053CD0D /* ReaderSettings.swift in Sources */ = {isa = PBXBuildFile; fileRef = 96A32BBB2F1BE6AB0053CD0D /* ReaderSettings.swift */; };
+		96A32BBE2F1BE71D0053CD0D /* FontSettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 96A32BBD2F1BE71D0053CD0D /* FontSettingsView.swift */; };
+		96A32BC02F1BE7930053CD0D /* ReaderFont.swift in Sources */ = {isa = PBXBuildFile; fileRef = 96A32BBF2F1BE7930053CD0D /* ReaderFont.swift */; };
+		96A32BC22F1BEB0B0053CD0D /* BookCardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 96A32BC12F1BEB0B0053CD0D /* BookCardView.swift */; };
+		96A32BC42F1BEBDA0053CD0D /* ChapterNumberView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 96A32BC32F1BEBDA0053CD0D /* ChapterNumberView.swift */; };
+		96A32BC62F1BEE5C0053CD0D /* bible_kjv.json in Resources */ = {isa = PBXBuildFile; fileRef = 96A32BC52F1BEE5C0053CD0D /* bible_kjv.json */; };
+		96A32BC82F1BF78E0053CD0D /* IndexedVerse.swift in Sources */ = {isa = PBXBuildFile; fileRef = 96A32BC72F1BF78E0053CD0D /* IndexedVerse.swift */; };
+		96A32BCA2F1BFBE00053CD0D /* HighlightedText.swift in Sources */ = {isa = PBXBuildFile; fileRef = 96A32BC92F1BFBE00053CD0D /* HighlightedText.swift */; };
+		96A32BCD2F1C2E8B0053CD0D /* CovenantDivider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 96A32BCC2F1C2E8B0053CD0D /* CovenantDivider.swift */; };
+		96A32BCF2F1C7BA70053CD0D /* AppIcon.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 96A32BCE2F1C7BA70053CD0D /* AppIcon.xcassets */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXFileReference section */
+		96A32B762F1BC78B0053CD0D /* BibleWish.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = BibleWish.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		96A32B792F1BC78B0053CD0D /* BibleWishApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BibleWishApp.swift; sourceTree = "<group>"; };
+		96A32B7B2F1BC78B0053CD0D /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
+		96A32B882F1BCD050053CD0D /* BibleBook.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BibleBook.swift; sourceTree = "<group>"; };
+		96A32B8A2F1BCD250053CD0D /* Chapter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Chapter.swift; sourceTree = "<group>"; };
+		96A32B8C2F1BCD390053CD0D /* Verse.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Verse.swift; sourceTree = "<group>"; };
+		96A32B8E2F1BCDFA0053CD0D /* BibleViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BibleViewModel.swift; sourceTree = "<group>"; };
+		96A32B922F1BCF250053CD0D /* ChapterListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChapterListView.swift; sourceTree = "<group>"; };
+		96A32B942F1BCF440053CD0D /* VerseListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VerseListView.swift; sourceTree = "<group>"; };
+		96A32B962F1BCFE70053CD0D /* bible.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; name = bible.json; path = BibleWish/Data/bible.json; sourceTree = SOURCE_ROOT; };
+		96A32B982F1BD1EE0053CD0D /* MainTabView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainTabView.swift; sourceTree = "<group>"; };
+		96A32B9A2F1BD3950053CD0D /* SearchView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchView.swift; sourceTree = "<group>"; };
+		96A32B9C2F1BD3BA0053CD0D /* BookmarksView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BookmarksView.swift; sourceTree = "<group>"; };
+		96A32B9E2F1BD3DA0053CD0D /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
+		96A32BA02F1BD5680053CD0D /* BookListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BookListView.swift; sourceTree = "<group>"; };
+		96A32BA32F1BD78F0053CD0D /* BibleData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BibleData.swift; sourceTree = "<group>"; };
+		96A32BA52F1BD8AD0053CD0D /* SearchResult.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchResult.swift; sourceTree = "<group>"; };
+		96A32BA72F1BD91B0053CD0D /* VerseDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VerseDetailView.swift; sourceTree = "<group>"; };
+		96A32BA92F1BDAB20053CD0D /* Bookmark.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Bookmark.swift; sourceTree = "<group>"; };
+		96A32BAB2F1BDAE40053CD0D /* BookmarkManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BookmarkManager.swift; sourceTree = "<group>"; };
+		96A32BAD2F1BDB620053CD0D /* BookmarkDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BookmarkDetailView.swift; sourceTree = "<group>"; };
+		96A32BB12F1BDE920053CD0D /* HighlightColor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HighlightColor.swift; sourceTree = "<group>"; };
+		96A32BB32F1BDECC0053CD0D /* Highlight.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Highlight.swift; sourceTree = "<group>"; };
+		96A32BB52F1BDEF20053CD0D /* HighlightManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HighlightManager.swift; sourceTree = "<group>"; };
+		96A32BB72F1BE2D10053CD0D /* VerseTextView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VerseTextView.swift; sourceTree = "<group>"; };
+		96A32BBB2F1BE6AB0053CD0D /* ReaderSettings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReaderSettings.swift; sourceTree = "<group>"; };
+		96A32BBD2F1BE71D0053CD0D /* FontSettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FontSettingsView.swift; sourceTree = "<group>"; };
+		96A32BBF2F1BE7930053CD0D /* ReaderFont.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReaderFont.swift; sourceTree = "<group>"; };
+		96A32BC12F1BEB0B0053CD0D /* BookCardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BookCardView.swift; sourceTree = "<group>"; };
+		96A32BC32F1BEBDA0053CD0D /* ChapterNumberView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChapterNumberView.swift; sourceTree = "<group>"; };
+		96A32BC52F1BEE5C0053CD0D /* bible_kjv.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; name = bible_kjv.json; path = BibleWish/Data/bible_kjv.json; sourceTree = SOURCE_ROOT; };
+		96A32BC72F1BF78E0053CD0D /* IndexedVerse.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IndexedVerse.swift; sourceTree = "<group>"; };
+		96A32BC92F1BFBE00053CD0D /* HighlightedText.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HighlightedText.swift; sourceTree = "<group>"; };
+		96A32BCC2F1C2E8B0053CD0D /* CovenantDivider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CovenantDivider.swift; sourceTree = "<group>"; };
+		96A32BCE2F1C7BA70053CD0D /* AppIcon.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = AppIcon.xcassets; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		96A32B732F1BC78B0053CD0D /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		96A32B6D2F1BC78B0053CD0D = {
+			isa = PBXGroup;
+			children = (
+				96A32B782F1BC78B0053CD0D /* BibleWish */,
+				96A32B772F1BC78B0053CD0D /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		96A32B772F1BC78B0053CD0D /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				96A32B762F1BC78B0053CD0D /* BibleWish.app */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		96A32B782F1BC78B0053CD0D /* BibleWish */ = {
+			isa = PBXGroup;
+			children = (
+				96A32BD02F1C7E1D0053CD0D /* Preview Content */,
+				96A32BCE2F1C7BA70053CD0D /* AppIcon.xcassets */,
+				96A32BCB2F1C01520053CD0D /* Data */,
+				96A32BA22F1BD73B0053CD0D /* Model */,
+				96A32BA32F1BD78F0053CD0D /* BibleData.swift */,
+				96A32B8E2F1BCDFA0053CD0D /* BibleViewModel.swift */,
+				96A32B792F1BC78B0053CD0D /* BibleWishApp.swift */,
+				96A32BC12F1BEB0B0053CD0D /* BookCardView.swift */,
+				96A32BA02F1BD5680053CD0D /* BookListView.swift */,
+				96A32BCC2F1C2E8B0053CD0D /* CovenantDivider.swift */,
+				96A32BAD2F1BDB620053CD0D /* BookmarkDetailView.swift */,
+				96A32B9C2F1BD3BA0053CD0D /* BookmarksView.swift */,
+				96A32B922F1BCF250053CD0D /* ChapterListView.swift */,
+				96A32BC32F1BEBDA0053CD0D /* ChapterNumberView.swift */,
+				96A32B7B2F1BC78B0053CD0D /* ContentView.swift */,
+				96A32BBD2F1BE71D0053CD0D /* FontSettingsView.swift */,
+				96A32BB12F1BDE920053CD0D /* HighlightColor.swift */,
+				96A32BC92F1BFBE00053CD0D /* HighlightedText.swift */,
+				96A32BC72F1BF78E0053CD0D /* IndexedVerse.swift */,
+				96A32B982F1BD1EE0053CD0D /* MainTabView.swift */,
+				96A32BBF2F1BE7930053CD0D /* ReaderFont.swift */,
+				96A32BBB2F1BE6AB0053CD0D /* ReaderSettings.swift */,
+				96A32B9A2F1BD3950053CD0D /* SearchView.swift */,
+				96A32B9E2F1BD3DA0053CD0D /* SettingsView.swift */,
+				96A32BA72F1BD91B0053CD0D /* VerseDetailView.swift */,
+				96A32B942F1BCF440053CD0D /* VerseListView.swift */,
+				96A32BB72F1BE2D10053CD0D /* VerseTextView.swift */,
+			);
+			path = BibleWish;
+			sourceTree = "<group>";
+		};
+		96A32BA22F1BD73B0053CD0D /* Model */ = {
+			isa = PBXGroup;
+			children = (
+				96A32B8C2F1BCD390053CD0D /* Verse.swift */,
+				96A32B8A2F1BCD250053CD0D /* Chapter.swift */,
+				96A32B882F1BCD050053CD0D /* BibleBook.swift */,
+				96A32BA52F1BD8AD0053CD0D /* SearchResult.swift */,
+				96A32BA92F1BDAB20053CD0D /* Bookmark.swift */,
+				96A32BAB2F1BDAE40053CD0D /* BookmarkManager.swift */,
+				96A32BB32F1BDECC0053CD0D /* Highlight.swift */,
+				96A32BB52F1BDEF20053CD0D /* HighlightManager.swift */,
+			);
+			path = Model;
+			sourceTree = "<group>";
+		};
+		96A32BCB2F1C01520053CD0D /* Data */ = {
+			isa = PBXGroup;
+			children = (
+				96A32BC52F1BEE5C0053CD0D /* bible_kjv.json */,
+				96A32B962F1BCFE70053CD0D /* bible.json */,
+			);
+			path = Data;
+			sourceTree = "<group>";
+		};
+		96A32BD02F1C7E1D0053CD0D /* Preview Content */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = "Preview Content";
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		96A32B752F1BC78B0053CD0D /* BibleWish */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 96A32B842F1BC78C0053CD0D /* Build configuration list for PBXNativeTarget "BibleWish" */;
+			buildPhases = (
+				96A32B722F1BC78B0053CD0D /* Sources */,
+				96A32B732F1BC78B0053CD0D /* Frameworks */,
+				96A32B742F1BC78B0053CD0D /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = BibleWish;
+			productName = BibleWish;
+			productReference = 96A32B762F1BC78B0053CD0D /* BibleWish.app */;
+			productType = "com.apple.product-type.application";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		96A32B6E2F1BC78B0053CD0D /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = 1;
+				LastSwiftUpdateCheck = 1540;
+				LastUpgradeCheck = 1540;
+				TargetAttributes = {
+					96A32B752F1BC78B0053CD0D = {
+						CreatedOnToolsVersion = 15.4;
+					};
+				};
+			};
+			buildConfigurationList = 96A32B712F1BC78B0053CD0D /* Build configuration list for PBXProject "BibleWish" */;
+			compatibilityVersion = "Xcode 14.0";
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				Base,
+			);
+			mainGroup = 96A32B6D2F1BC78B0053CD0D;
+			productRefGroup = 96A32B772F1BC78B0053CD0D /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				96A32B752F1BC78B0053CD0D /* BibleWish */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		96A32B742F1BC78B0053CD0D /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				96A32BCF2F1C7BA70053CD0D /* AppIcon.xcassets in Resources */,
+				96A32B972F1BCFE70053CD0D /* bible.json in Resources */,
+				96A32BC62F1BEE5C0053CD0D /* bible_kjv.json in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		96A32B722F1BC78B0053CD0D /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				96A32BB62F1BDEF20053CD0D /* HighlightManager.swift in Sources */,
+				96A32BC02F1BE7930053CD0D /* ReaderFont.swift in Sources */,
+				96A32B9B2F1BD3950053CD0D /* SearchView.swift in Sources */,
+				96A32B9D2F1BD3BA0053CD0D /* BookmarksView.swift in Sources */,
+				96A32BC82F1BF78E0053CD0D /* IndexedVerse.swift in Sources */,
+				96A32B7C2F1BC78B0053CD0D /* ContentView.swift in Sources */,
+				96A32BA82F1BD91B0053CD0D /* VerseDetailView.swift in Sources */,
+				96A32BCD2F1C2E8B0053CD0D /* CovenantDivider.swift in Sources */,
+				96A32B932F1BCF250053CD0D /* ChapterListView.swift in Sources */,
+				96A32BAC2F1BDAE40053CD0D /* BookmarkManager.swift in Sources */,
+				96A32BAA2F1BDAB20053CD0D /* Bookmark.swift in Sources */,
+				96A32BAE2F1BDB620053CD0D /* BookmarkDetailView.swift in Sources */,
+				96A32B992F1BD1EE0053CD0D /* MainTabView.swift in Sources */,
+				96A32B952F1BCF440053CD0D /* VerseListView.swift in Sources */,
+				96A32BB22F1BDE920053CD0D /* HighlightColor.swift in Sources */,
+				96A32BC42F1BEBDA0053CD0D /* ChapterNumberView.swift in Sources */,
+				96A32B8D2F1BCD390053CD0D /* Verse.swift in Sources */,
+				96A32BA62F1BD8AD0053CD0D /* SearchResult.swift in Sources */,
+				96A32B7A2F1BC78B0053CD0D /* BibleWishApp.swift in Sources */,
+				96A32B892F1BCD050053CD0D /* BibleBook.swift in Sources */,
+				96A32B9F2F1BD3DA0053CD0D /* SettingsView.swift in Sources */,
+				96A32BB42F1BDECC0053CD0D /* Highlight.swift in Sources */,
+				96A32BBE2F1BE71D0053CD0D /* FontSettingsView.swift in Sources */,
+				96A32BB82F1BE2D10053CD0D /* VerseTextView.swift in Sources */,
+				96A32BBC2F1BE6AB0053CD0D /* ReaderSettings.swift in Sources */,
+				96A32BA42F1BD78F0053CD0D /* BibleData.swift in Sources */,
+				96A32B8F2F1BCDFA0053CD0D /* BibleViewModel.swift in Sources */,
+				96A32B8B2F1BCD250053CD0D /* Chapter.swift in Sources */,
+				96A32BC22F1BEB0B0053CD0D /* BookCardView.swift in Sources */,
+				96A32BCA2F1BFBE00053CD0D /* HighlightedText.swift in Sources */,
+				96A32BA12F1BD5680053CD0D /* BookListView.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin XCBuildConfiguration section */
+		96A32B822F1BC78C0053CD0D /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.5;
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = iphoneos;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG $(inherited)";
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+			};
+			name = Debug;
+		};
+		96A32B832F1BC78C0053CD0D /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.5;
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				SDKROOT = iphoneos;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
+		96A32B852F1BC78C0053CD0D /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = YES;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_ASSET_PATHS = "\"BibleWish/Preview Content\"";
+				DEVELOPMENT_TEAM = 3FG6EV356S;
+				ENABLE_PREVIEWS = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_CFBundleDisplayName = BibleWish;
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.books";
+				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
+				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
+				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = Sysware.BibleWish;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+				SUPPORTS_MACCATALYST = NO;
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
+				SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD = NO;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		96A32B862F1BC78C0053CD0D /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = YES;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_ASSET_PATHS = "\"BibleWish/Preview Content\"";
+				DEVELOPMENT_TEAM = 3FG6EV356S;
+				ENABLE_PREVIEWS = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_CFBundleDisplayName = BibleWish;
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.books";
+				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
+				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
+				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = Sysware.BibleWish;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+				SUPPORTS_MACCATALYST = NO;
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
+				SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD = NO;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		96A32B712F1BC78B0053CD0D /* Build configuration list for PBXProject "BibleWish" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				96A32B822F1BC78C0053CD0D /* Debug */,
+				96A32B832F1BC78C0053CD0D /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		96A32B842F1BC78C0053CD0D /* Build configuration list for PBXNativeTarget "BibleWish" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				96A32B852F1BC78C0053CD0D /* Debug */,
+				96A32B862F1BC78C0053CD0D /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 96A32B6E2F1BC78B0053CD0D /* Project object */;
+}

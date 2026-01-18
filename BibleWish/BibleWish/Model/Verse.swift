@@ -1,0 +1,14 @@
+//
+//  Verse.swift
+//  BibleWish
+//
+//  Created by Patrick Carvalho on 2026-01-17.
+//
+
+import Foundation
+
+struct Verse: Codable, Identifiable {
+    let id = UUID()
+    let number: Int
+    let text: String
+}
