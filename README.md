@@ -1,5 +1,8 @@
 # BibleWish 
 
+<img width="128" height="128" alt="logo_128" src="https://github.com/user-attachments/assets/21784f4e-d0df-4ba4-9230-77000f54b041" />
+
+
 BibleWish was created with a simple and uncompromising purpose:
 
 To make the Word of God freely accessible, without distraction, monetization,
