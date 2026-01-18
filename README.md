@@ -24,6 +24,8 @@ purposes.
 If BibleWish helps even one person read the Bible more faithfully, more
 consistently, or with greater understanding, then its purpose is fulfilled.
 
+<img width="500" height="1082" alt="IMG_1041 copy" src="https://github.com/user-attachments/assets/1279e02c-ea99-46cc-867d-597584dae7d4" />
+
 ### Bible Translation Support
 
 At the moment, BibleWish supports the **King James Version (KJV)** of the Bible.
