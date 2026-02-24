@@ -7,6 +7,52 @@
 
 import Foundation
 
+enum BibleTranslation: String, CaseIterable, Identifiable {
+    case kjv
+    case bliv
+
+    var id: String { rawValue }
+
+    var resourceName: String {
+        switch self {
+        case .kjv:
+            return "bible_kjv"
+        case .bliv:
+            return "bible"
+        }
+    }
+
+    var language: String {
+        switch self {
+        case .kjv:
+            return "English"
+        case .bliv:
+            return "Portuguese"
+        }
+    }
+
+    var version: String {
+        switch self {
+        case .kjv:
+            return "KJV"
+        case .bliv:
+            return "BLIV"
+        }
+    }
+
+    var displayName: String {
+        "\(language) - \(version)"
+    }
+
+    var shortDescription: String {
+        switch self {
+        case .kjv:
+            return "Classic language (King James Version)"
+        case .bliv:
+            return "Modern Portuguese (BLIV)"
+        }
+    }
+}
 
 class BibleViewModel: ObservableObject {
 
@@ -18,60 +64,68 @@ class BibleViewModel: ObservableObject {
 
     @Published var errorMessage: String?
     @Published private(set) var verseIndex: [IndexedVerse] = []
-    private var hasBuiltIndex = false
-    
-    struct ReadingProgress: Codable {
-        var completedChapters: Set<String> // "Genesis-1", "Genesis-2"
-    }
-
-
-
-    init() {
-        
-        if let data = UserDefaults.standard.data(forKey: "readingProgress"),
-               let decoded = try? JSONDecoder().decode(ReadingProgress.self, from: data) {
-                readingProgress = decoded
-            } else {
-                readingProgress = ReadingProgress(completedChapters: [])
-            }
-        
-        loadBible()
-        
-        buildSearchIndex()        
-    }
-    
-    func progressForBook(_ book: BibleBook) -> Double {
-        let total = book.chapters.count
-        guard total > 0 else { return 0 }
-
-        let completed = book.chapters.filter { chapter in
-            readingProgress.completedChapters.contains("\(book.name)-\(chapter.number)")
-        }.count
-
-        return Double(completed) / Double(total)
-    }
-
-    
-    private func saveProgress() {
-        if let data = try? JSONEncoder().encode(readingProgress) {
-            UserDefaults.standard.set(data, forKey: "readingProgress")
+    @Published var selectedTranslation: BibleTranslation {
+        didSet {
+            guard oldValue != selectedTranslation else { return }
+            UserDefaults.standard.set(selectedTranslation.rawValue, forKey: selectedTranslationKey)
+            loadBible()
         }
     }
-    
+
+    private var hasBuiltIndex = false
+    private let selectedTranslationKey = "selected_bible_translation"
+
+    struct ReadingProgress: Codable {
+        var completedChapters: Set<String>
+    }
+
     @Published private(set) var readingProgress: ReadingProgress {
         didSet {
             saveProgress()
         }
     }
 
-    
-    func chapterKey(book: String, chapter: Int) -> String {
-        "\(book)-\(chapter)"
+    init() {
+        if let saved = UserDefaults.standard.string(forKey: selectedTranslationKey),
+           let translation = BibleTranslation(rawValue: saved) {
+            selectedTranslation = translation
+        } else {
+            selectedTranslation = .kjv
+        }
+
+        if let data = UserDefaults.standard.data(forKey: "readingProgress"),
+           let decoded = try? JSONDecoder().decode(ReadingProgress.self, from: data) {
+            readingProgress = decoded
+        } else {
+            readingProgress = ReadingProgress(completedChapters: [])
+        }
+
+        loadBible()
     }
 
+    func progressForBook(_ book: BibleBook) -> Double {
+        let total = book.chapters.count
+        guard total > 0 else { return 0 }
+
+        let completed = book.chapters.filter { chapter in
+            readingProgress.completedChapters.contains(chapterKey(book: book.name, chapter: chapter.number))
+        }.count
+
+        return Double(completed) / Double(total)
+    }
+
+    private func saveProgress() {
+        if let data = try? JSONEncoder().encode(readingProgress) {
+            UserDefaults.standard.set(data, forKey: "readingProgress")
+        }
+    }
+
+    func chapterKey(book: String, chapter: Int) -> String {
+        "\(selectedTranslation.rawValue)|\(book)-\(chapter)"
+    }
 
     func loadBible() {
-        guard let url = Bundle.main.url(forResource: "bible_kjv", withExtension: "json") else {
+        guard let url = Bundle.main.url(forResource: selectedTranslation.resourceName, withExtension: "json") else {
             errorMessage = "Bible JSON file not found."
             return
         }
@@ -80,16 +134,19 @@ class BibleViewModel: ObservableObject {
             let data = try Data(contentsOf: url)
             let decoded = try JSONDecoder().decode(BibleData.self, from: data)
 
+            hasBuiltIndex = false
+            verseIndex = []
+            errorMessage = nil
+
             DispatchQueue.main.async {
                 self.books = decoded.books
             }
-
         } catch {
             errorMessage = "Failed to load Bible: \(error.localizedDescription)"
             print(error)
         }
     }
-    
+
     func search(query: String, limit: Int = 100) -> [SearchResult] {
         let q = query
             .lowercased()
@@ -111,14 +168,14 @@ class BibleViewModel: ObservableObject {
                 )
 
                 if results.count >= limit {
-                    break // ⬅️ huge performance win
+                    break
                 }
             }
         }
 
         return results
     }
-    
+
     func onBooksUpdated() {
         guard !hasBuiltIndex else { return }
         guard !books.isEmpty else { return }
@@ -127,8 +184,6 @@ class BibleViewModel: ObservableObject {
         buildSearchIndex()
     }
 
-
-    
     private func buildSearchIndex() {
         var index: [IndexedVerse] = []
 
@@ -151,7 +206,7 @@ class BibleViewModel: ObservableObject {
         verseIndex = index
         print("🔍 Search index built: \(index.count) verses")
     }
-    
+
     func chapterFor(
         bookName: String,
         chapterNumber: Int
@@ -165,15 +220,15 @@ class BibleViewModel: ObservableObject {
     func book(named name: String) -> BibleBook? {
         books.first { $0.name == name }
     }
-    
+
     func isChapterCompleted(book: String, chapter: Int) -> Bool {
-        let key = "\(book)-\(chapter)"
+        let key = chapterKey(book: book, chapter: chapter)
         return readingProgress.completedChapters.contains(key)
     }
 
     func toggleChapterCompleted(book: String, chapter: Int) {
-        let key = "\(book)-\(chapter)"
-        
+        let key = chapterKey(book: book, chapter: chapter)
+
         var progress = readingProgress
 
         if progress.completedChapters.contains(key) {
@@ -183,9 +238,11 @@ class BibleViewModel: ObservableObject {
         }
 
         readingProgress = progress
-
     }
 
-
-
+    func resetReadingProgress() {
+        var progress = readingProgress
+        progress.completedChapters.removeAll()
+        readingProgress = progress
+    }
 }

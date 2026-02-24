@@ -10,9 +10,10 @@ import SwiftUI
 struct BookListView: View {
 
     @EnvironmentObject var viewModel: BibleViewModel
-    
+    @EnvironmentObject var versionStore: VersionStore
     
     @State private var refreshID = UUID()
+    @State private var showingLibrary = false
 
     private func refreshBookList() {
         refreshID = UUID()
@@ -25,11 +26,11 @@ struct BookListView: View {
     ]
 
     var oldTestamentBooks: [BibleBook] {
-        viewModel.books.filter { $0.isOldTestament }
+        Array(viewModel.books.prefix(39))
     }
 
     var newTestamentBooks: [BibleBook] {
-        viewModel.books.filter { !$0.isOldTestament }
+        Array(viewModel.books.dropFirst(39))
     }
     
     var body: some View {
@@ -122,9 +123,47 @@ struct BookListView: View {
                     .font(.headline)
                     .fontWeight(.semibold)
             }
+            
+            ToolbarItem(placement: .topBarTrailing) {
+                Menu {
+                    // Language picker
+                    Picker("Language", selection: $versionStore.selectedLanguageCode) {
+                        ForEach(versionStore.languages) { lang in
+                            Text(lang.nativeName).tag(lang.code)
+                        }
+                    }
+
+                    // Version picker for the selected language
+                    Picker("Version", selection: $versionStore.selectedVersionID) {
+                        ForEach(versionStore.versionsByLanguage[versionStore.selectedLanguageCode] ?? []) { version in
+                            Label(version.name, systemImage: version.isDownloaded ? "checkmark.circle.fill" : "icloud.and.arrow.down")
+                                .tag(version.id)
+                        }
+                    }
+
+                    Divider()
+                    Button("Manage versions…") { showingLibrary = true }
+                } label: {
+                    HStack(spacing: 6) {
+                        Image(systemName: "text.book.closed")
+                        VStack(alignment: .leading, spacing: 0) {
+                            Text(versionStore.selectedVersion?.name ?? "Version")
+                                .font(.subheadline)
+                            Text(versionStore.languages.first(where: { $0.code == versionStore.selectedLanguageCode })?.nativeName ?? "")
+                                .font(.caption2)
+                                .foregroundStyle(.secondary)
+                        }
+                    }
+                }
+            }
                                 
                             
+        }
+        .sheet(isPresented: $showingLibrary) {
+            VersionLibraryView()
+                .environmentObject(versionStore)
         }
                         
     }
 }
+

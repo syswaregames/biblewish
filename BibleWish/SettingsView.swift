@@ -8,79 +8,140 @@
 import SwiftUI
 
 struct SettingsView: View {
+
+    @EnvironmentObject var viewModel: BibleViewModel
+    @EnvironmentObject var versionStore: VersionStore
+    @State private var showResetAlert = false
+    @State private var showLibrarySheet = false
+
     var body: some View {
         List {
-            NavigationLink("Reading Font") {
-                FontSettingsView()
+
+            Section(header: Text("Bible")) {
+                NavigationLink {
+                    TranslationSettingsView()
+                } label: {
+                    HStack(spacing: 12) {
+                        Image(systemName: "globe")
+                            .foregroundColor(.accentColor)
+
+                        VStack(alignment: .leading, spacing: 3) {
+                            Text("Language & Version")
+                            Text("\(versionStore.languages.first(where: { $0.code == versionStore.selectedLanguageCode })?.nativeName ?? viewModel.selectedTranslation.language) - \(versionStore.selectedVersion?.name ?? viewModel.selectedTranslation.version)")
+                                .font(.caption)
+                                .foregroundColor(.secondary)
+                        }
+                    }
+                }
+                Button {
+                    showLibrarySheet = true
+                } label: {
+                    HStack(spacing: 12) {
+                        Image(systemName: "text.book.closed")
+                            .foregroundColor(.accentColor)
+
+                        VStack(alignment: .leading, spacing: 3) {
+                            Text("Bible Library")
+                            Text("Browse, download, and manage versions")
+                                .font(.caption)
+                                .foregroundColor(.secondary)
+                        }
+                    }
+                }
+            }
+
+            // MARK: - Reading Settings
+            Section(header: Text("Reading")) {
+                NavigationLink {
+                    FontSettingsView()
+                } label: {
+                    Label("Reading Font", systemImage: "textformat.size")
+                }
+            }
+
+            // MARK: - Progress
+            Section(
+                header: Text("Progress"),
+                footer: Text("This will remove all reading completion marks.")
+            ) {
+                Button(role: .destructive) {
+                    showResetAlert = true
+                } label: {
+                    Label("Reset Reading Progress",
+                          systemImage: "arrow.counterclockwise")
+                }
+            }
+
+            // MARK: - About
+            Section {
+                VStack(spacing: 16) {
+
+                    Image("BibleWishLogo")
+                        .resizable()
+                        .scaledToFit()
+                        .frame(width: 48, height: 48)
+                        .opacity(0.9)
+
+                    Text("BibleWish")
+                        .font(.headline)
+
+                    Divider()
+
+                    VStack(spacing: 6) {
+                        Text("""
+                        “The fear of the Lord is the beginning of wisdom:
+                        and the knowledge of the holy is understanding.”
+                        """)
+                        .font(.footnote)
+                        .italic()
+                        .multilineTextAlignment(.center)
+                        .foregroundColor(.secondary)
+
+                        Text("Proverbs 9:10")
+                            .font(.caption)
+                            .foregroundColor(.secondary)
+                    }
+
+                    Divider()
+
+                    Text("© 2026 BibleWish")
+
+                    Text("Created and designed by Patrick Carvalho")
+                        .font(.footnote)
+                        .foregroundColor(.secondary)
+                        .multilineTextAlignment(.center)
+
+                    Link(destination: URL(string: "https://instagram.com/patricksysware")!) {
+                        Label("@patricksysware", systemImage: "camera")
+                    }
+                }
+                .frame(maxWidth: .infinity)
+                .padding(.vertical, 12)
             }
         }
         .navigationTitle("Settings")
-        
-        VStack(spacing: 12) {
+        .alert("Reset Reading Progress?", isPresented: $showResetAlert) {
+            Button("Cancel", role: .cancel) {}
 
-            
-            Text("BibleWish")
-                .font(.headline)
-
-            Image("BibleWishLogo")
-                .resizable()
-                .scaledToFit()
-                .frame(width: 48, height: 48)
-                .opacity(0.9)
-            
-            Divider()
-                .padding(.vertical, 12)
-
-            VStack(spacing: 6) {
-
-                Text("""
-                “The fear of the Lord is the beginning of wisdom:
-                and the knowledge of the holy is understanding.”
-                """)
-                .font(.footnote)
-                .italic()
-                .multilineTextAlignment(.center)
-                .foregroundColor(.secondary)
-                .fixedSize(horizontal: false, vertical: true)
-
-                Text("Proverbs 9:10")
-                    .font(.caption)
-                    .foregroundColor(.secondary)
-
+            Button("Reset", role: .destructive) {
+                viewModel.resetReadingProgress()
             }
-            .padding(.horizontal, 24)
-
-
-            Text("© \(String(Calendar.current.component(.year, from: Date()))) BibleWish")
-
-            Text("Created and designed by Patrick Carvalho")
-                .font(.footnote)
-                .foregroundColor(.secondary)
-                .multilineTextAlignment(.center)
-
-            //.padding(.vertical, 8)
-
-            Link(destination: URL(string: "https://instagram.com/patricksysware")!) {
-                HStack(spacing: 8) {
-                    Image(systemName: "camera")
-                    Text("@patricksysware")
-                }
-            }
-            
-            Divider()
-            
-            .font(.footnote)
-            .foregroundColor(.secondary)
-
+        } message: {
+            Text("This will clear all completed chapters. This action cannot be undone.")
         }
-        .padding(.vertical, 24)
-        .frame(maxWidth: .infinity)
-
-
-
+        .sheet(isPresented: $showLibrarySheet) {
+            NavigationStack {
+                VersionLibraryView()
+                    .environmentObject(versionStore)
+                    .navigationTitle("Bible Library")
+                    .navigationBarTitleDisplayMode(.inline)
+            }
+        }
     }
 }
 
 #Preview {
     SettingsView()
+        .environmentObject(BibleViewModel())
 }
+

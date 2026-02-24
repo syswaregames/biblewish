@@ -87,8 +87,8 @@ struct VerseListView: View {
                     toggleChapterCompleted()
                 } label: {
                     Image(systemName: isChapterCompleted
-                          ? "bookmark.fill"
-                          : "bookmark")
+                          ? "checkmark.seal.fill"
+                          : "circle")
                 }
                 .accessibilityLabel(
                     isChapterCompleted
