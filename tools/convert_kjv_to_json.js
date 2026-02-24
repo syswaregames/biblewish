@@ -1,7 +1,7 @@
 const fs = require("fs");
 
 const inputPath = "bliv-n4_vpl.txt";
-const outputPath = "bible_bliv.json";
+const outputPath = "bible_pt_bliv.json";
 
 /* =======================
    🔧 DEBUG CONFIG
