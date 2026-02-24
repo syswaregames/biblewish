@@ -18,7 +18,7 @@ enum BibleTranslation: String, CaseIterable, Identifiable {
         case .kjv:
             return "bible_kjv"
         case .bliv:
-            return "bible"
+            return "bible_pt_bliv"
         }
     }
 
