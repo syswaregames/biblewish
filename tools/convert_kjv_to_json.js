@@ -1,7 +1,7 @@
 const fs = require("fs");
 
-const inputPath = "bliv-n4_vpl.txt";
-const outputPath = "bible_pt_bliv.json";
+const inputPath = "heb_vpl.txt";
+const outputPath = "heb_vpl.json";
 
 /* =======================
    🔧 DEBUG CONFIG
@@ -116,7 +116,7 @@ function normalizeBook(bookRaw) {
   return BOOK_LOOKUP[bookRaw.toLowerCase().trim()] || null;
 }
 
-const LANGUAGE = "pt";
+const LANGUAGE = "he";
 
 const BOOK_NAMES = {
   pt: {
@@ -273,6 +273,84 @@ const BOOK_NAMES = {
     JUD: "Jude",
 
     REV: "Revelation"
+  },
+
+  he: {
+    GEN: "בראשית",
+    EXO: "שמות",
+    LEV: "ויקרא",
+    NUM: "במדבר",
+    DEU: "דברים",
+
+    JOS: "יהושע",
+    JDG: "שופטים",
+    RUT: "רות",
+    "1SA": "שמואל א",
+    "2SA": "שמואל ב",
+    "1KI": "מלכים א",
+    "2KI": "מלכים ב",
+    "1CH": "דברי הימים א",
+    "2CH": "דברי הימים ב",
+    EZR: "עזרא",
+    NEH: "נחמיה",
+    EST: "אסתר",
+
+    JOB: "איוב",
+    PSA: "תהילים",
+    PRO: "משלי",
+    ECC: "קהלת",
+    SNG: "שיר השירים",
+
+    ISA: "ישעיהו",
+    JER: "ירמיהו",
+    LAM: "איכה",
+    EZK: "יחזקאל",
+    DAN: "דניאל",
+
+    HOS: "הושע",
+    JOL: "יואל",
+    AMO: "עמוס",
+    OBA: "עובדיה",
+    JON: "יונה",
+    MIC: "מיכה",
+    NAM: "נחום",
+    HAB: "חבקוק",
+    ZEP: "צפניה",
+    HAG: "חגי",
+    ZEC: "זכריה",
+    MAL: "מלאכי",
+
+    MAT: "מתי",
+    MRK: "מרקוס",
+    LUK: "לוקס",
+    JHN: "יוחנן",
+
+    ACT: "מעשי השליחים",
+
+    ROM: "אל הרומים",
+    "1CO": "אל הקורינתים א",
+    "2CO": "אל הקורינתים ב",
+    GAL: "אל הגלטים",
+    EPH: "אל האפסים",
+    PHP: "אל הפיליפים",
+    COL: "אל הקולוסים",
+    "1TH": "אל התסלוניקים א",
+    "2TH": "אל התסלוניקים ב",
+    "1TI": "אל טימותיאוס א",
+    "2TI": "אל טימותיאוס ב",
+    TIT: "אל טיטוס",
+    PHM: "אל פילימון",
+
+    HEB: "אל העברים",
+    JAS: "יעקב",
+    "1PE": "פטרוס א",
+    "2PE": "פטרוס ב",
+    "1JN": "יוחנן א",
+    "2JN": "יוחנן ב",
+    "3JN": "יוחנן ג",
+    JUD: "יהודה",
+
+    REV: "התגלות יוחנן"
   }
 };
 

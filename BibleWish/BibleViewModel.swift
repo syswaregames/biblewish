@@ -10,6 +10,8 @@ import Foundation
 enum BibleTranslation: String, CaseIterable, Identifiable {
     case kjv
     case bliv
+    case webu
+    case heb
 
     var id: String { rawValue }
 
@@ -19,6 +21,10 @@ enum BibleTranslation: String, CaseIterable, Identifiable {
             return "bible_kjv"
         case .bliv:
             return "bible_pt_bliv"
+        case .webu:
+            return "bible_en_webu"
+        case .heb:
+            return "bible_he_heb"
         }
     }
 
@@ -28,6 +34,10 @@ enum BibleTranslation: String, CaseIterable, Identifiable {
             return "English"
         case .bliv:
             return "Portuguese"
+        case .webu:
+            return "English"
+        case .heb:
+            return "Hebrew"
         }
     }
 
@@ -37,6 +47,10 @@ enum BibleTranslation: String, CaseIterable, Identifiable {
             return "KJV"
         case .bliv:
             return "BLIV"
+        case .webu:
+            return "WEBU"
+        case .heb:
+            return "HEB"
         }
     }
 
@@ -50,6 +64,10 @@ enum BibleTranslation: String, CaseIterable, Identifiable {
             return "Classic language (King James Version)"
         case .bliv:
             return "Modern Portuguese (BLIV)"
+        case .webu:
+            return "Modern English (WEBU)"
+        case .heb:
+            return "Hebrew text (HEB)"
         }
     }
 }

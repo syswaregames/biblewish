@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		9653ECD62F4E65110054C315 /* bible_en_webu.json in Resources */ = {isa = PBXBuildFile; fileRef = 9653ECD52F4E65110054C315 /* bible_en_webu.json */; };
+		9653ECDA2F4E690D0054C315 /* bible_he_heb.json in Resources */ = {isa = PBXBuildFile; fileRef = 9653ECD92F4E690D0054C315 /* bible_he_heb.json */; };
 		967850622F4E499C00F93196 /* VersionStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 967850612F4E499C00F93196 /* VersionStore.swift */; };
 		967850642F4E4BFC00F93196 /* VersionLibraryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 967850632F4E4BFC00F93196 /* VersionLibraryView.swift */; };
 		96A32B7A2F1BC78B0053CD0D /* BibleWishApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 96A32B792F1BC78B0053CD0D /* BibleWishApp.swift */; };
@@ -48,6 +50,8 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		9653ECD52F4E65110054C315 /* bible_en_webu.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = bible_en_webu.json; sourceTree = "<group>"; };
+		9653ECD92F4E690D0054C315 /* bible_he_heb.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = bible_he_heb.json; sourceTree = "<group>"; };
 		967850612F4E499C00F93196 /* VersionStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VersionStore.swift; sourceTree = "<group>"; };
 		967850632F4E4BFC00F93196 /* VersionLibraryView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VersionLibraryView.swift; sourceTree = "<group>"; };
 		96A32B762F1BC78B0053CD0D /* BibleWish.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = BibleWish.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -172,6 +176,8 @@
 		96A32BCB2F1C01520053CD0D /* Data */ = {
 			isa = PBXGroup;
 			children = (
+				9653ECD92F4E690D0054C315 /* bible_he_heb.json */,
+				9653ECD52F4E65110054C315 /* bible_en_webu.json */,
 				96A32BC52F1BEE5C0053CD0D /* bible_kjv.json */,
 				96A32B962F1BCFE70053CD0D /* bible_pt_bliv.json */,
 			);
@@ -246,6 +252,8 @@
 				96A32BCF2F1C7BA70053CD0D /* AppIcon.xcassets in Resources */,
 				96C098C02F1C8CA900FD74E9 /* BibleIcon.xcassets in Resources */,
 				96A32B972F1BCFE70053CD0D /* bible_pt_bliv.json in Resources */,
+				9653ECD62F4E65110054C315 /* bible_en_webu.json in Resources */,
+				9653ECDA2F4E690D0054C315 /* bible_he_heb.json in Resources */,
 				96A32BC62F1BEE5C0053CD0D /* bible_kjv.json in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -423,7 +431,7 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = YES;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1;
+				CURRENT_PROJECT_VERSION = 2;
 				DEVELOPMENT_ASSET_PATHS = "\"BibleWish/Preview Content\"";
 				DEVELOPMENT_TEAM = 3FG6EV356S;
 				ENABLE_PREVIEWS = YES;
@@ -439,7 +447,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.0;
+				MARKETING_VERSION = 1.1;
 				PRODUCT_BUNDLE_IDENTIFIER = Sysware.BibleWish;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
@@ -459,7 +467,7 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = YES;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1;
+				CURRENT_PROJECT_VERSION = 2;
 				DEVELOPMENT_ASSET_PATHS = "\"BibleWish/Preview Content\"";
 				DEVELOPMENT_TEAM = 3FG6EV356S;
 				ENABLE_PREVIEWS = YES;
@@ -475,7 +483,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.0;
+				MARKETING_VERSION = 1.1;
 				PRODUCT_BUNDLE_IDENTIFIER = Sysware.BibleWish;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";

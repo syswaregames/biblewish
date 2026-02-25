@@ -111,19 +111,22 @@ final class VersionStore: ObservableObject {
         // Languages
         let en = BibleLanguage(code: "en", nativeName: "English", localizedName: "English")
         let ptBR = BibleLanguage(code: "pt-BR", nativeName: "Português (Brasil)", localizedName: "Portuguese (Brazil)")
-        languages = [en, ptBR]
+        let he = BibleLanguage(code: "he", nativeName: "עברית", localizedName: "Hebrew")
+        languages = [en, ptBR, he]
 
         // Versions (align ids with BibleTranslation.rawValue where possible)
         let kjv = BibleVersion(id: "kjv", name: "King James Version", languageCode: "en", isDownloaded: true, sizeInMB: 5.2)
+        let webu = BibleVersion(id: "webu", name: "English (WEBU)", languageCode: "en", isDownloaded: true, sizeInMB: 4.8)
         let bliv = BibleVersion(id: "bliv", name: "BLIV", languageCode: "pt-BR", isDownloaded: true, sizeInMB: 4.9)
+        let heb = BibleVersion(id: "heb", name: "Hebrew Bible (HEB)", languageCode: "he", isDownloaded: true, sizeInMB: 6.1)
 
         // Example of additional versions you might list (not downloaded yet)
         // let niv = BibleVersion(id: "niv", name: "New International Version", languageCode: "en", isDownloaded: false, sizeInMB: 6.0)
 
         versionsByLanguage = [
-            en.code: [kjv],
-            ptBR.code: [bliv]
+            en.code: [kjv, webu],
+            ptBR.code: [bliv],
+            he.code: [heb]
         ]
     }
 }
-
