@@ -206,7 +206,7 @@ struct PrayerEditorView: View {
                         }
                     }
 
-                    Text("Your prayer list is private. It is only shared between your devices.")
+                    Text("Only you can see your prayer list.")
                         .font(.caption)
                         .foregroundStyle(palette.inkMuted)
 
