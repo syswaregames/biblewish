@@ -94,6 +94,7 @@ final class SelfTest {
         runNoteTextView()
         runBookNavigator()
         runVerseSelection()
+        runVersionSwitch()
         runOriginalWords()
         await runSearch()
         await runAuth()
@@ -166,6 +167,36 @@ final class SelfTest {
         let again = bookmarks.save(runs: [(16...17, "x")], bookName: "John", chapter: 3, translation: "kjv")
         check("saving the same run again changes nothing", again.added == 0 && again.already == 1 && bookmarks.bookmarks.count == before + 2)
         for bookmark in bookmarks.bookmarks where bookmark.bookName == "John" && bookmark.chapterNumber == 3 { bookmarks.toggle(bookmark) }
+    }
+
+    // MARK: - Changing version in the reader
+
+    private func runVersionSwitch() {
+        let loaded = BibleTranslation.allCases.compactMap { translation in translation.loadBooks().map { (translation, $0) } }
+        check("all four translations load", loaded.count == 4)
+        // Every book of every translation can be found again from the KJV, by canonical order.
+        guard let kjv = loaded.first(where: { $0.0 == .kjv })?.1 else { check("KJV loads", false); return }
+        var misses: [String] = []
+        for (translation, books) in loaded where translation != .kjv {
+            for (position, book) in kjv.enumerated() {
+                let canonical = BookIndex.of(name: book.name)
+                guard let place = ReaderPosition.locate(canonical: canonical, position: position, chapter: 1, in: books) else { misses.append("\(translation) \(book.name)"); continue }
+                let found = books[place.book].name
+                if BookIndex.of(name: found) != canonical { misses.append("\(translation): \(book.name) -> \(found)") }
+            }
+        }
+        check("every KJV book maps to the same book in WEB, Biblia Livre and Hebrew", misses.isEmpty, misses.prefix(5).joined(separator: " | "))
+        if let bliv = loaded.first(where: { $0.0 == .bliv })?.1, let john = kjv.firstIndex(where: { $0.name == "John" }) {
+            let place = ReaderPosition.locate(canonical: BookIndex.of(name: "John"), position: john, chapter: 3, in: bliv)
+            check("John 3 in KJV is Jo\u{00E3}o 3 in Biblia Livre", place.map { bliv[$0.book].name == "Jo\u{00E3}o" && bliv[$0.book].chapters[$0.chapter].number == 3 } == true, "\(String(describing: place))")
+        }
+        if let web = loaded.first(where: { $0.0 == .webu })?.1 {
+            let psalms = kjv.firstIndex { $0.name.hasPrefix("Psalm") } ?? 18
+            let place = ReaderPosition.locate(canonical: BookIndex.of(name: kjv[psalms].name), position: psalms, chapter: 119, in: web)
+            check("Psalm 119 stays Psalm 119 in WEB", place.map { web[$0.book].chapters[$0.chapter].number == 119 } == true)
+        }
+        check("a chapter that does not exist falls back to the last one", ReaderPosition.locate(canonical: nil, position: 0, chapter: 999, in: kjv).map { $0.chapter == kjv[0].chapters.count - 1 } == true)
+        check("nothing is found in an empty list", ReaderPosition.locate(canonical: 0, position: 0, chapter: 1, in: []) == nil)
     }
 
     // MARK: - Search

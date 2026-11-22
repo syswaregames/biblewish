@@ -118,6 +118,8 @@ enum WidgetSync {
 class BibleViewModel: ObservableObject {
 
     @Published var books: [BibleBook] = []
+    /// Counts up each time a translation's books finish loading, so an open reader knows to swap its book.
+    @Published private(set) var booksRevision = 0
 
     @Published var errorMessage: String?
     @Published var selectedTranslation: BibleTranslation {
@@ -252,6 +254,7 @@ class BibleViewModel: ObservableObject {
 
             DispatchQueue.main.async {
                 self.books = decoded.books
+                self.booksRevision += 1
             }
         } catch {
             errorMessage = "Failed to load Bible: \(error.localizedDescription)"

@@ -149,3 +149,9 @@ Not checked: typing on a device, VoiceOver on the results, and the Release-build
 
 Biblia Livre follows the oldest manuscripts and leaves out 15 verses (Mateus 17:21, 18:11, 23:14; Marcos 7:16, 9:44, 9:46, 11:26, 15:28; Lucas 17:36, 23:17; Atos 8:37, 15:34, 24:7, 28:29; Romanos 16:24). The app showed "—" for them. The website supplies a BibleWish translation from the KJV for each and flags it `omitted`; now the app has the same: `tools/sync_omitted_verses.py` copies those verses (text and flag, nothing else) from the website's file into `bible_pt_bliv.json`, the reader shows a small gold `*` after the verse and the website's Portuguese footnote at the end of the chapter ("* v. 37: este versículo não aparece nos manuscritos mais antigos, por isso a Bíblia Livre o omite. Tradução do BibleWish."), hidden in focus mode like the website's, and search, copy, share, Send and notes read them like any verse. Re-run the script when the website's file changes.
 
+
+## Quick version switch in the reader (2026-11-22)
+
+A small pill with the open version (KJV, WEB, BLIV, HEB) sits in the reader's toolbar; its menu lists every version by language. Choosing one opens the same book, chapter and verse in it (the verse at the top of the screen is kept) and says which version it switched to. Books are matched by their place in the 66-book order, so Hebrew, which lists and names them differently, lands on the right book (`ReaderPosition`, checked for every book of every translation). Highlights are kept per translation, so the selection of the old one doesn't follow you.
+
+Not checked: opening the menu and tapping a version on a device.

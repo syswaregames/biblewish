@@ -17,6 +17,7 @@ struct VerseListView: View {
     @EnvironmentObject var readerSettings: ReaderSettings
     @EnvironmentObject var bookmarkManager: BookmarkManager
     @EnvironmentObject var highlightManager: HighlightManager
+    @EnvironmentObject var versionStore: VersionStore
     @Environment(\.palette) private var palette
 
     @State private var didAutoCompleteChapter = false
@@ -35,6 +36,10 @@ struct VerseListView: View {
     @State private var showRelated = false
     @State private var showWords = false
     @State private var showSend = false
+    /// The verse at the top of the screen, so a change of version can stay on it.
+    @State private var topVerse: Int?
+    /// Where the reader was when the version was changed; used once the new books arrive.
+    @State private var versionCarry: (canonical: Int?, position: Int, chapter: Int, verse: Int?)?
     @ScaledMetric(relativeTo: .largeTitle) private var chapterNumberSize: CGFloat = 52
     @ScaledMetric(relativeTo: .title3) private var ornamentSize: CGFloat = 22
 
@@ -79,6 +84,7 @@ struct VerseListView: View {
                         }
                     }
                     }
+                    .scrollTargetLayout()
 
                     if !omittedVerses.isEmpty && (!readerSettings.focusMode || focusPeek) {
                         omittedFootnote
@@ -108,10 +114,12 @@ struct VerseListView: View {
                 
                 .id(currentChapterIndex)
             }
+            .scrollPosition(id: $topVerse, anchor: .top)
             .simultaneousGesture(
                 DragGesture(minimumDistance: 20)
                     .onEnded(handleSwipe)
             )
+            .onChange(of: viewModel.booksRevision) { restoreAfterVersionChange() }
             .onChange(of: pendingVerse) {
                 guard let verse = pendingVerse else { return }
                 DispatchQueue.main.asyncAfter(deadline: .now() + 0.15) { proxy.scrollTo(verse, anchor: .top) }
@@ -241,6 +249,10 @@ struct VerseListView: View {
             }
 
             ToolbarItem(placement: .navigationBarTrailing) {
+                versionMenu
+            }
+
+            ToolbarItem(placement: .navigationBarTrailing) {
                 if !placesInChapter.isEmpty {
                     Button {
                         showPlaces = true
@@ -279,6 +291,58 @@ struct VerseListView: View {
 
     }
     
+    // MARK: - Changing the Bible version
+
+    /// A small pill with the open version; its menu lists the versions to switch to.
+    private var versionMenu: some View {
+        Menu {
+            ForEach(versionStore.languages) { language in
+                Section(language.nativeName) {
+                    ForEach(versionStore.versionsByLanguage[language.code] ?? []) { version in
+                        Button {
+                            switchVersion(to: version)
+                        } label: {
+                            if version.id == versionStore.selectedVersionID {
+                                Label(version.name, systemImage: "checkmark")
+                            } else {
+                                Text(version.name)
+                            }
+                        }
+                    }
+                }
+            }
+        } label: {
+            Text(translationId.uppercased())
+                .font(.caption.weight(.bold))
+                .padding(.horizontal, 8)
+                .padding(.vertical, 4)
+                .overlay(RoundedRectangle(cornerRadius: 6).stroke(palette.gold.opacity(0.7)))
+        }
+        .accessibilityLabel("Bible version \(versionStore.selectedVersion?.name ?? translationId.uppercased()). Change version")
+    }
+
+    private func switchVersion(to version: BibleVersion) {
+        guard version.id != versionStore.selectedVersionID else { return }
+        versionCarry = (
+            canonical: BookIndex.of(name: book.name),
+            position: bookPosition,
+            chapter: chapter.number,
+            verse: (topVerse ?? 1) > 1 ? topVerse : nil
+        )
+        versionStore.setSelected(languageCode: version.languageCode, versionID: version.id)
+        UISelectionFeedbackGenerator().selectionChanged()
+        show(version.name)
+    }
+
+    /// The new translation's books have loaded: open the same book, chapter and verse in them. Books
+    /// are matched by their place in the 66-book order (Hebrew lists them differently).
+    private func restoreAfterVersionChange() {
+        guard let carry = versionCarry else { return }
+        versionCarry = nil
+        guard let place = ReaderPosition.locate(canonical: carry.canonical, position: carry.position, chapter: carry.chapter, in: viewModel.books) else { return }
+        goTo(book: place.book, chapter: place.chapter, verse: carry.verse)
+    }
+
     // MARK: - Verses Biblia Livre leaves out
 
     private var omittedVerses: [Int] { chapter.verses.filter { $0.omitted == true }.map(\.number) }
