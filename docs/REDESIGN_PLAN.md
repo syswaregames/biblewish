@@ -45,7 +45,7 @@ Goal: bring the iOS app in line with the identity and features of biblewish.com 
 - [x] Reading plans (`tools/build_plans.py` → `reading_plans.json`): catalog, start/stop, per-chapter checklist, on track/ahead/behind and streaks (ported from `js/plans.js`). Search moved into the Bible tab's toolbar to keep five tabs. Still to do: per-book Bible progress. Never change a published plan's days; add a new plan id
 - [x] Study tab: favorites (the old bookmarks) + notes with colored tags and a tag filter, replacing the Bookmarks tab; "Add Note…" in the reader's long-press menu. Still to do: Markdown rendering and clickable verse references in notes
 - [x] Achievements: 30 badges from the website's `api/lib/badges.php` (`tools/build_badges.py`) that work offline (reading, through the Bible, study, seasonal), computed on the device from a new timestamped reading log; unlock toast and an Achievements screen linked from Home. Community and leaderboard badges wait for Phase 4. Chapters read before this version count toward progress but have no dates, so they don't count toward streaks
-- [ ] Cross-references and places (`data/crossrefs`, `data/places`) in the verse detail
+- [x] Cross-references (long-press a verse → Cross-references), places named in a chapter (map button in the reader toolbar) and Bible Maps journeys (card on Home), from `tools/build_study_data.py`
 
 ### Phase 4 — Account and sync (optional, later)
 Sign in with the website's email code, sync favorites/notes/progress, prayer list, community prayers. Needs: updated `PRIVACY.md` and App Store privacy labels, moderation (report/block) for user-generated content.

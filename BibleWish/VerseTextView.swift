@@ -23,6 +23,7 @@ struct VerseTextView: View {
 
     @State private var showHighlightMenu = false
     @State private var showNoteEditor = false
+    @State private var showCrossReferences = false
 
     var body: some View {
 
@@ -89,6 +90,10 @@ struct VerseTextView: View {
                 }
             }
 
+            Button("Cross-references") {
+                showCrossReferences = true
+            }
+
             Button("Add Note\u{2026}") {
                 showNoteEditor = true
             }
@@ -100,6 +105,13 @@ struct VerseTextView: View {
                     verse: verse.number
                 )
             }
+        }
+        .sheet(isPresented: $showCrossReferences) {
+            CrossReferencesView(
+                bookIndex: viewModel.books.firstIndex { $0.name == bookName } ?? 0,
+                chapter: chapterNumber,
+                verse: verse.number
+            )
         }
         .sheet(isPresented: $showNoteEditor) {
             NoteEditorView(reference: "\(bookName) \(chapterNumber):\(verse.number)")

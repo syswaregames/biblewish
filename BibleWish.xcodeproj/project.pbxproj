@@ -7,6 +7,11 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		96F1A5442F4F111100A1B2D0 /* PlacesViews.swift in Sources */ = {isa = PBXBuildFile; fileRef = 96F1A4442F4F111100A1B2C0 /* PlacesViews.swift */; };
+		96F1A5432F4F111100A1B2D0 /* CrossReferencesView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 96F1A4432F4F111100A1B2C0 /* CrossReferencesView.swift */; };
+		96F1A5422F4F111100A1B2D0 /* BibleStudyData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 96F1A4422F4F111100A1B2C0 /* BibleStudyData.swift */; };
+		96F1A5412F4F111100A1B2D0 /* places in Resources */ = {isa = PBXBuildFile; fileRef = 96F1A4412F4F111100A1B2C0 /* places */; };
+		96F1A5402F4F111100A1B2D0 /* crossrefs in Resources */ = {isa = PBXBuildFile; fileRef = 96F1A4402F4F111100A1B2C0 /* crossrefs */; };
 		96F1A5322F4F111100A1B2D0 /* AchievementsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 96F1A4322F4F111100A1B2C0 /* AchievementsView.swift */; };
 		96F1A5312F4F111100A1B2D0 /* Achievements.swift in Sources */ = {isa = PBXBuildFile; fileRef = 96F1A4312F4F111100A1B2C0 /* Achievements.swift */; };
 		96F1A5302F4F111100A1B2D0 /* badges.json in Resources */ = {isa = PBXBuildFile; fileRef = 96F1A4302F4F111100A1B2C0 /* badges.json */; };
@@ -68,6 +73,11 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		96F1A4442F4F111100A1B2C0 /* PlacesViews.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlacesViews.swift; sourceTree = "<group>"; };
+		96F1A4432F4F111100A1B2C0 /* CrossReferencesView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CrossReferencesView.swift; sourceTree = "<group>"; };
+		96F1A4422F4F111100A1B2C0 /* BibleStudyData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BibleStudyData.swift; sourceTree = "<group>"; };
+		96F1A4412F4F111100A1B2C0 /* places */ = {isa = PBXFileReference; lastKnownFileType = folder; path = places; sourceTree = "<group>"; };
+		96F1A4402F4F111100A1B2C0 /* crossrefs */ = {isa = PBXFileReference; lastKnownFileType = folder; path = crossrefs; sourceTree = "<group>"; };
 		96F1A4322F4F111100A1B2C0 /* AchievementsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AchievementsView.swift; sourceTree = "<group>"; };
 		96F1A4312F4F111100A1B2C0 /* Achievements.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Achievements.swift; sourceTree = "<group>"; };
 		96F1A4302F4F111100A1B2C0 /* badges.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = badges.json; sourceTree = "<group>"; };
@@ -159,6 +169,8 @@
 		96A32B782F1BC78B0053CD0D /* BibleWish */ = {
 			isa = PBXGroup;
 			children = (
+				96F1A4442F4F111100A1B2C0 /* PlacesViews.swift */,
+				96F1A4432F4F111100A1B2C0 /* CrossReferencesView.swift */,
 				96F1A4322F4F111100A1B2C0 /* AchievementsView.swift */,
 				96F1A4222F4F111100A1B2C0 /* NoteEditorView.swift */,
 				96F1A4212F4F111100A1B2C0 /* StudyView.swift */,
@@ -201,6 +213,7 @@
 		96A32BA22F1BD73B0053CD0D /* Model */ = {
 			isa = PBXGroup;
 			children = (
+				96F1A4422F4F111100A1B2C0 /* BibleStudyData.swift */,
 				96F1A4312F4F111100A1B2C0 /* Achievements.swift */,
 				96F1A4202F4F111100A1B2C0 /* StudyNotes.swift */,
 				96F1A4112F4F111100A1B2C0 /* ReadingPlans.swift */,
@@ -226,6 +239,8 @@
 		96A32BCB2F1C01520053CD0D /* Data */ = {
 			isa = PBXGroup;
 			children = (
+				96F1A4412F4F111100A1B2C0 /* places */,
+				96F1A4402F4F111100A1B2C0 /* crossrefs */,
 				96F1A4302F4F111100A1B2C0 /* badges.json */,
 				96F1A4102F4F111100A1B2C0 /* reading_plans.json */,
 				96F1A4012F4F111100A1B2C0 /* votd_references.json */,
@@ -303,6 +318,8 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				96F1A5412F4F111100A1B2D0 /* places in Resources */,
+				96F1A5402F4F111100A1B2D0 /* crossrefs in Resources */,
 				96F1A5302F4F111100A1B2D0 /* badges.json in Resources */,
 				96F1A5102F4F111100A1B2D0 /* reading_plans.json in Resources */,
 				96F1A5012F4F111100A1B2D0 /* votd_references.json in Resources */,
@@ -323,6 +340,9 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				96F1A5442F4F111100A1B2D0 /* PlacesViews.swift in Sources */,
+				96F1A5432F4F111100A1B2D0 /* CrossReferencesView.swift in Sources */,
+				96F1A5422F4F111100A1B2D0 /* BibleStudyData.swift in Sources */,
 				96F1A5322F4F111100A1B2D0 /* AchievementsView.swift in Sources */,
 				96F1A5312F4F111100A1B2D0 /* Achievements.swift in Sources */,
 				96F1A5222F4F111100A1B2D0 /* NoteEditorView.swift in Sources */,

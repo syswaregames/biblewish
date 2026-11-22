@@ -20,6 +20,7 @@ struct VerseListView: View {
     @State private var currentChapterIndex: Int
     @State private var slideDirection: CGFloat = 0
     @State private var isAnimating = false
+    @State private var showPlaces = false
 
     init(
         book: BibleBook,
@@ -98,11 +99,25 @@ struct VerseListView: View {
 
         }
         .themedScreen()
+        .sheet(isPresented: $showPlaces) {
+            ChapterPlacesView(bookName: book.name, chapter: chapter.number, mentions: placesInChapter)
+        }
         .navigationTitle("\(book.name) \(chapter.number)")
         .navigationBarTitleDisplayMode(.inline)
         
         
         .toolbar {
+            ToolbarItem(placement: .navigationBarTrailing) {
+                if !placesInChapter.isEmpty {
+                    Button {
+                        showPlaces = true
+                    } label: {
+                        Image(systemName: "map")
+                    }
+                    .accessibilityLabel("Places in this chapter")
+                }
+            }
+
             ToolbarItem(placement: .navigationBarTrailing) {
                 Button {
                     readerSettings.focusMode.toggle()
@@ -131,6 +146,13 @@ struct VerseListView: View {
 
     }
     
+    // MARK: - Places
+
+    private var placesInChapter: [PlaceMention] {
+        guard let index = viewModel.books.firstIndex(where: { $0.name == book.name }) else { return [] }
+        return PlacesStore.shared.places(book: index, chapter: chapter.number)
+    }
+
     // MARK: - Book page
 
     /// Book name, big chapter number, reading time and an ornamental divider.

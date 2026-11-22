@@ -30,6 +30,7 @@ struct HomeView: View {
                     openPassageCard
                     progressCard
                     achievementsCard
+                    mapsCard
                 }
                 .padding(.horizontal, 16)
                 .padding(.bottom, 24)
@@ -249,6 +250,28 @@ struct HomeView: View {
                             .font(.subheadline)
                             .foregroundStyle(palette.inkMuted)
                     }
+                }
+                Spacer()
+                Image(systemName: "chevron.right")
+                    .foregroundStyle(palette.gold)
+            }
+            .padding(20)
+            .themedCard(cornerRadius: 16)
+        }
+        .buttonStyle(.plain)
+    }
+
+    private var mapsCard: some View {
+        NavigationLink {
+            JourneysView()
+        } label: {
+            HStack {
+                VStack(alignment: .leading, spacing: 8) {
+                    sectionLabel("Bible maps")
+                    Text("Journeys of Abraham, the Exodus, Jesus and Paul")
+                        .font(.system(.body, design: .serif))
+                        .foregroundStyle(palette.ink)
+                        .multilineTextAlignment(.leading)
                 }
                 Spacer()
                 Image(systemName: "chevron.right")
