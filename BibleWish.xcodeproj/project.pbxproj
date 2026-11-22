@@ -7,8 +7,10 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		96F1A2032F4F111100A1B2D3 /* Theme.swift in Sources */ = {isa = PBXBuildFile; fileRef = 96F1A1032F4F111100A1B2C5 /* Theme.swift */; };
 		9653ECD62F4E65110054C315 /* bible_en_webu.json in Resources */ = {isa = PBXBuildFile; fileRef = 9653ECD52F4E65110054C315 /* bible_en_webu.json */; };
 		9653ECDA2F4E690D0054C315 /* bible_he_heb.json in Resources */ = {isa = PBXBuildFile; fileRef = 9653ECD92F4E690D0054C315 /* bible_he_heb.json */; };
+		9653ECDC2F4E8ABD0054C315 /* red_letter_ranges.json in Resources */ = {isa = PBXBuildFile; fileRef = 9653ECDB2F4E8ABC0054C315 /* red_letter_ranges.json */; };
 		967850622F4E499C00F93196 /* VersionStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 967850612F4E499C00F93196 /* VersionStore.swift */; };
 		967850642F4E4BFC00F93196 /* VersionLibraryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 967850632F4E4BFC00F93196 /* VersionLibraryView.swift */; };
 		96A32B7A2F1BC78B0053CD0D /* BibleWishApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 96A32B792F1BC78B0053CD0D /* BibleWishApp.swift */; };
@@ -38,6 +40,8 @@
 		96A32BBC2F1BE6AB0053CD0D /* ReaderSettings.swift in Sources */ = {isa = PBXBuildFile; fileRef = 96A32BBB2F1BE6AB0053CD0D /* ReaderSettings.swift */; };
 		96A32BBE2F1BE71D0053CD0D /* FontSettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 96A32BBD2F1BE71D0053CD0D /* FontSettingsView.swift */; };
 		96A32BC02F1BE7930053CD0D /* ReaderFont.swift in Sources */ = {isa = PBXBuildFile; fileRef = 96A32BBF2F1BE7930053CD0D /* ReaderFont.swift */; };
+		96F1A2012F4F111100A1B2D1 /* BookNameMapper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 96F1A1012F4F111100A1B2C3 /* BookNameMapper.swift */; };
+		96F1A2022F4F111100A1B2D2 /* RedLetterRanges.swift in Sources */ = {isa = PBXBuildFile; fileRef = 96F1A1022F4F111100A1B2C4 /* RedLetterRanges.swift */; };
 		96A32BC22F1BEB0B0053CD0D /* BookCardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 96A32BC12F1BEB0B0053CD0D /* BookCardView.swift */; };
 		96A32BC42F1BEBDA0053CD0D /* ChapterNumberView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 96A32BC32F1BEBDA0053CD0D /* ChapterNumberView.swift */; };
 		96A32BC62F1BEE5C0053CD0D /* bible_kjv.json in Resources */ = {isa = PBXBuildFile; fileRef = 96A32BC52F1BEE5C0053CD0D /* bible_kjv.json */; };
@@ -50,8 +54,10 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		96F1A1032F4F111100A1B2C5 /* Theme.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Theme.swift; sourceTree = "<group>"; };
 		9653ECD52F4E65110054C315 /* bible_en_webu.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = bible_en_webu.json; sourceTree = "<group>"; };
 		9653ECD92F4E690D0054C315 /* bible_he_heb.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = bible_he_heb.json; sourceTree = "<group>"; };
+		9653ECDB2F4E8ABC0054C315 /* red_letter_ranges.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = red_letter_ranges.json; sourceTree = "<group>"; };
 		967850612F4E499C00F93196 /* VersionStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VersionStore.swift; sourceTree = "<group>"; };
 		967850632F4E4BFC00F93196 /* VersionLibraryView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VersionLibraryView.swift; sourceTree = "<group>"; };
 		96A32B762F1BC78B0053CD0D /* BibleWish.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = BibleWish.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -78,6 +84,8 @@
 		96A32BB12F1BDE920053CD0D /* HighlightColor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HighlightColor.swift; sourceTree = "<group>"; };
 		96A32BB32F1BDECC0053CD0D /* Highlight.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Highlight.swift; sourceTree = "<group>"; };
 		96A32BB52F1BDEF20053CD0D /* HighlightManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HighlightManager.swift; sourceTree = "<group>"; };
+		96F1A1012F4F111100A1B2C3 /* BookNameMapper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BookNameMapper.swift; sourceTree = "<group>"; };
+		96F1A1022F4F111100A1B2C4 /* RedLetterRanges.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RedLetterRanges.swift; sourceTree = "<group>"; };
 		96A32BB72F1BE2D10053CD0D /* VerseTextView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VerseTextView.swift; sourceTree = "<group>"; };
 		96A32BBB2F1BE6AB0053CD0D /* ReaderSettings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReaderSettings.swift; sourceTree = "<group>"; };
 		96A32BBD2F1BE71D0053CD0D /* FontSettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FontSettingsView.swift; sourceTree = "<group>"; };
@@ -167,6 +175,9 @@
 				96A32BAB2F1BDAE40053CD0D /* BookmarkManager.swift */,
 				96A32BB32F1BDECC0053CD0D /* Highlight.swift */,
 				96A32BB52F1BDEF20053CD0D /* HighlightManager.swift */,
+				96F1A1012F4F111100A1B2C3 /* BookNameMapper.swift */,
+				96F1A1022F4F111100A1B2C4 /* RedLetterRanges.swift */,
+				96F1A1032F4F111100A1B2C5 /* Theme.swift */,
 				967850612F4E499C00F93196 /* VersionStore.swift */,
 				967850632F4E4BFC00F93196 /* VersionLibraryView.swift */,
 			);
@@ -176,6 +187,7 @@
 		96A32BCB2F1C01520053CD0D /* Data */ = {
 			isa = PBXGroup;
 			children = (
+				9653ECDB2F4E8ABC0054C315 /* red_letter_ranges.json */,
 				9653ECD92F4E690D0054C315 /* bible_he_heb.json */,
 				9653ECD52F4E65110054C315 /* bible_en_webu.json */,
 				96A32BC52F1BEE5C0053CD0D /* bible_kjv.json */,
@@ -255,6 +267,7 @@
 				9653ECD62F4E65110054C315 /* bible_en_webu.json in Resources */,
 				9653ECDA2F4E690D0054C315 /* bible_he_heb.json in Resources */,
 				96A32BC62F1BEE5C0053CD0D /* bible_kjv.json in Resources */,
+				9653ECDC2F4E8ABD0054C315 /* red_letter_ranges.json in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -286,6 +299,8 @@
 				96A32BA62F1BD8AD0053CD0D /* SearchResult.swift in Sources */,
 				96A32B7A2F1BC78B0053CD0D /* BibleWishApp.swift in Sources */,
 				96A32B892F1BCD050053CD0D /* BibleBook.swift in Sources */,
+				96F1A2012F4F111100A1B2D1 /* BookNameMapper.swift in Sources */,
+				96F1A2022F4F111100A1B2D2 /* RedLetterRanges.swift in Sources */,
 				96A32B9F2F1BD3DA0053CD0D /* SettingsView.swift in Sources */,
 				96A32BB42F1BDECC0053CD0D /* Highlight.swift in Sources */,
 				96A32BBE2F1BE71D0053CD0D /* FontSettingsView.swift in Sources */,
@@ -298,6 +313,7 @@
 				96D100022F20C0010053CD0D /* TranslationSettingsView.swift in Sources */,
 				96A32BCA2F1BFBE00053CD0D /* HighlightedText.swift in Sources */,
 				967850622F4E499C00F93196 /* VersionStore.swift in Sources */,
+				96F1A2032F4F111100A1B2D3 /* Theme.swift in Sources */,
 				96A32BA12F1BD5680053CD0D /* BookListView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

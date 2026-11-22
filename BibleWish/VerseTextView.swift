@@ -34,12 +34,21 @@ struct VerseTextView: View {
             verse: verse.number
         )
 
+        let isRedLetter = readerSettings.redLetterEnabled
+            && RedLetterRanges.shared.isRedLetter(
+                bookName: bookName,
+                chapter: chapterNumber,
+                verse: verse.number,
+                includeActsRevelation: readerSettings.redLetterIncludeActsRevelation
+            )
+
         (
             Text("\(verse.number) ")
                 .font(.caption2)
                 .foregroundColor(.secondary)
             +
             Text(verse.text)
+                .foregroundColor(isRedLetter ? .red : .primary)
         )
 
         .font(

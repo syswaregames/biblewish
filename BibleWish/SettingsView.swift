@@ -11,6 +11,7 @@ struct SettingsView: View {
 
     @EnvironmentObject var viewModel: BibleViewModel
     @EnvironmentObject var versionStore: VersionStore
+    @EnvironmentObject var readerSettings: ReaderSettings
     @State private var showResetAlert = false
     @State private var showLibrarySheet = false
 
@@ -57,6 +58,16 @@ struct SettingsView: View {
                 } label: {
                     Label("Reading Font", systemImage: "textformat.size")
                 }
+
+                Toggle(isOn: $readerSettings.redLetterEnabled) {
+                    Label("Red Letter", systemImage: "text.quote")
+                }
+
+                Toggle(isOn: $readerSettings.redLetterIncludeActsRevelation) {
+                    Label("Include Acts & Revelation", systemImage: "book")
+                }
+                .disabled(!readerSettings.redLetterEnabled)
+                .opacity(readerSettings.redLetterEnabled ? 1 : 0.5)
             }
 
             // MARK: - Progress
@@ -144,4 +155,3 @@ struct SettingsView: View {
     SettingsView()
         .environmentObject(BibleViewModel())
 }
-

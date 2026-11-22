@@ -11,13 +11,15 @@ import SwiftUI
 struct BibleWishApp: App {
     
     @StateObject private var viewModel = BibleViewModel()
+    @StateObject private var themeStore = ThemeStore()
     
     var body: some Scene {
         WindowGroup {
-            ContentView()
-            // BookListView()
-            
+            ThemedRoot {
+                ContentView()
+            }
             .environmentObject(viewModel)
+            .environmentObject(themeStore)
         }
     }
 }

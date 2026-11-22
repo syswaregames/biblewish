@@ -1,0 +1,60 @@
+# BibleWish App Redesign — Plan
+
+Status: **Phase 0 in progress** · Created 2026-11-22
+
+Goal: bring the iOS app in line with the identity and features of biblewish.com (source: `../BibleWish_Website`, see its `docs/PORTAL_PLAN.md` and `CLAUDE.md`).
+
+## Decisions (2026-11-22)
+
+| Question | Decision |
+|---|---|
+| Scope | Phases 0–3: look + Home + Plans + Study, all on-device |
+| Accounts / sync | Not now. Revisit in Phase 4. Privacy stays "no data leaves the device" |
+| Website data | Bundled copies of the website's JSON (offline, simple) |
+| Minimum iOS | 17.5 (already the project target), so `@Observable` is allowed |
+
+## Design language (from the website)
+
+- Dark by default: page `#0b0a09` with a warm radial gradient (`#2a1f1a` → `#0b0a09`); panels `#17120e`.
+- Gold accent `#c7a96b` (bright `#e0ba78`), gold hairlines at ~13% opacity.
+- Scripture in a serif (Iowan Old Style / Palatino → SwiftUI `.serif` design); UI in the system sans.
+- Themes: Dark / Sepia / Light / Auto. Paper themes darken the accents.
+- Reader extras: "book page" frame (double gold border, ornaments), illuminated drop cap on verse 1, focus mode, reading time, red letters.
+- Every color comes from a token; no hard-coded colors in views.
+
+## Phases
+
+### Phase 0 — Groundwork
+- [x] This plan
+- [ ] `.gitignore` for `.DS_Store`; untrack the existing ones
+- [ ] `Theme` (tokens for Dark/Sepia/Light/Auto) + `ThemeStore` persisted in `UserDefaults`
+- [ ] Color/image assets: logo, time-of-day hero photos (from `assets/images/home`, credits in its `CREDITS.md`)
+- [ ] Apply the theme at the app root (background, tint, color scheme)
+
+### Phase 1 — Visual identity
+- [ ] Restyle Bible, Search, Bookmarks, Settings with theme tokens
+- [ ] Theme picker in Settings
+- [ ] Reader: book-page frame, drop cap, focus mode, "~N min read"
+- [ ] Red letters: replace the partial `red_letter_ranges.json` with the website's `data/redletter` (check its format first); keep the Acts/Revelation toggle
+
+### Phase 2 — Home dashboard
+- [ ] New first tab: greeting + time-of-day hero, Verse of the Day (`data/votd`), Continue reading, Open a passage, shortcuts
+- [ ] Tab bar: Home · Bible · Plans · Study · More
+
+### Phase 3 — Offline features
+- [ ] Reading plans (`data/plans`) with progress, streaks, per-book Bible progress. Never change a published plan's days; add a new plan id
+- [ ] Study: favorites + notes (colored tags), replacing Bookmarks
+- [ ] Achievements (badge definitions from the website's `api/lib/badges.php`, computed locally)
+- [ ] Cross-references and places (`data/crossrefs`, `data/places`) in the verse detail
+
+### Phase 4 — Account and sync (optional, later)
+Sign in with the website's email code, sync favorites/notes/progress, prayer list, community prayers. Needs: updated `PRIVACY.md` and App Store privacy labels, moderation (report/block) for user-generated content.
+
+### Phase 5 — Polish
+Widgets (verse of the day), notifications, Dynamic Type and VoiceOver pass, App Store listing.
+
+## Working notes
+
+- The Xcode project lists files explicitly in `project.pbxproj`: every new Swift file or resource must be registered there.
+- Bundled JSON from the website is large (~6.5 MB per translation); only bundle what the app uses and check the app size.
+- Keep the website and app data in sync by copying from `../BibleWish_Website/data/` with a script in `tools/`, not by hand.
