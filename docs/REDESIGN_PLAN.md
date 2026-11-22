@@ -119,3 +119,9 @@ Kept from the old screen: a hairline on each book tile shows how much of it you 
 
 Not checked: tapping through the navigator on a device (the layout was checked in Dark and Sepia on iPhone and in Dark on iPad; the section, search and recents logic is covered by the Debug self-test).
 
+
+## Selecting verses in the reader (2026-11-22)
+
+Redone after the website's reader (read.html: the selection bar). Before: a tap toggled a favorite with no sign of it, and a long press opened a plain dialog. Now a tap selects a verse (a highlight in the pen color, with a colored edge) and tapping again deselects; a long press selects every verse from the nearest selected one to this one (a range). While anything is selected a bar rises from the bottom with the reference written the website's way (`John 3:16-18,21`), the four pen colors and these actions: Save (a favorite per run of verses; the heart fills when they are all saved and tapping again removes them), Note (opens the note editor on the passage), Image (Sunrise / Field / Sunset / Night / Gold, Square or Story, drawn on the device and shared), Study (Related verses, Places in this chapter), Copy, Share (reference, translation, numbered verses and a link, as on the website) and Clear (with Undo). Favorited verses carry a small heart. In focus mode the first tap still brings the verse numbers back.
+
+Not in the app: "Send to someone" and "Original words" (they need the website's server and word data). Not checked: tapping through the bar and the share sheet on a device (layout checked in Dark and Sepia; the logic, the reference wording against the website's own function on 14 selections, favorites per run and Clear/Undo are covered by the Debug self-test, 209 checks).

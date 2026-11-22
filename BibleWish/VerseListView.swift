@@ -15,6 +15,8 @@ struct VerseListView: View {
     
     @EnvironmentObject var viewModel: BibleViewModel
     @EnvironmentObject var readerSettings: ReaderSettings
+    @EnvironmentObject var bookmarkManager: BookmarkManager
+    @EnvironmentObject var highlightManager: HighlightManager
     @Environment(\.palette) private var palette
 
     @State private var didAutoCompleteChapter = false
@@ -27,6 +29,10 @@ struct VerseListView: View {
     @State private var pendingVerse: Int?
     /// Focus mode: a tap on the text shows the verse numbers until the chapter changes.
     @State private var focusPeek = false
+    @State private var toast: ReaderToast?
+    @State private var noteReference: String?
+    @State private var showCard = false
+    @State private var showRelated = false
     @ScaledMetric(relativeTo: .largeTitle) private var chapterNumberSize: CGFloat = 52
     @ScaledMetric(relativeTo: .title3) private var ornamentSize: CGFloat = 22
 
@@ -57,8 +63,10 @@ struct VerseListView: View {
                             bookName: book.name,
                             chapterNumber: chapter.number,
                             dropCap: readerSettings.bookPage && verse.number == 1,
-                            focusPeek: focusPeek,
-                            onFocusTap: { withAnimation(.easeInOut(duration: 0.2)) { focusPeek = true } }
+                            isFavorite: favoriteVerses.contains(verse.number),
+                            onTap: { tapVerse(verse.number) },
+                            onLongPress: { extendSelection(to: verse.number) },
+                            focusPeek: focusPeek
                         )
                         .id(verse.number)
                         
@@ -121,6 +129,49 @@ struct VerseListView: View {
 
         }
         .themedScreen()
+        .safeAreaInset(edge: .bottom, spacing: 0) {
+            if !selection.isEmpty {
+                VerseSelectionBar(
+                    label: selectionLabel,
+                    shareText: shareText,
+                    allSaved: allSelectionSaved,
+                    hasPlaces: !placesInChapter.isEmpty,
+                    onColor: { setPenColor($0) },
+                    onSave: saveOrUnsave,
+                    onNote: { noteReference = selectionLabel },
+                    onImage: { showCard = true },
+                    onRelated: { showRelated = true },
+                    onPlaces: { showPlaces = true },
+                    onCopy: copySelection,
+                    onClear: clearSelection
+                )
+                .padding(.top, 8)
+                .background(palette.pageBottom)
+                .transition(.move(edge: .bottom).combined(with: .opacity))
+            }
+        }
+        .animation(.easeInOut(duration: 0.25), value: selection)
+        .overlay(alignment: .top) {
+            if let toast {
+                ReaderToastView(toast: toast) { self.toast = nil }
+                    .padding(.top, 8)
+                    .transition(.move(edge: .top).combined(with: .opacity))
+            }
+        }
+        .animation(.spring(duration: 0.35), value: toast)
+        .sheet(isPresented: Binding(get: { noteReference != nil }, set: { if !$0 { noteReference = nil } })) {
+            NoteEditorView(reference: noteReference ?? "")
+        }
+        .sheet(isPresented: $showCard) {
+            VerseCardView(
+                text: VerseSelection.plainText(chapter.verses, selected: selection),
+                reference: selectionLabel,
+                translation: translationId.uppercased()
+            )
+        }
+        .sheet(isPresented: $showRelated) {
+            CrossReferencesView(bookIndex: bookIndex, chapter: chapter.number, verse: selection.first ?? 1)
+        }
         .sheet(isPresented: $showPlaces) {
             ChapterPlacesView(bookName: book.name, chapter: chapter.number, mentions: placesInChapter)
         }
@@ -202,6 +253,107 @@ struct VerseListView: View {
 
     }
     
+    // MARK: - Selecting verses
+    //
+    // As on the website, a selected verse is a highlighted one: tap to select, tap again to
+    // deselect; the bar at the bottom acts on the selection.
+
+    private var translationId: String { viewModel.selectedTranslation.widgetId }
+    private var bookIndex: Int { viewModel.books.firstIndex { $0.name == book.name } ?? -1 }
+
+    private var selection: [Int] {
+        highlightManager.selected(translation: translationId, bookIndex: bookIndex, chapter: chapter.number)
+    }
+
+    private var selectionLabel: String {
+        VerseSelection.label(chapter: "\(book.name) \(chapter.number)", verses: selection)
+    }
+
+    private var shareText: String {
+        VerseSelection.shareText(
+            label: selectionLabel,
+            translation: translationId.uppercased(),
+            text: VerseSelection.numberedText(chapter.verses, selected: selection),
+            link: VerseSelection.link(forLabel: selectionLabel)
+        )
+    }
+
+    private var favoriteVerses: Set<Int> {
+        bookmarkManager.favoriteVerses(bookName: book.name, chapter: chapter.number)
+    }
+
+    private var allSelectionSaved: Bool {
+        !selection.isEmpty && favoriteVerses.isSuperset(of: selection)
+    }
+
+    private func show(_ message: String, undoTitle: String? = nil, undo: (() -> Void)? = nil) {
+        let item = ReaderToast(message: message, undoTitle: undoTitle, undo: undo)
+        toast = item
+        Task {
+            try? await Task.sleep(nanoseconds: undo == nil ? 2_500_000_000 : 6_000_000_000)
+            if toast == item { toast = nil }
+        }
+    }
+
+    private func tapVerse(_ number: Int) {
+        if readerSettings.focusMode && !focusPeek {
+            withAnimation(.easeInOut(duration: 0.2)) { focusPeek = true }
+            return
+        }
+        select(number)
+        UISelectionFeedbackGenerator().selectionChanged()
+    }
+
+    private func select(_ number: Int) {
+        highlightManager.toggle(translation: translationId, bookIndex: bookIndex, bookName: book.name, chapter: chapter.number, verse: number, color: readerSettings.highlightColor)
+    }
+
+    /// Long press: select every verse from the nearest selected one to this one.
+    private func extendSelection(to number: Int) {
+        let current = selection
+        let anchor = current.min { abs($0 - number) < abs($1 - number) } ?? number
+        for verse in min(anchor, number)...max(anchor, number) where !current.contains(verse) {
+            select(verse)
+        }
+    }
+
+    private func setPenColor(_ color: HighlightColor) {
+        readerSettings.highlightColor = color
+        highlightManager.setColor(color, translation: translationId, bookIndex: bookIndex, bookName: book.name, chapter: chapter.number, verses: selection)
+    }
+
+    private func clearSelection() {
+        let removed = highlightManager.clear(translation: translationId, bookIndex: bookIndex, chapter: chapter.number)
+        let (translation, index, number) = (translationId, bookIndex, chapter.number)
+        show("Selection cleared") {
+            highlightManager.restore(removed, translation: translation, bookIndex: index, chapter: number)
+        }
+    }
+
+    private func copySelection() {
+        UIPasteboard.general.string = shareText
+        UINotificationFeedbackGenerator().notificationOccurred(.success)
+        show("Copied")
+    }
+
+    /// One favorite per run of verses; saving again removes them (the heart shows which).
+    private func saveOrUnsave() {
+        let runs = VerseSelection.runs(selection)
+        if allSelectionSaved {
+            bookmarkManager.remove(runs: runs, bookName: book.name, chapter: chapter.number)
+            show("Removed from your favorites")
+            return
+        }
+        let texts = runs.map { run in
+            (range: run, text: run.count == 1
+                ? VerseSelection.plainText(chapter.verses, selected: Array(run))
+                : VerseSelection.numberedText(chapter.verses, selected: Array(run)))
+        }
+        let result = bookmarkManager.save(runs: texts, bookName: book.name, chapter: chapter.number, translation: translationId)
+        UINotificationFeedbackGenerator().notificationOccurred(.success)
+        show(result.added > 0 ? "Saved to your favorites \u{2661}" : "Already in your favorites")
+    }
+
     // MARK: - Choosing another chapter
 
     private var bookPosition: Int {

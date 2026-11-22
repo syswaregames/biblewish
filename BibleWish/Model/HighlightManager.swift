@@ -71,6 +71,56 @@ class HighlightManager: ObservableObject {
         onChange?(.pushHighlightChapter(translation: translation, bookIndex: bookIndex, chapter: chapter))
     }
 
+    /// The highlighted verses of a chapter, in order: the reader's current selection.
+    func selected(translation: String, bookIndex: Int, chapter: Int) -> [Int] {
+        highlights
+            .filter { $0.translation == translation && $0.bookIndex == bookIndex && $0.chapterNumber == chapter }
+            .map(\.verseNumber)
+            .sorted()
+    }
+
+    /// Highlights the verse, or removes its highlight. Returns whether it is highlighted now.
+    @discardableResult
+    func toggle(translation: String, bookIndex: Int, bookName: String, chapter: Int, verse: Int, color: HighlightColor) -> Bool {
+        if highlightFor(translation: translation, bookIndex: bookIndex, chapter: chapter, verse: verse) != nil {
+            removeHighlight(translation: translation, bookIndex: bookIndex, chapter: chapter, verse: verse)
+            return false
+        }
+        highlight(translation: translation, bookIndex: bookIndex, bookName: bookName, chapter: chapter, verse: verse, color: color)
+        return true
+    }
+
+    /// Gives all of these verses one color (one change to sync, however many verses).
+    func setColor(_ color: HighlightColor, translation: String, bookIndex: Int, bookName: String, chapter: Int, verses: [Int]) {
+        let wanted = Set(verses)
+        highlights.removeAll { $0.translation == translation && $0.bookIndex == bookIndex && $0.chapterNumber == chapter && wanted.contains($0.verseNumber) }
+        for verse in wanted.sorted() {
+            highlights.append(Highlight(bookName: bookName, chapterNumber: chapter, verseNumber: verse, color: color, translation: translation, bookIndex: bookIndex))
+        }
+        save()
+        onChange?(.pushHighlightChapter(translation: translation, bookIndex: bookIndex, chapter: chapter))
+    }
+
+    /// Removes every highlight in the chapter and returns them, so the clear can be undone.
+    @discardableResult
+    func clear(translation: String, bookIndex: Int, chapter: Int) -> [Highlight] {
+        let removed = highlights.filter { $0.translation == translation && $0.bookIndex == bookIndex && $0.chapterNumber == chapter }
+        guard !removed.isEmpty else { return [] }
+        highlights.removeAll { $0.translation == translation && $0.bookIndex == bookIndex && $0.chapterNumber == chapter }
+        save()
+        onChange?(.pushHighlightChapter(translation: translation, bookIndex: bookIndex, chapter: chapter))
+        return removed
+    }
+
+    /// Puts back highlights returned by `clear`.
+    func restore(_ removed: [Highlight], translation: String, bookIndex: Int, chapter: Int) {
+        guard !removed.isEmpty else { return }
+        highlights.removeAll { $0.translation == translation && $0.bookIndex == bookIndex && $0.chapterNumber == chapter }
+        highlights.append(contentsOf: removed)
+        save()
+        onChange?(.pushHighlightChapter(translation: translation, bookIndex: bookIndex, chapter: chapter))
+    }
+
     func highlightFor(translation: String, bookIndex: Int, chapter: Int, verse: Int) -> Highlight? {
         highlights.first { matches($0, translation, bookIndex, chapter, verse) }
     }

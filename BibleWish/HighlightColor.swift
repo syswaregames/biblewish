@@ -22,6 +22,11 @@ enum HighlightColor: String, Codable, CaseIterable {
         }
     }
 
+    /// The wash behind a highlighted verse: gentler on a dark page, so red words stay readable.
+    func fill(onDark: Bool) -> Color {
+        onDark ? iconColor.opacity(0.2) : color
+    }
+
     var iconColor: Color {
         switch self {
         case .yellow: return .yellow

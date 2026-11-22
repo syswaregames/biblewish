@@ -37,6 +37,12 @@ class ReaderSettings: ObservableObject {
 
     private let bookPageKey = "reader_book_page"
     private let focusModeKey = "reader_focus_mode"
+    /// The color a tapped verse gets (the reader can change it from the selection bar).
+    @Published var highlightColor: HighlightColor {
+        didSet { save() }
+    }
+
+    private let highlightColorKey = "reader_highlight_color"
     private let fontSizeKey = "reader_font_size"
     private let fontKey = "reader_font"
     private let redLetterEnabledKey = "reader_red_letter_enabled"
@@ -49,6 +55,7 @@ class ReaderSettings: ObservableObject {
         let savedFontRaw = UserDefaults.standard.string(forKey: fontKey)
         self.font = ReaderFont(rawValue: savedFontRaw ?? "serif") ?? .serif
 
+        self.highlightColor = HighlightColor(rawValue: UserDefaults.standard.string(forKey: highlightColorKey) ?? "") ?? .yellow
         self.bookPage = UserDefaults.standard.object(forKey: bookPageKey) as? Bool ?? true
         self.focusMode = UserDefaults.standard.object(forKey: focusModeKey) as? Bool ?? false
 
@@ -62,6 +69,7 @@ class ReaderSettings: ObservableObject {
     private func save() {
         UserDefaults.standard.set(fontSize, forKey: fontSizeKey)
         UserDefaults.standard.set(font.rawValue, forKey: fontKey)
+        UserDefaults.standard.set(highlightColor.rawValue, forKey: highlightColorKey)
         UserDefaults.standard.set(bookPage, forKey: bookPageKey)
         UserDefaults.standard.set(focusMode, forKey: focusModeKey)
         UserDefaults.standard.set(redLetterEnabled, forKey: redLetterEnabledKey)

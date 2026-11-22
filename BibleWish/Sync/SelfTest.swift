@@ -93,6 +93,7 @@ final class SelfTest {
         runNoteEditing()
         runNoteTextView()
         runBookNavigator()
+        runVerseSelection()
         await runAuth()
         await runFavoritesAndReading()
         await runHighlights()
@@ -115,6 +116,53 @@ final class SelfTest {
         check("junk keys are skipped", AchievementMetrics.chapterRefs(fromKeys: ["kjv|Nonsense-1", "oops", "kjv|John-x", ""]).isEmpty)
         let model = BibleViewModel()
         check("keys the app writes are the ones we read", AchievementMetrics.chapterRefs(fromKeys: [model.chapterKey(book: "John", chapter: 3)]) == [ChapterRef(book: 42, chapter: 3)], model.chapterKey(book: "John", chapter: 3))
+    }
+
+    // MARK: - Selecting verses in the reader
+
+    private func runVerseSelection() {
+        var mismatches: [String] = []
+        for (verses, expected) in VerseFixtures.references where VerseSelection.format(verses) != expected {
+            mismatches.append("\(verses) -> \(VerseSelection.format(verses)) (website: \(expected))")
+        }
+        check("verse ranges are written like the website's on \(VerseFixtures.references.count) selections", mismatches.isEmpty, mismatches.prefix(3).joined(separator: " | "))
+        check("order and repeats don't matter", VerseSelection.format([20, 17, 16, 16]) == "16-17,20")
+        check("an empty selection has no text", VerseSelection.format([]) == "" && VerseSelection.runs([]).isEmpty)
+        check("a label joins the chapter and the verses", VerseSelection.label(chapter: "John 3", verses: [16, 17, 20]) == "John 3:16-17,20")
+
+        let verses = [Verse(number: 16, text: "For God so loved the world."), Verse(number: 17, text: "For God sent not his Son."), Verse(number: 18, text: "He that believeth.")]
+        check("numbered text, in order", VerseSelection.numberedText(verses, selected: [17, 16]) == "16. For God so loved the world. 17. For God sent not his Son.")
+        check("plain text has no numbers", VerseSelection.plainText(verses, selected: [18]) == "He that believeth.")
+        let link = VerseSelection.link(forLabel: "John 3:16-17,20")
+        check("the link opens the first run on the website", link.absoluteString == "https://biblewish.com/read.html?q=John%203:16-17", link.absoluteString)
+        let share = VerseSelection.shareText(label: "John 3:16", translation: "KJV", text: "16. For God so loved", link: link)
+        check("share text is shaped like the website's", share == "John 3:16 (KJV)\n16. For God so loved\n\nRead on BibleWish:\nhttps://biblewish.com/read.html?q=John%203:16-17", share)
+
+        // Highlights are the selection.
+        highlights.removeAllLocal()
+        check("tapping a verse selects it", highlights.toggle(translation: "kjv", bookIndex: 42, bookName: "John", chapter: 3, verse: 16, color: .yellow))
+        highlights.toggle(translation: "kjv", bookIndex: 42, bookName: "John", chapter: 3, verse: 18, color: .yellow)
+        highlights.toggle(translation: "kjv", bookIndex: 42, bookName: "John", chapter: 3, verse: 17, color: .yellow)
+        check("the selection is the highlighted verses, in order", highlights.selected(translation: "kjv", bookIndex: 42, chapter: 3) == [16, 17, 18])
+        check("tapping again deselects", highlights.toggle(translation: "kjv", bookIndex: 42, bookName: "John", chapter: 3, verse: 17, color: .yellow) == false && highlights.selected(translation: "kjv", bookIndex: 42, chapter: 3) == [16, 18])
+        check("another chapter or translation is a separate selection", highlights.selected(translation: "kjv", bookIndex: 42, chapter: 4).isEmpty && highlights.selected(translation: "web", bookIndex: 42, chapter: 3).isEmpty)
+        highlights.setColor(.green, translation: "kjv", bookIndex: 42, bookName: "John", chapter: 3, verses: [16, 18])
+        check("a color applies to every selected verse", highlights.highlightFor(translation: "kjv", bookIndex: 42, chapter: 3, verse: 16)?.color == .green && highlights.highlightFor(translation: "kjv", bookIndex: 42, chapter: 3, verse: 18)?.color == .green && highlights.selected(translation: "kjv", bookIndex: 42, chapter: 3) == [16, 18])
+        let removed = highlights.clear(translation: "kjv", bookIndex: 42, chapter: 3)
+        check("clearing removes the chapter's highlights", removed.count == 2 && highlights.selected(translation: "kjv", bookIndex: 42, chapter: 3).isEmpty)
+        highlights.restore(removed, translation: "kjv", bookIndex: 42, chapter: 3)
+        check("undo puts them back with their colors", highlights.selected(translation: "kjv", bookIndex: 42, chapter: 3) == [16, 18] && highlights.highlightFor(translation: "kjv", bookIndex: 42, chapter: 3, verse: 16)?.color == .green)
+        highlights.removeAllLocal()
+
+        // Favorites from a selection: one favorite per run.
+        let before = bookmarks.bookmarks.count
+        let result = bookmarks.save(runs: [(16...17, "16. a 17. b"), (20...20, "c")], bookName: "John", chapter: 3, translation: "kjv")
+        check("each run is saved as a favorite", result.added == 2 && result.already == 0 && bookmarks.bookmarks.count == before + 2)
+        check("a range favorite keeps its end, a single verse has none", bookmarks.bookmarks.contains { $0.bookName == "John" && $0.verseNumber == 16 && $0.verseEnd == 17 } && bookmarks.bookmarks.contains { $0.bookName == "John" && $0.verseNumber == 20 && $0.verseEnd == nil })
+        check("favorited verses include every verse in a range", bookmarks.favoriteVerses(bookName: "John", chapter: 3).isSuperset(of: [16, 17, 20]) && !bookmarks.favoriteVerses(bookName: "John", chapter: 3).contains(18))
+        let again = bookmarks.save(runs: [(16...17, "x")], bookName: "John", chapter: 3, translation: "kjv")
+        check("saving the same run again changes nothing", again.added == 0 && again.already == 1 && bookmarks.bookmarks.count == before + 2)
+        for bookmark in bookmarks.bookmarks where bookmark.bookName == "John" && bookmark.chapterNumber == 3 { bookmarks.toggle(bookmark) }
     }
 
     // MARK: - Book navigator (sections, search, recents)

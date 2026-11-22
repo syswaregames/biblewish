@@ -38,6 +38,45 @@ class BookmarkManager: ObservableObject {
         save()
     }
 
+    /// The verses of a chapter that are in favorites (a favorite can cover a range).
+    func favoriteVerses(bookName: String, chapter: Int) -> Set<Int> {
+        var verses = Set<Int>()
+        for bookmark in bookmarks where bookmark.bookName == bookName && bookmark.chapterNumber == chapter {
+            verses.formUnion(bookmark.verseNumber...max(bookmark.verseNumber, bookmark.verseEnd ?? bookmark.verseNumber))
+        }
+        return verses
+    }
+
+    /// Saves each run of selected verses as a favorite. Runs already saved are left alone.
+    func save(runs: [(range: ClosedRange<Int>, text: String)], bookName: String, chapter: Int, translation: String) -> (added: Int, already: Int) {
+        var added = 0
+        var already = 0
+        for run in runs {
+            let end: Int? = run.range.upperBound > run.range.lowerBound ? run.range.upperBound : nil
+            if bookmarks.contains(where: { $0.bookName == bookName && $0.chapterNumber == chapter && $0.verseNumber == run.range.lowerBound && $0.verseEnd == end }) {
+                already += 1
+                continue
+            }
+            let bookmark = Bookmark(bookName: bookName, chapterNumber: chapter, verseNumber: run.range.lowerBound, verseText: run.text, verseEnd: end, translation: translation)
+            bookmarks.append(bookmark)
+            onChange?(.pushFavorite(bookmark.id))
+            added += 1
+        }
+        if added > 0 { save() }
+        return (added, already)
+    }
+
+    /// Removes the favorites saved for exactly these runs (the other way round from `save(runs:)`).
+    func remove(runs: [ClosedRange<Int>], bookName: String, chapter: Int) {
+        for run in runs {
+            let end: Int? = run.upperBound > run.lowerBound ? run.upperBound : nil
+            guard let index = bookmarks.firstIndex(where: { $0.bookName == bookName && $0.chapterNumber == chapter && $0.verseNumber == run.lowerBound && $0.verseEnd == end }) else { continue }
+            let removed = bookmarks.remove(at: index)
+            if let serverId = removed.serverId { onChange?(.deleteFavorite(serverId: serverId)) }
+        }
+        save()
+    }
+
     func delete(at offsets: IndexSet) {
         for index in offsets {
             if let serverId = bookmarks[index].serverId {

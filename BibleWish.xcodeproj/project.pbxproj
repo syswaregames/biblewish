@@ -12,6 +12,7 @@
 		22934FEB281389717A8161FC /* SyncOp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5AEFCAF1079758B9FCACD125 /* SyncOp.swift */; };
 		2EEF285498396F23360455ED /* NoteInline.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B79F46A1DE423D7E4576416 /* NoteInline.swift */; };
 		33B486BC1156FC8D24972734 /* SwiftUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 79B7E44CF86DB7FED700B6ED /* SwiftUI.framework */; };
+		35F02D002BC429C30882AEA6 /* VerseSelectionBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = AFE66F6BCC0D9B2BD7A44041 /* VerseSelectionBar.swift */; };
 		3673945D4F2DA9BC54E0A14F /* SyncEngine.swift in Sources */ = {isa = PBXBuildFile; fileRef = A6304D99DDDFE3371DAD0099 /* SyncEngine.swift */; };
 		41E6E796789C7F13A845176B /* SignInView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 20483F9AEB2004EB42EDF122 /* SignInView.swift */; };
 		4D47D94BC818C78030DF7D7C /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F1553558A44AD513ACA31169 /* Foundation.framework */; };
@@ -95,9 +96,12 @@
 		96F1A5502F4F111100A1B2D0 /* BibleProgressView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 96F1A4502F4F111100A1B2C0 /* BibleProgressView.swift */; };
 		96F1A5512F4F111100A1B2D0 /* NoteDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 96F1A4512F4F111100A1B2C0 /* NoteDetailView.swift */; };
 		96F1A5602F4F111100A1B2D0 /* DailyVerseReminder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 96F1A4602F4F111100A1B2C0 /* DailyVerseReminder.swift */; };
+		A1A30FD2F8EED20A9A85287C /* VerseCardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9D3EE9E7F2223D7D179B811B /* VerseCardView.swift */; };
 		A6AE8E4F356088632734539F /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = 7ECDFA1553EDBAA5BEBF1E64 /* PrivacyInfo.xcprivacy */; };
 		B091D009BB4DC5768F7A4A8B /* VerseLibrary.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0FDCC472C67F882419CA4611 /* VerseLibrary.swift */; };
+		BE45B5EB4FF84D6061714424 /* VerseSelection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 855D086055BBC84504733DDC /* VerseSelection.swift */; };
 		CBA41874341E014307997991 /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = EB864C3AFF590D8698A05CA9 /* PrivacyInfo.xcprivacy */; };
+		CEB80B61B3B5CD81B732B58E /* VerseFixtures.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7EDF58B4D2327A1D1FA3DB97 /* VerseFixtures.swift */; };
 		D1C77A58355CDBC16BDD752F /* SelfTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8D26807FF18B9FCFE3092E85 /* SelfTest.swift */; };
 		EF928E9A3883CC7C91AC3E23 /* APIClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = E13CDB28A55487D545F0F5B9 /* APIClient.swift */; };
 		F46224FD10A5841D41E49FF4 /* NoteInlineFixtures.swift in Sources */ = {isa = PBXBuildFile; fileRef = 689CF0E10CFD3B0CCEC37F29 /* NoteInlineFixtures.swift */; };
@@ -144,7 +148,9 @@
 		79B7E44CF86DB7FED700B6ED /* SwiftUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SwiftUI.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS26.0.sdk/System/Library/Frameworks/SwiftUI.framework; sourceTree = DEVELOPER_DIR; };
 		7E47020590BF77B69E94FADA /* SharedConfig.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = SharedConfig.swift; sourceTree = "<group>"; };
 		7ECDFA1553EDBAA5BEBF1E64 /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; includeInIndex = 1; path = PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
+		7EDF58B4D2327A1D1FA3DB97 /* VerseFixtures.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = VerseFixtures.swift; sourceTree = "<group>"; };
 		831B532E71FB2B231BFD0645 /* NoteTextView.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = NoteTextView.swift; sourceTree = "<group>"; };
+		855D086055BBC84504733DDC /* VerseSelection.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = VerseSelection.swift; sourceTree = "<group>"; };
 		8D26807FF18B9FCFE3092E85 /* SelfTest.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = SelfTest.swift; sourceTree = "<group>"; };
 		9653ECD52F4E65110054C315 /* bible_en_webu.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = bible_en_webu.json; sourceTree = "<group>"; };
 		9653ECD92F4E690D0054C315 /* bible_he_heb.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = bible_he_heb.json; sourceTree = "<group>"; };
@@ -214,9 +220,11 @@
 		96F1A4512F4F111100A1B2C0 /* NoteDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NoteDetailView.swift; sourceTree = "<group>"; };
 		96F1A4602F4F111100A1B2C0 /* DailyVerseReminder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DailyVerseReminder.swift; sourceTree = "<group>"; };
 		99F7AFF39B698C61ED104BF0 /* Info.plist */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		9D3EE9E7F2223D7D179B811B /* VerseCardView.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = VerseCardView.swift; sourceTree = "<group>"; };
 		A6304D99DDDFE3371DAD0099 /* SyncEngine.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = SyncEngine.swift; sourceTree = "<group>"; };
 		AE2932C132042DB9030A95F1 /* BibleWish.entitlements */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.plist.entitlements; path = BibleWish.entitlements; sourceTree = "<group>"; };
 		AF91AF459CBACE653CB9EAD2 /* BibleWishWidgetExtension.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = BibleWishWidgetExtension.appex; sourceTree = BUILT_PRODUCTS_DIR; };
+		AFE66F6BCC0D9B2BD7A44041 /* VerseSelectionBar.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = VerseSelectionBar.swift; sourceTree = "<group>"; };
 		B5820E1C1E4D99B9017FCCEC /* BookNavigatorView.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = BookNavigatorView.swift; sourceTree = "<group>"; };
 		C0CF4D7276E9D3CC5811425F /* AccountView.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = AccountView.swift; sourceTree = "<group>"; };
 		D681B96C312819CCD0ABB420 /* AuthStore.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = AuthStore.swift; sourceTree = "<group>"; };
@@ -329,6 +337,8 @@
 				F1CAE0100016A5836D23835C /* Prayer */,
 				831B532E71FB2B231BFD0645 /* NoteTextView.swift */,
 				B5820E1C1E4D99B9017FCCEC /* BookNavigatorView.swift */,
+				AFE66F6BCC0D9B2BD7A44041 /* VerseSelectionBar.swift */,
+				9D3EE9E7F2223D7D179B811B /* VerseCardView.swift */,
 			);
 			path = BibleWish;
 			sourceTree = "<group>";
@@ -359,6 +369,7 @@
 				3B79F46A1DE423D7E4576416 /* NoteInline.swift */,
 				47BABA0DFE2B60515C7D1B4D /* NoteEditing.swift */,
 				6B5968A5A2F6B8614B0227F8 /* BookGroups.swift */,
+				855D086055BBC84504733DDC /* VerseSelection.swift */,
 			);
 			path = Model;
 			sourceTree = "<group>";
@@ -415,6 +426,7 @@
 				A6304D99DDDFE3371DAD0099 /* SyncEngine.swift */,
 				36B4C43724B3CB313115E608 /* SyncStatusView.swift */,
 				689CF0E10CFD3B0CCEC37F29 /* NoteInlineFixtures.swift */,
+				7EDF58B4D2327A1D1FA3DB97 /* VerseFixtures.swift */,
 			);
 			name = Sync;
 			path = Sync;
@@ -637,6 +649,10 @@
 				7606AB7E655217D4A5050AC2 /* NoteTextView.swift in Sources */,
 				857895A78BC49A79D150C633 /* BookGroups.swift in Sources */,
 				20CF880F2B2549C81E6C90C9 /* BookNavigatorView.swift in Sources */,
+				BE45B5EB4FF84D6061714424 /* VerseSelection.swift in Sources */,
+				CEB80B61B3B5CD81B732B58E /* VerseFixtures.swift in Sources */,
+				35F02D002BC429C30882AEA6 /* VerseSelectionBar.swift in Sources */,
+				A1A30FD2F8EED20A9A85287C /* VerseCardView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

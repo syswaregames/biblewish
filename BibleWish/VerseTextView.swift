@@ -14,12 +14,13 @@ struct VerseTextView: View {
     let chapterNumber: Int
     /// Verse 1 of a book-page chapter: its first letter is drawn as a large gold initial.
     var dropCap = false
-    /// In focus mode a tap brings the verse numbers back (until the next chapter) instead of
-    /// bookmarking; the chapter view owns that state.
-    var focusPeek = false
-    var onFocusTap: () -> Void = {}
+    /// Whether the verse is in the reader's favorites: a small heart after the text.
+    var isFavorite = false
+    /// A tap selects the verse (in focus mode it first brings the numbers back, until the next chapter).
+    var onTap: () -> Void = {}
+    /// A long press extends the selection from the nearest selected verse to this one.
+    var onLongPress: () -> Void = {}
 
-    @EnvironmentObject var bookmarkManager: BookmarkManager
     @EnvironmentObject var highlightManager: HighlightManager
     @EnvironmentObject var readerSettings: ReaderSettings
     @EnvironmentObject var viewModel: BibleViewModel
@@ -27,19 +28,10 @@ struct VerseTextView: View {
     /// 1 at the default text size, larger with Dynamic Type; the reader's own size slider is the base.
     @ScaledMetric(relativeTo: .body) private var textScale: CGFloat = 1
 
-    @State private var showHighlightMenu = false
-    @State private var showNoteEditor = false
-    @State private var showCrossReferences = false
+    /// In focus mode the numbers are hidden until a tap brings them back.
+    var focusPeek = false
 
     var body: some View {
-
-        let bookmark = Bookmark(
-            bookName: bookName,
-            chapterNumber: chapterNumber,
-            verseNumber: verse.number,
-            verseText: verse.text,
-            translation: viewModel.selectedTranslation.widgetId
-        )
 
         let highlight = highlightManager.highlightFor(
             translation: savedTranslation,
@@ -52,88 +44,38 @@ struct VerseTextView: View {
             numberText
             +
             verseText
+            +
+            heartText
         )
-
         .font(
             .system(
                 size: readerSettings.fontSize * textScale,
                 design: readerSettings.font.fontDesign
-
             )
         )
-
-        
-
         .lineSpacing(6)
         .fixedSize(horizontal: false, vertical: true)
         .padding(.vertical, 2)
         .padding(.horizontal, 4)
-        .background(highlight?.color.color ?? Color.clear)
+        .background(highlight?.color.fill(onDark: palette.colorScheme == .dark) ?? Color.clear)
+        .overlay(alignment: .leading) {
+            if highlight != nil {
+                Capsule().fill(highlight?.color.iconColor ?? palette.gold).frame(width: 3).padding(.vertical, 3)
+            }
+        }
         .cornerRadius(6)
         .contentShape(Rectangle())
         .accessibilityElement(children: .combine)
         .accessibilityLabel("Verse \(verse.number). \(verse.text)")
-        .accessibilityValue(accessibilityState(bookmarked: bookmarkManager.isBookmarked(bookmark), highlighted: highlight != nil))
-        .accessibilityHint("Double tap to bookmark")
+        .accessibilityValue(accessibilityState(highlighted: highlight != nil))
+        .accessibilityHint(highlight != nil ? "Double tap to deselect" : "Double tap to select")
         .accessibilityAddTraits(.isButton)
-        .accessibilityAction { toggleBookmarkOrPeek(bookmark) }
-        .accessibilityAction(named: "Highlight") { showHighlightMenu = true }
-        .accessibilityAction(named: "Add note") { showNoteEditor = true }
-        .accessibilityAction(named: "Cross-references") { showCrossReferences = true }
-        .onTapGesture {
-            toggleBookmarkOrPeek(bookmark)
-        }
-        .onLongPressGesture {
-            showHighlightMenu = true
+        .accessibilityAction { onTap() }
+        .accessibilityAction(named: "Select up to this verse") { onLongPress() }
+        .onTapGesture { onTap() }
+        .onLongPressGesture(minimumDuration: 0.4) {
+            onLongPress()
             UIImpactFeedbackGenerator(style: .medium).impactOccurred()
-        }
-        .confirmationDialog(
-            "Highlight Color",
-            isPresented: $showHighlightMenu,
-            titleVisibility: .visible
-        ) {
-            ForEach(HighlightColor.allCases, id: \.self) { color in
-                Button {
-                    highlightManager.highlight(
-                        translation: savedTranslation,
-                        bookIndex: bookIndex,
-                        bookName: bookName,
-                        chapter: chapterNumber,
-                        verse: verse.number,
-                        color: color
-                    )
-                } label: {
-                    Label(color.rawValue.capitalized, systemImage: "circle.fill")
-                        .foregroundColor(color.iconColor)
-                }
-            }
-
-            Button("Cross-references") {
-                showCrossReferences = true
-            }
-
-            Button("Add Note\u{2026}") {
-                showNoteEditor = true
-            }
-
-            Button("Remove Highlight", role: .destructive) {
-                highlightManager.removeHighlight(
-                    translation: savedTranslation,
-                    bookIndex: bookIndex,
-                    chapter: chapterNumber,
-                    verse: verse.number
-                )
-            }
-        }
-        .sheet(isPresented: $showCrossReferences) {
-            CrossReferencesView(
-                bookIndex: viewModel.books.firstIndex { $0.name == bookName } ?? 0,
-                chapter: chapterNumber,
-                verse: verse.number
-            )
-        }
-        .sheet(isPresented: $showNoteEditor) {
-            NoteEditorView(reference: "\(bookName) \(chapterNumber):\(verse.number)")
         }
     }
 
@@ -141,19 +83,15 @@ struct VerseTextView: View {
     private var savedTranslation: String { viewModel.selectedTranslation.widgetId }
     private var bookIndex: Int { viewModel.books.firstIndex { $0.name == bookName } ?? -1 }
 
-    private func toggleBookmarkOrPeek(_ bookmark: Bookmark) {
-        if readerSettings.focusMode && !focusPeek {
-            onFocusTap()
-            return
-        }
-        bookmarkManager.toggle(bookmark)
-        UIImpactFeedbackGenerator(style: .light).impactOccurred()
-    }
-
-    private func accessibilityState(bookmarked: Bool, highlighted: Bool) -> String {
-        [bookmarked ? "Bookmarked" : nil, highlighted ? "Highlighted" : nil]
+    private func accessibilityState(highlighted: Bool) -> String {
+        [highlighted ? "Selected" : nil, isFavorite ? "In favorites" : nil]
             .compactMap { $0 }
             .joined(separator: ", ")
+    }
+
+    private var heartText: Text {
+        guard isFavorite else { return Text("") }
+        return Text(" ") + Text(Image(systemName: "heart.fill")).font(.caption2).foregroundColor(palette.gold)
     }
 
     /// The verse number. Hidden in focus mode, and for a drop-cap verse, where the initial stands in.
