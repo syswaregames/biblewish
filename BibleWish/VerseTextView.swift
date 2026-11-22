@@ -16,6 +16,8 @@ struct VerseTextView: View {
     @EnvironmentObject var bookmarkManager: BookmarkManager
     @EnvironmentObject var highlightManager: HighlightManager
     @EnvironmentObject var readerSettings: ReaderSettings
+    @EnvironmentObject var viewModel: BibleViewModel
+    @Environment(\.palette) private var palette
 
     @State private var showHighlightMenu = false
 
@@ -34,21 +36,12 @@ struct VerseTextView: View {
             verse: verse.number
         )
 
-        let isRedLetter = readerSettings.redLetterEnabled
-            && RedLetterRanges.shared.isRedLetter(
-                bookName: bookName,
-                chapter: chapterNumber,
-                verse: verse.number,
-                includeActsRevelation: readerSettings.redLetterIncludeActsRevelation
-            )
-
         (
             Text("\(verse.number) ")
                 .font(.caption2)
                 .foregroundColor(.secondary)
             +
-            Text(verse.text)
-                .foregroundColor(isRedLetter ? .red : .primary)
+            verseText
         )
 
         .font(
@@ -103,5 +96,41 @@ struct VerseTextView: View {
                 )
             }
         }
+    }
+
+    /// The verse text, with the words of Jesus in red when the reader has turned that on.
+    private var verseText: Text {
+        guard readerSettings.redLetterEnabled,
+              let translationId = viewModel.selectedTranslation.redLetterId else {
+            return Text(verse.text)
+        }
+
+        let spans = RedLetterRanges.shared.spans(
+            translation: translationId,
+            bookName: bookName,
+            chapter: chapterNumber,
+            verse: verse.number,
+            includeExtras: readerSettings.redLetterIncludeActsRevelation
+        )
+
+        let utf16 = Array(verse.text.utf16)
+        var result = Text("")
+        var position = 0
+
+        func plain(_ range: Range<Int>) -> Text {
+            Text(String(decoding: utf16[range], as: UTF16.self))
+        }
+
+        for span in spans where span.lowerBound >= position && span.upperBound <= utf16.count {
+            if span.lowerBound > position {
+                result = result + plain(position..<span.lowerBound)
+            }
+            result = result + plain(span).foregroundColor(palette.jesus)
+            position = span.upperBound
+        }
+        if position < utf16.count {
+            result = result + plain(position..<utf16.count)
+        }
+        return result
     }
 }

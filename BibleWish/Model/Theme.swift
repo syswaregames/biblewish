@@ -32,6 +32,7 @@ struct ThemePalette {
     let gold: Color
     let goldBright: Color
     let goldLine: Color
+    let jesus: Color
     let surface: Color
     let panel: Color
     let pageTop: Color
@@ -54,6 +55,7 @@ struct ThemePalette {
         gold: Color(hex: 0xC7A96B),
         goldBright: Color(hex: 0xE0BA78),
         goldLine: Color(hex: 0xFFC878).opacity(0.13),
+        jesus: Color(hex: 0xC8524A),
         surface: Color.white.opacity(0.03),
         panel: Color(hex: 0x17120E),
         pageTop: Color(hex: 0x2A1F1A),
@@ -68,6 +70,7 @@ struct ThemePalette {
         gold: Color(hex: 0x94681F),
         goldBright: Color(hex: 0x8A5D14),
         goldLine: Color(hex: 0x8C6224).opacity(0.2),
+        jesus: Color(hex: 0x8E2A22),
         surface: Color(hex: 0x785424).opacity(0.05),
         panel: Color(hex: 0xF6ECD6),
         pageTop: Color(hex: 0xF7EEDB),
@@ -82,6 +85,7 @@ struct ThemePalette {
         gold: Color(hex: 0x8A6322),
         goldBright: Color(hex: 0x7D5410),
         goldLine: Color(hex: 0x826028).opacity(0.17),
+        jesus: Color(hex: 0x952219),
         surface: Color(hex: 0x3C2D19).opacity(0.035),
         panel: Color.white,
         pageTop: Color(hex: 0xF6F3EE),

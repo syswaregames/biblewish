@@ -28,6 +28,16 @@ enum BibleTranslation: String, CaseIterable, Identifiable {
         }
     }
 
+    /// The id used by the website's red-letter data, or nil when the translation has none.
+    var redLetterId: String? {
+        switch self {
+        case .kjv: return "kjv"
+        case .webu: return "web"
+        case .bliv: return "bliv"
+        case .heb: return nil
+        }
+    }
+
     var language: String {
         switch self {
         case .kjv:

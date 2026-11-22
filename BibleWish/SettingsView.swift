@@ -60,11 +60,11 @@ struct SettingsView: View {
                 }
 
                 Toggle(isOn: $readerSettings.redLetterEnabled) {
-                    Label("Red Letter", systemImage: "text.quote")
+                    Label("Words of Jesus in Red", systemImage: "text.quote")
                 }
 
                 Toggle(isOn: $readerSettings.redLetterIncludeActsRevelation) {
-                    Label("Include Acts & Revelation", systemImage: "book")
+                    Label("Include Acts, Epistles & Revelation", systemImage: "book")
                 }
                 .disabled(!readerSettings.redLetterEnabled)
                 .opacity(readerSettings.redLetterEnabled ? 1 : 0.5)
