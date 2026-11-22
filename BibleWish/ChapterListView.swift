@@ -70,10 +70,8 @@ struct ChapterListView: View {
         let isCurrent = viewModel.lastRead?.bookIndex == bookIndex && viewModel.lastRead?.chapterNumber == number
         let isRead = viewModel.isChapterCompleted(book: book.name, chapter: number)
 
-        let label = Text("\(number)")
-            .font(.system(.body, weight: isCurrent ? .semibold : .regular))
-            .foregroundStyle(palette.ink)
-            .frame(maxWidth: .infinity)
+        // A flexible square (it takes the cell's width), with the number on top.
+        let label = Color.clear
             .aspectRatio(1, contentMode: .fit)
             .background(
                 ZStack {
@@ -85,6 +83,11 @@ struct ChapterListView: View {
                     }
                 }
             )
+            .overlay {
+                Text("\(number)")
+                    .font(.system(.body, weight: isCurrent ? .semibold : .regular))
+                    .foregroundStyle(palette.ink)
+            }
             .overlay(alignment: .topTrailing) {
                 if isRead {
                     Image(systemName: "checkmark")

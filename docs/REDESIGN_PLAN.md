@@ -111,3 +111,11 @@ The editor has the website's formatting actions: bold, italic, heading, bullets,
 
 Not checked: typing and tapping the toolbar on a device (the logic and the text-view integration are covered by the Debug self-test, 176 checks).
 
+## Book selection like the website (2026-11-22)
+
+The Bible tab is the website's navigator (read.html: BOOK_GROUPS, the navigator sheet): a search field that also takes a reference ("John 3:16" opens it, a book name filters, no match offers "Search the Bible for…"), recent chapters, Old / New Testament tabs, colored section chips that jump to a section, and the ten sections (Law, History, Poetry & Wisdom, Major and Minor Prophets, Gospels, Acts, Letters of Paul, General Letters, Prophecy) each with its own color. Books are tinted tiles with the section color along the left edge; the book being read glows; single-chapter books open the reader directly. Chapters are a grid of square tiles in the book's color with a check on read chapters. Tapping the reader's title opens the same navigator as a sheet and switches the chapter in place. On the paper themes the section colors are darkened for text (the site's `--group-darken`: 58% Sepia, 55% Light).
+
+Kept from the old screen: a hairline on each book tile shows how much of it you have read (the website puts progress on the Plans page; the app keeps it on the tile as well as in Plans). Dropped: the logo and the OT/NT headings with emoji.
+
+Not checked: tapping through the navigator on a device (the layout was checked in Dark and Sepia on iPhone and in Dark on iPad; the section, search and recents logic is covered by the Debug self-test).
+
