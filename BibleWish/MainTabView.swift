@@ -82,7 +82,8 @@ struct MainTabView: View {
     private var withSync: some View {
         withEnvironment
             .task {
-                sync.attach(auth: auth, viewModel: bibleVM, bookmarks: bookmarkManager)
+                highlightManager.migrateLegacy(currentTranslation: bibleVM.selectedTranslation.widgetId)
+                sync.attach(auth: auth, viewModel: bibleVM, bookmarks: bookmarkManager, highlights: highlightManager, notes: noteStore)
                 await auth.restore()
                 await sync.signedIn()
             }
@@ -98,7 +99,7 @@ struct MainTabView: View {
             .task {
                 guard ProcessInfo.processInfo.environment["BW_SELFTEST"] != nil else { return }
                 try? await Task.sleep(nanoseconds: 3_000_000_000)
-                let test = SelfTest(auth: auth, sync: sync, bibleVM: bibleVM, bookmarks: bookmarkManager)
+                let test = SelfTest(auth: auth, sync: sync, bibleVM: bibleVM, bookmarks: bookmarkManager, highlights: highlightManager, notes: noteStore)
                 await test.run()
             }
             #endif

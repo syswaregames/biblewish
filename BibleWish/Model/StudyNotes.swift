@@ -39,15 +39,27 @@ struct Note: Identifiable, Codable, Equatable {
     var tags: [NoteTag]
     let createdAt: Date
     var updatedAt: Date
+    /// The note's id on biblewish.com once it has been synced.
+    var serverId: Int?
 
-    init(title: String = "", body: String = "", reference: String = "", tags: [NoteTag] = []) {
-        self.id = UUID()
+    init(
+        id: UUID = UUID(),
+        title: String = "",
+        body: String = "",
+        reference: String = "",
+        tags: [NoteTag] = [],
+        createdAt: Date = Date(),
+        updatedAt: Date = Date(),
+        serverId: Int? = nil
+    ) {
+        self.id = id
         self.title = title
         self.body = body
         self.reference = reference
         self.tags = tags
-        self.createdAt = Date()
-        self.updatedAt = Date()
+        self.createdAt = createdAt
+        self.updatedAt = updatedAt
+        self.serverId = serverId
     }
 
     var wordCount: Int {
@@ -73,6 +85,9 @@ final class NoteStore: ObservableObject {
     /// Most recently edited first.
     @Published private(set) var notes: [Note] = []
 
+    /// Set by the sync engine to hear about changes made by the reader (not ones applied from the server).
+    var onChange: ((SyncOp) -> Void)?
+
     private let key = "study_notes_v1"
 
     init() {
@@ -96,10 +111,53 @@ final class NoteStore: ObservableObject {
         }
         notes.insert(note, at: 0)
         persist()
+        onChange?(.pushNote(note.id))
     }
 
     func delete(id: UUID) {
+        let serverId = note(id: id)?.serverId
         notes.removeAll { $0.id == id }
+        persist()
+        if let serverId { onChange?(.deleteNote(serverId: serverId)) }
+    }
+
+    // MARK: - Sync (these never call onChange)
+
+    func setServerId(_ serverId: Int, for id: UUID) {
+        guard let index = notes.firstIndex(where: { $0.id == id }) else { return }
+        notes[index].serverId = serverId
+        persist()
+    }
+
+    /// Makes the notes match the server's, keeping notes that haven't been sent yet.
+    func apply(serverNotes: [Note]) {
+        let waiting = notes.filter { $0.serverId == nil }
+        let known = Dictionary(uniqueKeysWithValues: notes.compactMap { local in local.serverId.map { ($0, local) } })
+
+        let fromServer = serverNotes.map { incoming -> Note in
+            // Keep the local id of a note we already had.
+            guard let serverId = incoming.serverId, let local = known[serverId] else { return incoming }
+            return Note(
+                id: local.id, title: incoming.title, body: incoming.body, reference: incoming.reference,
+                tags: incoming.tags, createdAt: incoming.createdAt, updatedAt: incoming.updatedAt, serverId: serverId
+            )
+        }
+        let updated = (waiting + fromServer).sorted { $0.updatedAt > $1.updatedAt }
+        if updated != notes {
+            notes = updated
+            persist()
+        }
+    }
+
+    /// Forget the links to a server account (a different account is signing in).
+    func clearServerIds() {
+        for index in notes.indices { notes[index].serverId = nil }
+        persist()
+    }
+
+    func removeAllLocal() {
+        guard !notes.isEmpty else { return }
+        notes = []
         persist()
     }
 

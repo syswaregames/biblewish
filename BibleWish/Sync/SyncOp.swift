@@ -14,6 +14,12 @@ enum SyncOp: Codable, Hashable {
     case readChapter(book: Int, chapter: Int, read: Bool)
     /// One-time upload of the chapters read before signing in (Bible progress only).
     case importReading
+    /// One chapter's highlights in one translation; the current state is sent when it runs.
+    case pushHighlightChapter(translation: String, bookIndex: Int, chapter: Int)
+    /// One-time merge of the highlights made before signing in.
+    case mergeHighlights
+    case pushNote(UUID)
+    case deleteNote(serverId: Int)
 
     /// Operations that describe the same target replace each other, so the queue stays short.
     var supersedeKey: String? {

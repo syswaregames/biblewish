@@ -42,7 +42,8 @@ struct VerseTextView: View {
         )
 
         let highlight = highlightManager.highlightFor(
-            book: bookName,
+            translation: savedTranslation,
+            bookIndex: bookIndex,
             chapter: chapterNumber,
             verse: verse.number
         )
@@ -94,7 +95,9 @@ struct VerseTextView: View {
             ForEach(HighlightColor.allCases, id: \.self) { color in
                 Button {
                     highlightManager.highlight(
-                        book: bookName,
+                        translation: savedTranslation,
+                        bookIndex: bookIndex,
+                        bookName: bookName,
                         chapter: chapterNumber,
                         verse: verse.number,
                         color: color
@@ -115,7 +118,8 @@ struct VerseTextView: View {
 
             Button("Remove Highlight", role: .destructive) {
                 highlightManager.removeHighlight(
-                    book: bookName,
+                    translation: savedTranslation,
+                    bookIndex: bookIndex,
                     chapter: chapterNumber,
                     verse: verse.number
                 )
@@ -132,6 +136,10 @@ struct VerseTextView: View {
             NoteEditorView(reference: "\(bookName) \(chapterNumber):\(verse.number)")
         }
     }
+
+    /// The translation and book number highlights are saved under (like biblewish.com).
+    private var savedTranslation: String { viewModel.selectedTranslation.widgetId }
+    private var bookIndex: Int { viewModel.books.firstIndex { $0.name == bookName } ?? -1 }
 
     private func toggleBookmarkOrPeek(_ bookmark: Bookmark) {
         if readerSettings.focusMode && !focusPeek {

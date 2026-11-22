@@ -20,14 +20,18 @@ final class SelfTest {
     let sync: SyncEngine
     let bibleVM: BibleViewModel
     let bookmarks: BookmarkManager
+    let highlights: HighlightManager
+    let notes: NoteStore
 
     private(set) var failures = 0
 
-    init(auth: AuthStore, sync: SyncEngine, bibleVM: BibleViewModel, bookmarks: BookmarkManager) {
+    init(auth: AuthStore, sync: SyncEngine, bibleVM: BibleViewModel, bookmarks: BookmarkManager, highlights: HighlightManager, notes: NoteStore) {
         self.auth = auth
         self.sync = sync
         self.bibleVM = bibleVM
         self.bookmarks = bookmarks
+        self.highlights = highlights
+        self.notes = notes
     }
 
     /// Reads from the server as the signed-in test account.
@@ -82,6 +86,8 @@ final class SelfTest {
         runKeyFormat()
         await runAuth()
         await runFavoritesAndReading()
+        await runHighlights()
+        await runNotes()
         emit(failures == 0 ? "SELFTEST ALL PASSED" : "SELFTEST \(failures) FAILED")
         emit("SELFTEST DONE")
     }
@@ -231,6 +237,194 @@ final class SelfTest {
         // Clean up both throwaway accounts.
         check("delete second account", await auth.deleteAccount())
         _ = email
+    }
+
+    // MARK: - Highlights
+
+    private struct ServerHighlights {
+        var verses: [String: [Int]] = [:]
+        var colors: [String: [String: String]] = [:]
+    }
+
+    private func serverHighlights() async -> ServerHighlights {
+        guard let data = try? await APIClient.shared.send("GET", "api/highlights.php"),
+              let object = try? JSONSerialization.jsonObject(with: data) as? [String: Any] else { return ServerHighlights() }
+        // The server answers [] for an empty map.
+        return ServerHighlights(
+            verses: object["highlights"] as? [String: [Int]] ?? [:],
+            colors: object["colors"] as? [String: [String: String]] ?? [:]
+        )
+    }
+
+    private func putServerHighlight(_ translation: String, _ book: Int, _ chapter: Int, _ verses: [Int], colors: [String: String]? = nil) async {
+        var body: [String: Any] = ["translation": translation, "book_index": book, "chapter": chapter, "verses": verses]
+        if let colors { body["colors"] = colors }
+        _ = try? await APIClient.shared.send("PUT", "api/highlights.php", json: body)
+    }
+
+    private func runHighlights() async {
+        if auth.isSignedIn { await auth.signOut() }
+        highlights.removeAllLocal()
+
+        // Highlights made before this version only know a book name: they get its number and the open translation.
+        let legacy = [Highlight(bookName: "John", chapterNumber: 3, verseNumber: 5, color: .green)]
+        UserDefaults.standard.set(try? JSONEncoder().encode(legacy), forKey: "saved_highlights")
+        let migrated = HighlightManager()
+        migrated.migrateLegacy(currentTranslation: "bliv")
+        check("legacy highlight gets its book number and translation", migrated.highlights.first?.bookIndex == 42 && migrated.highlights.first?.translation == "bliv", "\(String(describing: migrated.highlights.first))")
+        UserDefaults.standard.removeObject(forKey: "saved_highlights")
+
+        // Made on the device before signing in.
+        highlights.highlight(translation: "kjv", bookIndex: 42, bookName: "John", chapter: 3, verse: 16, color: .green)
+        highlights.highlight(translation: "kjv", bookIndex: 42, bookName: "John", chapter: 3, verse: 17, color: .yellow)
+        highlights.highlight(translation: "kjv", bookIndex: 0, bookName: "Genesis", chapter: 1, verse: 1, color: .pink)
+        check("nothing queued while signed out (highlights)", sync.pendingCount == 0, "\(sync.pendingCount)")
+
+        guard await signInFreshAccount("hl") != nil else { check("sign in for highlight tests", false); return }
+        await sync.signedIn()
+        var server = await serverHighlights()
+        check("device highlights merged up", server.verses["kjv:42:3"] == [16, 17] && server.verses["kjv:0:1"] == [1], "\(server.verses)")
+        check("colors survived (yellow is the default)", server.colors["kjv:42:3"] == ["16": "green"] && server.colors["kjv:0:1"] == ["1": "pink"], "\(server.colors)")
+
+        // Changes while signed in.
+        highlights.removeHighlight(translation: "kjv", bookIndex: 42, chapter: 3, verse: 17)
+        await sync.syncNow()
+        server = await serverHighlights()
+        check("removed highlight removed on the server", server.verses["kjv:42:3"] == [16], "\(server.verses)")
+        highlights.highlight(translation: "kjv", bookIndex: 42, bookName: "John", chapter: 3, verse: 16, color: .blue)
+        await sync.syncNow()
+        server = await serverHighlights()
+        check("changed color reached the server", server.colors["kjv:42:3"] == ["16": "blue"], "\(server.colors)")
+
+        // Changes made on the website (and another translation).
+        await putServerHighlight("web", 43, 1, [8], colors: ["8": "pink"])
+        await putServerHighlight("heb2", 0, 1, [1])
+        await sync.syncNow()
+        check("website highlight arrived with its color", highlights.highlightFor(translation: "web", bookIndex: 43, chapter: 1, verse: 8)?.color == .pink)
+        check("highlights are per translation", highlights.highlightFor(translation: "kjv", bookIndex: 43, chapter: 1, verse: 8) == nil)
+        check("a translation the app doesn't have stays on the server", !highlights.highlights.contains { $0.translation == "heb2" })
+        await putServerHighlight("kjv", 0, 1, [])
+        await sync.syncNow()
+        check("highlight removed on the website disappears", highlights.highlightFor(translation: "kjv", bookIndex: 0, chapter: 1, verse: 1) == nil)
+        // The website sends verses only; saved colors must survive its edits.
+        await putServerHighlight("kjv", 42, 3, [16, 18])
+        await sync.syncNow()
+        check("website edit keeps the saved color", highlights.highlightFor(translation: "kjv", bookIndex: 42, chapter: 3, verse: 16)?.color == .blue && highlights.highlightFor(translation: "kjv", bookIndex: 42, chapter: 3, verse: 18)?.color == .yellow)
+
+        // Offline.
+        setenv("BW_API_BASE", "http://localhost:9", 1)
+        highlights.highlight(translation: "kjv", bookIndex: 42, bookName: "John", chapter: 3, verse: 20, color: .green)
+        await sync.syncNow()
+        check("offline highlight stays queued", sync.pendingCount >= 1)
+        setenv("BW_API_BASE", "http://localhost:8088", 1)
+        await sync.syncNow()
+        server = await serverHighlights()
+        check("queued highlight delivered", sync.pendingCount == 0 && server.verses["kjv:42:3"]?.contains(20) == true, "\(server.verses)")
+
+        // Another account gets everything on the device.
+        await auth.signOut()
+        let chaptersOnDevice = Set(highlights.chapters.map(\.key))
+        guard await signInFreshAccount("hl2") != nil else { check("second account for highlights", false); return }
+        await sync.signedIn()
+        server = await serverHighlights()
+        check("second account received the device highlights", Set(server.verses.keys) == chaptersOnDevice && !chaptersOnDevice.isEmpty, "\(server.verses.keys) vs \(chaptersOnDevice)")
+        _ = await auth.deleteAccount()
+        highlights.removeAllLocal()
+    }
+
+    // MARK: - Notes
+
+    private struct SrvNote: Decodable {
+        let id: Int
+        let title: String
+        let body: String
+        let reference: String?
+        let tags: [String]
+        let bookIndex: Int?
+        let chapter: Int?
+        let verseStart: Int?
+    }
+    private struct SrvNotes: Decodable { let notes: [SrvNote] }
+
+    private func serverNotes() async -> [SrvNote] { await get(SrvNotes.self, "api/notes.php")?.notes ?? [] }
+
+    private func runNotes() async {
+        if auth.isSignedIn { await auth.signOut() }
+        notes.removeAllLocal()
+
+        var plain = Note(title: "", body: "First line of body\nmore text", reference: "", tags: [.insight])
+        var verse = Note(title: "Grace", body: "**bold** and a list\n- one", reference: "John 3:16", tags: [.prayer, .promise])
+        notes.save(plain)
+        notes.save(verse)
+        check("nothing queued while signed out (notes)", sync.pendingCount == 0, "\(sync.pendingCount)")
+
+        guard await signInFreshAccount("notes") != nil else { check("sign in for note tests", false); return }
+        await sync.signedIn()
+        var server = await serverNotes()
+        check("both notes reached the server", server.count == 2, "\(server.count)")
+        check("untitled note was sent with its first line as the title", server.contains { $0.title == "First line of body" && $0.body.hasPrefix("First line") })
+        let anchored = server.first { $0.title == "Grace" }
+        check("note about a verse is anchored to it", anchored?.bookIndex == 42 && anchored?.chapter == 3 && anchored?.verseStart == 16, "\(String(describing: anchored))")
+        check("tags and Markdown survived", anchored?.tags == ["prayer", "promise"] && anchored?.body.contains("**bold**") == true)
+        check("notes are linked to the server", notes.notes.allSatisfy { $0.serverId != nil } && notes.notes.count == 2)
+
+        // Edit and delete on the device.
+        verse = notes.notes.first { $0.title == "Grace" }!
+        verse.body = "edited on the device"
+        notes.save(verse)
+        await sync.syncNow()
+        server = await serverNotes()
+        check("edit reached the server", server.contains { $0.title == "Grace" && $0.body == "edited on the device" })
+        plain = notes.notes.first { $0.body.hasPrefix("First line") }!
+        notes.delete(id: plain.id)
+        await sync.syncNow()
+        server = await serverNotes()
+        check("delete reached the server", server.count == 1, "\(server.count)")
+
+        // Made on the website.
+        _ = try? await APIClient.shared.send("POST", "api/notes.php", json: ["title": "From the web", "body": "web body", "reference": "Psalm 23", "tags": ["question"]])
+        await sync.syncNow()
+        let fromWeb = notes.notes.first { $0.title == "From the web" }
+        check("website note arrived", fromWeb != nil && fromWeb?.tags == [.question] && fromWeb?.reference == "Psalm 23" && fromWeb?.serverId != nil)
+        let graceId = server.first { $0.title == "Grace" }!.id
+        _ = try? await APIClient.shared.send("PUT", "api/notes.php", query: ["id": String(graceId)], json: ["title": "Grace", "body": "edited on the web", "reference": "John 3:16"])
+        let localIdBefore = notes.notes.first { $0.title == "Grace" }?.id
+        await sync.syncNow()
+        let graceNow = notes.notes.first { $0.title == "Grace" }
+        check("website edit arrived and the note kept its local id", graceNow?.body == "edited on the web" && graceNow?.id == localIdBefore)
+        check("tags kept when the website edits without them", graceNow?.tags == [.prayer, .promise], "\(String(describing: graceNow?.tags))")
+        if let webId = fromWeb?.serverId { _ = try? await APIClient.shared.send("DELETE", "api/notes.php", query: ["id": String(webId)]) }
+        await sync.syncNow()
+        check("note deleted on the website disappears", !notes.notes.contains { $0.title == "From the web" } && notes.notes.count == 1, "\(notes.notes.map(\.title))")
+
+        // Offline edit.
+        setenv("BW_API_BASE", "http://localhost:9", 1)
+        var offline = notes.notes.first!
+        offline.body = "written offline"
+        notes.save(offline)
+        await sync.syncNow()
+        check("offline edit stays on the device and queued", notes.notes.first?.body == "written offline" && sync.pendingCount >= 1)
+        setenv("BW_API_BASE", "http://localhost:8088", 1)
+        await sync.syncNow()
+        server = await serverNotes()
+        check("offline edit delivered and not overwritten by the pull", server.first?.body == "written offline" && notes.notes.first?.body == "written offline" && sync.pendingCount == 0, "\(String(describing: server.first?.body)) / \(String(describing: notes.notes.first?.body))")
+
+        // A new note while signed in.
+        notes.save(Note(title: "Made while signed in", body: "hello", reference: "", tags: []))
+        await sync.syncNow()
+        server = await serverNotes()
+        check("new note synced", server.contains { $0.title == "Made while signed in" } && server.count == 2, "\(server.count)")
+
+        // Another account.
+        await auth.signOut()
+        let onDevice = notes.notes.count
+        guard await signInFreshAccount("notes2") != nil else { check("second account for notes", false); return }
+        await sync.signedIn()
+        server = await serverNotes()
+        check("second account received the notes", server.count == onDevice && onDevice == 2, "\(server.count) vs \(onDevice)")
+        check("no duplicates locally", notes.notes.count == onDevice, "\(notes.notes.count)")
+        _ = await auth.deleteAccount()
+        notes.removeAllLocal()
     }
 }
 #endif
