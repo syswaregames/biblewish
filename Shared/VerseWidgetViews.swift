@@ -76,7 +76,7 @@ struct VerseWidgetContent: View {
                 .foregroundStyle(ink)
                 .lineLimit(lineLimit)
                 .minimumScaleFactor(0.6)
-                .frame(maxHeight: .infinity, alignment: .topLeading)
+                .frame(maxHeight: .infinity, alignment: size == .large ? .leading : .topLeading)
 
             Text(verse.label)
                 .font(.system(size: size == .small ? 12 : 13, weight: .semibold, design: .serif))
@@ -91,7 +91,7 @@ struct VerseWidgetContent: View {
         switch size {
         case .small: return 14
         case .medium: return 16
-        default: return 21
+        default: return 24
         }
     }
 
