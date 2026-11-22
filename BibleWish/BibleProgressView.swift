@@ -78,6 +78,7 @@ struct BibleProgressView: View {
             .font(.system(.caption, design: .serif, weight: .semibold))
             .tracking(2.5)
             .foregroundStyle(palette.gold)
+            .accessibilityAddTraits(.isHeader)
             .padding(.top, range.lowerBound == 0 ? 0 : 14)
 
         ForEach(range.filter { $0 < viewModel.books.count }, id: \.self) { index in

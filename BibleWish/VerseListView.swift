@@ -23,6 +23,8 @@ struct VerseListView: View {
     @State private var showPlaces = false
     /// Focus mode: a tap on the text shows the verse numbers until the chapter changes.
     @State private var focusPeek = false
+    @ScaledMetric(relativeTo: .largeTitle) private var chapterNumberSize: CGFloat = 52
+    @ScaledMetric(relativeTo: .title3) private var ornamentSize: CGFloat = 22
 
     init(
         book: BibleBook,
@@ -66,7 +68,8 @@ struct VerseListView: View {
 
                     if readerSettings.bookPage {
                         Text("\u{2766}")
-                            .font(.system(size: 22, design: .serif))
+                            .font(.system(size: ornamentSize, design: .serif))
+                            .accessibilityHidden(true)
                             .foregroundStyle(palette.gold)
                             .padding(.top, 20)
                     }
@@ -175,7 +178,7 @@ struct VerseListView: View {
                     .foregroundStyle(palette.gold)
 
                 Text("\(chapter.number)")
-                    .font(.system(size: 52, weight: .regular, design: .serif))
+                    .font(.system(size: chapterNumberSize, weight: .regular, design: .serif))
                     .foregroundStyle(palette.goldBright)
 
                 if !readerSettings.focusMode || focusPeek {
@@ -189,11 +192,13 @@ struct VerseListView: View {
                     Image(systemName: "diamond.fill")
                         .font(.system(size: 6))
                         .foregroundStyle(palette.gold)
+                        .accessibilityHidden(true)
                     Rectangle().fill(palette.goldLine).frame(height: 1)
                 }
                 .padding(.vertical, 12)
             }
             .accessibilityElement(children: .combine)
+            .accessibilityAddTraits(.isHeader)
         } else if !readerSettings.focusMode || focusPeek {
             Text("~\(readingMinutes) min read")
                 .font(.caption)

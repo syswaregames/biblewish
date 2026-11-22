@@ -14,10 +14,12 @@ struct ChapterListView: View {
     @EnvironmentObject var viewModel: BibleViewModel
         
 
+    @ScaledMetric(relativeTo: .body) private var tile: CGFloat = 60
+
     // Adaptive grid: fits 4–6 columns depending on screen
-    let columns = [
-        GridItem(.adaptive(minimum: 60), spacing: 12)
-    ]
+    private var columns: [GridItem] {
+        [GridItem(.adaptive(minimum: tile), spacing: 12)]
+    }
 
     var body: some View {
 

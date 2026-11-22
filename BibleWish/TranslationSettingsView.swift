@@ -42,6 +42,8 @@ struct TranslationSettingsView: View {
                         .padding(.vertical, 6)
                     }
                     .buttonStyle(.plain)
+                    .accessibilityElement(children: .combine)
+                    .accessibilityAddTraits(viewModel.selectedTranslation == translation ? .isSelected : [])
                 }
             } footer: {
                 Text("Changing translation also updates search and reading progress for that translation.")

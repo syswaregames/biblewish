@@ -107,7 +107,7 @@ struct HomeView: View {
             .overlay(alignment: .bottomLeading) {
                 VStack(alignment: .leading, spacing: 4) {
                     Text(timeOfDay.greeting)
-                        .font(.system(size: 34, weight: .semibold, design: .serif))
+                        .font(.system(.largeTitle, design: .serif, weight: .semibold))
                     Text(Date().formatted(.dateTime.weekday(.wide).month(.wide).day()))
                         .font(.system(.subheadline, design: .serif))
                         .opacity(0.85)
@@ -126,6 +126,7 @@ struct HomeView: View {
             .font(.system(.caption, design: .serif, weight: .semibold))
             .tracking(2.5)
             .foregroundStyle(palette.gold)
+            .accessibilityAddTraits(.isHeader)
     }
 
     private func verseOfTheDayCard(_ verse: VerseOfTheDay) -> some View {

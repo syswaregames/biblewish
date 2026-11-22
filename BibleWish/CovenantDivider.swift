@@ -36,5 +36,6 @@ struct CovenantDivider: View {
         }
         .padding(.vertical, 20)
         .frame(maxWidth: .infinity)
+        .accessibilityHidden(true)
     }
 }

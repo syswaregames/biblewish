@@ -40,6 +40,7 @@ struct VerseDetailView: View {
                             : "star"
                         )
                     }
+                    .accessibilityLabel(bookmarkManager.isBookmarked(bookmark) ? "Remove bookmark" : "Add bookmark")
                 }
 
                 Text(result.verseText)

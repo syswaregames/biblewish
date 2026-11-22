@@ -59,6 +59,7 @@ struct PlansView: View {
             .font(.system(.caption, design: .serif, weight: .semibold))
             .tracking(2.5)
             .foregroundStyle(palette.gold)
+            .accessibilityAddTraits(.isHeader)
     }
 
     private func startedCard(_ plan: PlanInfo) -> some View {

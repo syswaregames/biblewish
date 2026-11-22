@@ -78,6 +78,7 @@ struct PlanDetailView: View {
             .font(.system(.caption, design: .serif, weight: .semibold))
             .tracking(2.5)
             .foregroundStyle(palette.gold)
+            .accessibilityAddTraits(.isHeader)
     }
 
     private func stat(_ value: String, _ caption: String) -> some View {
@@ -196,6 +197,7 @@ struct PlanDetailView: View {
                         HStack(spacing: 10) {
                             Image(systemName: summary.isDayDone(day) ? "checkmark.circle.fill" : "circle")
                                 .foregroundStyle(summary.isDayDone(day) ? palette.goldBright : palette.inkMuted)
+                                .accessibilityHidden(true)
                             Text("Day \(day)")
                                 .font(.subheadline.weight(.semibold))
                                 .foregroundStyle(palette.ink)
@@ -208,6 +210,9 @@ struct PlanDetailView: View {
                         .padding(.vertical, 9)
                     }
                     .buttonStyle(.plain)
+                    .accessibilityElement(children: .ignore)
+                    .accessibilityLabel("Day \(day), \(PlansStore.label(forDay: summary.days[day - 1], bookNames: bookNames)), \(summary.isDayDone(day) ? "done" : "not done")")
+                    .accessibilityHint("Shows this day's chapters")
 
                     Divider().overlay(palette.goldLine)
                 }

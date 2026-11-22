@@ -22,7 +22,7 @@ struct BookCardView: View {
         VStack(alignment: .leading, spacing: 8) {
 
             Text(bookName)
-                .font(.system(size: 16, weight: .semibold, design: .serif))
+                .font(.system(.callout, design: .serif, weight: .semibold))
                 .foregroundStyle(palette.ink)
                 .frame(maxWidth: .infinity)
                 .multilineTextAlignment(.center)

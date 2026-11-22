@@ -102,6 +102,7 @@ struct NoteEditorView: View {
             .font(.system(.caption, design: .serif, weight: .semibold))
             .tracking(2.5)
             .foregroundStyle(palette.gold)
+            .accessibilityAddTraits(.isHeader)
     }
 
     private func field<Content: View>(_ title: String, @ViewBuilder content: () -> Content) -> some View {

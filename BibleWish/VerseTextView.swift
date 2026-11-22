@@ -24,6 +24,8 @@ struct VerseTextView: View {
     @EnvironmentObject var readerSettings: ReaderSettings
     @EnvironmentObject var viewModel: BibleViewModel
     @Environment(\.palette) private var palette
+    /// 1 at the default text size, larger with Dynamic Type; the reader's own size slider is the base.
+    @ScaledMetric(relativeTo: .body) private var textScale: CGFloat = 1
 
     @State private var showHighlightMenu = false
     @State private var showNoteEditor = false
@@ -52,7 +54,7 @@ struct VerseTextView: View {
 
         .font(
             .system(
-                size: readerSettings.fontSize,
+                size: readerSettings.fontSize * textScale,
                 design: readerSettings.font.fontDesign
 
             )
@@ -67,13 +69,17 @@ struct VerseTextView: View {
         .background(highlight?.color.color ?? Color.clear)
         .cornerRadius(6)
         .contentShape(Rectangle())
+        .accessibilityElement(children: .combine)
+        .accessibilityLabel("Verse \(verse.number). \(verse.text)")
+        .accessibilityValue(accessibilityState(bookmarked: bookmarkManager.isBookmarked(bookmark), highlighted: highlight != nil))
+        .accessibilityHint("Double tap to bookmark")
+        .accessibilityAddTraits(.isButton)
+        .accessibilityAction { toggleBookmarkOrPeek(bookmark) }
+        .accessibilityAction(named: "Highlight") { showHighlightMenu = true }
+        .accessibilityAction(named: "Add note") { showNoteEditor = true }
+        .accessibilityAction(named: "Cross-references") { showCrossReferences = true }
         .onTapGesture {
-            if readerSettings.focusMode && !focusPeek {
-                onFocusTap()
-                return
-            }
-            bookmarkManager.toggle(bookmark)
-            UIImpactFeedbackGenerator(style: .light).impactOccurred()
+            toggleBookmarkOrPeek(bookmark)
         }
         .onLongPressGesture {
             showHighlightMenu = true
@@ -124,6 +130,21 @@ struct VerseTextView: View {
         .sheet(isPresented: $showNoteEditor) {
             NoteEditorView(reference: "\(bookName) \(chapterNumber):\(verse.number)")
         }
+    }
+
+    private func toggleBookmarkOrPeek(_ bookmark: Bookmark) {
+        if readerSettings.focusMode && !focusPeek {
+            onFocusTap()
+            return
+        }
+        bookmarkManager.toggle(bookmark)
+        UIImpactFeedbackGenerator(style: .light).impactOccurred()
+    }
+
+    private func accessibilityState(bookmarked: Bool, highlighted: Bool) -> String {
+        [bookmarked ? "Bookmarked" : nil, highlighted ? "Highlighted" : nil]
+            .compactMap { $0 }
+            .joined(separator: ", ")
     }
 
     /// The verse number. Hidden in focus mode, and for a drop-cap verse, where the initial stands in.
@@ -179,7 +200,7 @@ struct VerseTextView: View {
                 var piece = Text(String(decoding: utf16[range], as: UTF16.self))
                 if isInitial {
                     piece = piece
-                        .font(.system(size: readerSettings.fontSize * 1.9, weight: .semibold, design: .serif))
+                        .font(.system(size: readerSettings.fontSize * textScale * 1.9, weight: .semibold, design: .serif))
                         .foregroundColor(palette.goldBright)
                 } else if run.red {
                     piece = piece.foregroundColor(palette.jesus)

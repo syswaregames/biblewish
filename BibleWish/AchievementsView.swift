@@ -11,6 +11,8 @@ struct AchievementsView: View {
 
     @EnvironmentObject var achievements: AchievementsStore
     @Environment(\.palette) private var palette
+    @ScaledMetric(relativeTo: .title) private var emoji: CGFloat = 28
+    @ScaledMetric(relativeTo: .title) private var badgeBox: CGFloat = 52
 
     var body: some View {
         ScrollView {
@@ -25,6 +27,7 @@ struct AchievementsView: View {
                             .font(.system(.caption, design: .serif, weight: .semibold))
                             .tracking(2.5)
                             .foregroundStyle(palette.gold)
+                            .accessibilityAddTraits(.isHeader)
 
                         ForEach(achievements.badges.filter { $0.group == group }) { badge in
                             row(badge)
@@ -44,8 +47,8 @@ struct AchievementsView: View {
 
         return HStack(alignment: .top, spacing: 14) {
             Text(badge.icon)
-                .font(.system(size: 28))
-                .frame(width: 52, height: 52)
+                .font(.system(size: emoji))
+                .frame(width: badgeBox, height: badgeBox)
                 .background(Circle().fill(isEarned ? palette.gold.opacity(0.18) : palette.surface))
                 .overlay(Circle().stroke(isEarned ? palette.gold : palette.goldLine, lineWidth: isEarned ? 1.5 : 1))
                 .saturation(isEarned ? 1 : 0)
@@ -88,11 +91,12 @@ struct BadgeToast: View {
     var onTap: () -> Void
 
     @Environment(\.palette) private var palette
+    @ScaledMetric(relativeTo: .title) private var emoji: CGFloat = 30
 
     var body: some View {
         Button(action: onTap) {
             HStack(spacing: 12) {
-                Text(badge.icon).font(.system(size: 30))
+                Text(badge.icon).font(.system(size: emoji))
                 VStack(alignment: .leading, spacing: 2) {
                     Text("BADGE UNLOCKED")
                         .font(.system(.caption2, design: .serif, weight: .semibold))

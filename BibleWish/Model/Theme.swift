@@ -25,6 +25,9 @@ enum ThemeChoice: String, CaseIterable, Identifiable {
     }
 }
 
+/// Sepia and Light use slightly deeper muted ink and gold than biblewish.com so small text keeps a
+/// contrast ratio of at least 4.5:1 on the whole page gradient (checked against the page, bottom of
+/// the page and panel colors). Dark already passes.
 struct ThemePalette {
     let ink: Color
     let inkSoft: Color
@@ -74,9 +77,9 @@ struct ThemePalette {
     static let sepia = ThemePalette(
         ink: Color(hex: 0x3A2A1B),
         inkSoft: Color(hex: 0x6B5139),
-        inkMuted: Color(hex: 0x543E28).opacity(0.74),
-        gold: Color(hex: 0x94681F),
-        goldBright: Color(hex: 0x8A5D14),
+        inkMuted: Color(hex: 0x543E28).opacity(0.82),
+        gold: Color(hex: 0x7E5718),
+        goldBright: Color(hex: 0x6E4A12),
         goldLine: Color(hex: 0x8C6224).opacity(0.2),
         jesus: Color(hex: 0x8E2A22),
         greenInk: Color(hex: 0x2F6B2A),
@@ -93,9 +96,9 @@ struct ThemePalette {
     static let light = ThemePalette(
         ink: Color(hex: 0x1F1A15),
         inkSoft: Color(hex: 0x5A4B3B),
-        inkMuted: Color(hex: 0x3C3228).opacity(0.7),
-        gold: Color(hex: 0x8A6322),
-        goldBright: Color(hex: 0x7D5410),
+        inkMuted: Color(hex: 0x3C3228).opacity(0.76),
+        gold: Color(hex: 0x805A1C),
+        goldBright: Color(hex: 0x6F4C14),
         goldLine: Color(hex: 0x826028).opacity(0.17),
         jesus: Color(hex: 0x952219),
         greenInk: Color(hex: 0x2A6326),
