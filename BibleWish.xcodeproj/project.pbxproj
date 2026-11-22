@@ -14,7 +14,9 @@
 		3673945D4F2DA9BC54E0A14F /* SyncEngine.swift in Sources */ = {isa = PBXBuildFile; fileRef = A6304D99DDDFE3371DAD0099 /* SyncEngine.swift */; };
 		41E6E796789C7F13A845176B /* SignInView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 20483F9AEB2004EB42EDF122 /* SignInView.swift */; };
 		4D47D94BC818C78030DF7D7C /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F1553558A44AD513ACA31169 /* Foundation.framework */; };
+		69B5B6423C93DF94FD639B4B /* NoteEditing.swift in Sources */ = {isa = PBXBuildFile; fileRef = 47BABA0DFE2B60515C7D1B4D /* NoteEditing.swift */; };
 		726C62E89FD312F043E1256F /* VerseWidgetViews.swift in Sources */ = {isa = PBXBuildFile; fileRef = D809CA7C24BF42A1C821E777 /* VerseWidgetViews.swift */; };
+		7606AB7E655217D4A5050AC2 /* NoteTextView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 831B532E71FB2B231BFD0645 /* NoteTextView.swift */; };
 		781676FDAF2813B1E68783ED /* votd in Resources */ = {isa = PBXBuildFile; fileRef = 5110D69EF9E3A5C85A94E842 /* votd */; };
 		79C5EF7002B3A83EFED33FBF /* SharedConfig.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7E47020590BF77B69E94FADA /* SharedConfig.swift */; };
 		823CF170995770EC85ED3786 /* PrayerListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F0C24FFA7E1640981236637D /* PrayerListView.swift */; };
@@ -129,6 +131,7 @@
 		20483F9AEB2004EB42EDF122 /* SignInView.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = SignInView.swift; sourceTree = "<group>"; };
 		36B4C43724B3CB313115E608 /* SyncStatusView.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = SyncStatusView.swift; sourceTree = "<group>"; };
 		3B79F46A1DE423D7E4576416 /* NoteInline.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = NoteInline.swift; sourceTree = "<group>"; };
+		47BABA0DFE2B60515C7D1B4D /* NoteEditing.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = NoteEditing.swift; sourceTree = "<group>"; };
 		4AC2B1F2D8025037233D4C1E /* WidgetKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WidgetKit.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS26.0.sdk/System/Library/Frameworks/WidgetKit.framework; sourceTree = DEVELOPER_DIR; };
 		5110D69EF9E3A5C85A94E842 /* votd */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = folder; name = votd; path = Data/votd; sourceTree = "<group>"; };
 		5AEFCAF1079758B9FCACD125 /* SyncOp.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = SyncOp.swift; sourceTree = "<group>"; };
@@ -138,6 +141,7 @@
 		79B7E44CF86DB7FED700B6ED /* SwiftUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SwiftUI.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS26.0.sdk/System/Library/Frameworks/SwiftUI.framework; sourceTree = DEVELOPER_DIR; };
 		7E47020590BF77B69E94FADA /* SharedConfig.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = SharedConfig.swift; sourceTree = "<group>"; };
 		7ECDFA1553EDBAA5BEBF1E64 /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; includeInIndex = 1; path = PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
+		831B532E71FB2B231BFD0645 /* NoteTextView.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = NoteTextView.swift; sourceTree = "<group>"; };
 		8D26807FF18B9FCFE3092E85 /* SelfTest.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = SelfTest.swift; sourceTree = "<group>"; };
 		9653ECD52F4E65110054C315 /* bible_en_webu.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = bible_en_webu.json; sourceTree = "<group>"; };
 		9653ECD92F4E690D0054C315 /* bible_he_heb.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = bible_he_heb.json; sourceTree = "<group>"; };
@@ -319,6 +323,7 @@
 				20483F9AEB2004EB42EDF122 /* SignInView.swift */,
 				C0CF4D7276E9D3CC5811425F /* AccountView.swift */,
 				F1CAE0100016A5836D23835C /* Prayer */,
+				831B532E71FB2B231BFD0645 /* NoteTextView.swift */,
 			);
 			path = BibleWish;
 			sourceTree = "<group>";
@@ -347,6 +352,7 @@
 				967850612F4E499C00F93196 /* VersionStore.swift */,
 				967850632F4E4BFC00F93196 /* VersionLibraryView.swift */,
 				3B79F46A1DE423D7E4576416 /* NoteInline.swift */,
+				47BABA0DFE2B60515C7D1B4D /* NoteEditing.swift */,
 			);
 			path = Model;
 			sourceTree = "<group>";
@@ -621,6 +627,8 @@
 				8CE5E7950CF1C906211F793A /* SyncStatusView.swift in Sources */,
 				2EEF285498396F23360455ED /* NoteInline.swift in Sources */,
 				F46224FD10A5841D41E49FF4 /* NoteInlineFixtures.swift in Sources */,
+				69B5B6423C93DF94FD639B4B /* NoteEditing.swift in Sources */,
+				7606AB7E655217D4A5050AC2 /* NoteTextView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

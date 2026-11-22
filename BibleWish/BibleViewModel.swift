@@ -95,6 +95,16 @@ extension BibleTranslation {
     }
 }
 
+extension BibleTranslation {
+    /// This translation's books, read from the app's own files. Used when a verse is needed from a
+    /// translation that isn't open (the reader only keeps the open one in memory).
+    func loadBooks() -> [BibleBook]? {
+        guard let url = Bundle.main.url(forResource: resourceName, withExtension: "json"),
+              let data = try? Data(contentsOf: url) else { return nil }
+        return try? JSONDecoder().decode(BibleData.self, from: data).books
+    }
+}
+
 /// Keeps the Verse of the Day widget on the reader's translation (shared through the App Group).
 enum WidgetSync {
     static func publish(_ translation: BibleTranslation) {

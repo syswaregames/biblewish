@@ -12,6 +12,7 @@
 
 #if DEBUG
 import Foundation
+import UIKit
 
 @MainActor
 final class SelfTest {
@@ -90,6 +91,7 @@ final class SelfTest {
         runKeyFormat()
         runNoteFormat()
         runNoteEditing()
+        runNoteTextView()
         await runAuth()
         await runFavoritesAndReading()
         await runHighlights()
@@ -112,6 +114,41 @@ final class SelfTest {
         check("junk keys are skipped", AchievementMetrics.chapterRefs(fromKeys: ["kjv|Nonsense-1", "oops", "kjv|John-x", ""]).isEmpty)
         let model = BibleViewModel()
         check("keys the app writes are the ones we read", AchievementMetrics.chapterRefs(fromKeys: [model.chapterKey(book: "John", chapter: 3)]) == [ChapterRef(book: 42, chapter: 3)], model.chapterKey(book: "John", chapter: 3))
+    }
+
+    // MARK: - The editor's text view
+
+    /// The toolbar's edits applied to a real UITextView (positions are UTF-16, so emoji are the trap).
+    private func runNoteTextView() {
+        let controller = NoteEditorController()
+        let view = UITextView()
+        controller.textView = view
+
+        func select(_ word: String) {
+            view.selectedRange = (view.text as NSString).range(of: word)
+        }
+
+        view.text = "a \u{1F600} word b"
+        select("word")
+        controller.perform { NoteEditing.wrap($0, $1, marker: "**", placeholder: "x") }
+        check("the text view gets the bold edit", view.text == "a \u{1F600} **word** b" && (view.text as NSString).substring(with: view.selectedRange) == "word", "\(view.text ?? "") \(view.selectedRange)")
+        controller.perform { NoteEditing.wrap($0, $1, marker: "**", placeholder: "x") }
+        check("and takes it off again", view.text == "a \u{1F600} word b" && (view.text as NSString).substring(with: view.selectedRange) == "word", "\(view.text ?? "")")
+
+        view.text = "one\ntwo"
+        view.selectedRange = NSRange(location: 0, length: 7)
+        controller.perform { NoteEditing.lines($0, $1, style: .numbered) }
+        check("a list is applied to the selected lines", view.text == "1. one\n2. two", view.text ?? "")
+
+        view.text = "- item"
+        view.selectedRange = NSRange(location: 6, length: 0)
+        if let edit = NoteEditing.returnKey(view.text, caret: 6) { controller.apply(edit) }
+        check("return in a list continues it in the text view", view.text == "- item\n- " && view.selectedRange == NSRange(location: 9, length: 0), "\(view.text ?? "") \(view.selectedRange)")
+
+        view.text = "hello"
+        view.selectedRange = NSRange(location: 5, length: 0)
+        controller.perform { NoteEditing.verseCard($0, $1, reference: "John 3:16", translation: "KJV", text: "For God so loved") }
+        check("a verse card lands at the caret", view.text.hasSuffix("\n::: verse John 3:16 \u{00B7} KJV\nFor God so loved\n:::\n") && view.text.hasPrefix("hello\n"), view.text ?? "")
     }
 
     // MARK: - Note editing (the toolbar)
