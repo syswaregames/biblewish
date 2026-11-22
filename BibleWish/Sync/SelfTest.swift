@@ -88,6 +88,7 @@ final class SelfTest {
     func run() async {
         check("base url is local", APIConfig.baseURL.absoluteString == "http://localhost:8088", APIConfig.baseURL.absoluteString)
         runKeyFormat()
+        runNoteFormat()
         await runAuth()
         await runFavoritesAndReading()
         await runHighlights()
@@ -110,6 +111,27 @@ final class SelfTest {
         check("junk keys are skipped", AchievementMetrics.chapterRefs(fromKeys: ["kjv|Nonsense-1", "oops", "kjv|John-x", ""]).isEmpty)
         let model = BibleViewModel()
         check("keys the app writes are the ones we read", AchievementMetrics.chapterRefs(fromKeys: [model.chapterKey(book: "John", chapter: 3)]) == [ChapterRef(book: 42, chapter: 3)], model.chapterKey(book: "John", chapter: 3))
+    }
+
+    // MARK: - Note formatting
+
+    /// The note syntax is shared with the website (js/note-format.js).
+    private func runNoteFormat() {
+        check("colored and highlighted spans", NoteSpan.spans(in: "a {red|b} c {=gold|d}") == [.plain("a "), .color(.red, "b"), .plain(" c "), .mark(.gold, "d")], "\(NoteSpan.spans(in: "a {red|b} c {=gold|d}"))")
+        check("an unknown color stays plain text", NoteSpan.spans(in: "{blue|x}") == [.plain("{blue|x}")])
+        check("an unclosed span stays plain text", NoteSpan.spans(in: "{red|oops") == [.plain("{red|oops")])
+        check("every website color is known", Set(NoteColor.allCases.map(\.rawValue)) == ["red", "gold", "green", "teal", "violet"])
+
+        check("a colored box with a title", NoteBlock.parse("::: gold Remember\nbe still\n:::") == [.box(color: .gold, title: "Remember", body: [.paragraph("be still")])], "\(NoteBlock.parse("::: gold Remember\nbe still\n:::"))")
+        check("a box without a title", NoteBlock.parse("::: red\ntext\n:::") == [.box(color: .red, title: nil, body: [.paragraph("text")])])
+        check("a verse card with its citation", NoteBlock.parse("::: verse John 3:16 \u{00B7} KJV\nFor God so loved\n:::") == [.verse(cite: "John 3:16 \u{00B7} KJV", body: [.paragraph("For God so loved")])], "\(NoteBlock.parse("::: verse John 3:16 \u{00B7} KJV\nFor God so loved\n:::"))")
+        check("a box without its closing line stays text", NoteBlock.parse("::: gold Title\nbody") == [.paragraph("::: gold Title"), .paragraph("body")])
+        check("an unknown box color stays text", NoteBlock.parse("::: pink\nx\n:::") == [.paragraph("::: pink"), .paragraph("x"), .paragraph(":::")])
+        check("blocks around a box", NoteBlock.parse("before\n::: green\ninside\n:::\nafter") == [.paragraph("before"), .box(color: .green, title: nil, body: [.paragraph("inside")]), .paragraph("after")])
+        check("a box can hold a list", NoteBlock.parse("::: teal List\n- one\n- two\n:::") == [.box(color: .teal, title: "List", body: [.bullet("one"), .bullet("two")])])
+        check("headings up to three hashes", NoteBlock.parse("# A\n## B\n### C\n#### D") == [.heading(level: 1, text: "A"), .heading(level: 2, text: "B"), .heading(level: 2, text: "C"), .paragraph("#### D")])
+        check("bullets and numbers as on the website", NoteBlock.parse("\u{2022} dot\n* star\n3) three\n1. one") == [.bullet("dot"), .bullet("star"), .numbered(3, "three"), .numbered(1, "one")], "\(NoteBlock.parse("\u{2022} dot\n* star\n3) three\n1. one"))")
+        check("quotes and blank lines", NoteBlock.parse("> wise\n\nplain") == [.quote("wise"), .gap, .paragraph("plain")])
     }
 
     // MARK: - Sign-in

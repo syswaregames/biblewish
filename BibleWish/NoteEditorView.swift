@@ -56,7 +56,7 @@ struct NoteEditorView: View {
                         Text("\(draft.wordCount) word\(draft.wordCount == 1 ? "" : "s")")
                             .font(.caption)
                             .foregroundStyle(palette.inkMuted)
-                        Text("Formatting: **bold**, *italic*, # heading, - list, 1. numbered, > quote, [text](https://\u{2026}). Verses like John 3:16 become links.")
+                        Text("Formatting: **bold**, *italic*, # heading, - list, 1. numbered, > quote, [text](https://\u{2026}), {red|colored words}, {=gold|highlighted words}. A box: a line ::: gold Title, your lines, then :::  (a verse card: ::: verse John 3:16). Verses like John 3:16 become links.")
                             .font(.caption)
                             .foregroundStyle(palette.inkMuted)
                     }
