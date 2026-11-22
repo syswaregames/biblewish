@@ -74,4 +74,11 @@ Done: Today's reading card on Home; Bible progress by book (Plans tab; chapters 
 ## Still open
 
 - Reader: a true wrapped drop cap (SwiftUI `Text` can't wrap around an initial)
-- Phase 4 (accounts and sync) and Phase 5 (widgets, notifications, accessibility, App Store listing)
+- Phase 4 (accounts and sync)
+- Phase 5: accessibility pass (VoiceOver, Dynamic Type) and the App Store listing
+
+## Phase 5 so far (2026-11-22)
+
+- Daily verse notification: optional, with a time picker in Settings; the next 30 days are scheduled in the selected translation and topped up whenever the app opens (`DailyVerseReminder`). The planning logic is tested; the system permission prompt and delivery were not exercised (no way to grant notification permission headlessly).
+- Verse of the Day widget: see `docs/WIDGET.md`. Needs the App Group registered in the Apple Developer account.
+

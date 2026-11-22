@@ -62,7 +62,10 @@ struct MainTabView: View {
         .environmentObject(achievements)
         .environmentObject(reminder)
         .task(id: bibleVM.books.count) { await reminder.reschedule(books: bibleVM.books) }
-        .task(id: bibleVM.selectedTranslation) { await reminder.reschedule(books: bibleVM.books) }
+        .task(id: bibleVM.selectedTranslation) {
+            WidgetSync.publish(bibleVM.selectedTranslation)
+            await reminder.reschedule(books: bibleVM.books)
+        }
         .onChange(of: reminder.time) { Task { await reminder.reschedule(books: bibleVM.books) } }
         .onChange(of: scenePhase) {
             guard scenePhase == .active else { return }

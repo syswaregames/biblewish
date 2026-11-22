@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import WidgetKit
 
 enum BibleTranslation: String, CaseIterable, Identifiable {
     case kjv
@@ -79,6 +80,28 @@ enum BibleTranslation: String, CaseIterable, Identifiable {
         case .heb:
             return "Hebrew text (HEB)"
         }
+    }
+}
+
+extension BibleTranslation {
+    /// The id the Verse of the Day widget uses for this translation.
+    var widgetId: String {
+        switch self {
+        case .kjv: return "kjv"
+        case .bliv: return "bliv"
+        case .webu: return "web"
+        case .heb: return "heb"
+        }
+    }
+}
+
+/// Keeps the Verse of the Day widget on the reader's translation (shared through the App Group).
+enum WidgetSync {
+    static func publish(_ translation: BibleTranslation) {
+        guard let defaults = SharedConfig.defaults,
+              defaults.string(forKey: SharedConfig.translationKey) != translation.widgetId else { return }
+        defaults.set(translation.widgetId, forKey: SharedConfig.translationKey)
+        WidgetCenter.shared.reloadAllTimelines()
     }
 }
 
