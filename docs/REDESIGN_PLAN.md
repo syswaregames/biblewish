@@ -1,6 +1,6 @@
 # BibleWish App Redesign — Plan
 
-Status: **Phase 0 in progress** · Created 2026-11-22
+Status: **Phases 0–3 done; theme walkthrough done (2026-11-22)** · Created 2026-11-22
 
 Goal: bring the iOS app in line with the identity and features of biblewish.com (source: `../BibleWish_Website`, see its `docs/PORTAL_PLAN.md` and `CLAUDE.md`).
 
@@ -58,3 +58,19 @@ Widgets (verse of the day), notifications, Dynamic Type and VoiceOver pass, App 
 - The Xcode project lists files explicitly in `project.pbxproj`: every new Swift file or resource must be registered there.
 - Bundled JSON from the website is large (~6.5 MB per translation); only bundle what the app uses and check the app size.
 - Keep the website and app data in sync by copying from `../BibleWish_Website/data/` with a script in `tools/`, not by hand.
+
+## Theme walkthrough (2026-11-22)
+
+Captured Home, Bible, the reader (Matthew 5, red letters, drop cap), Settings, Plans, plan detail, Study notes, the note editor, Achievements, cross-references, Bible Maps and a journey map in Sepia and Light on an iPhone 17 Pro simulator. No contrast or leftover-dark-panel problems were found.
+
+Logic checked inside the real app (57 checks, all passing): passage parsing and abbreviations, verse-of-the-day dates (including 29 February), plan start/tick/stop/behind and streaks, note save/update/delete, the reading log, Easter and Christmas badge dates, cross-references, places and red-letter spans. Found and fixed: abbreviations like "1 Jn 2" did not parse.
+
+Not checked: tapping through the UI (no automation available), the Auto theme under a light system appearance, Search and the Favorites list in Sepia/Light, VoiceOver and Dynamic Type.
+
+## Still open
+
+- Today's reading card on Home; Bible progress by book on Plans
+- Notes: Markdown and clickable verse references
+- Reader: tap-to-peek in focus mode, a true wrapped drop cap
+- Phase 4 (accounts and sync) and Phase 5 (widgets, notifications, accessibility, App Store listing)
+
