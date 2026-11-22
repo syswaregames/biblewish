@@ -1,6 +1,6 @@
 # Privacy Policy – BibleWish
 
-Effective Date: January 2026
+Effective Date: January 2026 (updated November 2026)
 
 BibleWish respects your privacy. This app does not collect, store, track, or
 share any personal data.
@@ -14,8 +14,16 @@ BibleWish does not collect:
 - Identifiers
 - Accounts or profiles
 
-All reading progress, bookmarks, and preferences are stored locally on your
-device only.
+All reading progress, bookmarks, notes, reading plans, achievements, and
+preferences are stored locally on your device only.
+
+## Notifications and Widget
+
+If you turn on the daily verse reminder, BibleWish schedules notifications on
+your device. They are created and delivered locally; no notification data is
+sent anywhere. The Verse of the Day widget reads the day’s verse from files
+bundled with the app, and shares only your chosen Bible translation between the
+app and the widget on your device.
 
 ## Third-Party Services
 

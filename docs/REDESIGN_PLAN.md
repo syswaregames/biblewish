@@ -75,10 +75,12 @@ Done: Today's reading card on Home; Bible progress by book (Plans tab; chapters 
 
 - Reader: a true wrapped drop cap (SwiftUI `Text` can't wrap around an initial)
 - Phase 4 (accounts and sync)
-- Phase 5: accessibility pass (VoiceOver, Dynamic Type) and the App Store listing
+- Phase 5: a VoiceOver walkthrough on a device, and checking the iPad layouts
 
 ## Phase 5 so far (2026-11-22)
 
 - Daily verse notification: optional, with a time picker in Settings; the next 30 days are scheduled in the selected translation and topped up whenever the app opens (`DailyVerseReminder`). The planning logic is tested; the system permission prompt and delivery were not exercised (no way to grant notification permission headlessly).
 - Verse of the Day widget: see `docs/WIDGET.md`. Needs the App Group registered in the Apple Developer account.
+- Accessibility pass: fixed font sizes now scale with Dynamic Type (checked at the largest accessibility size on Home, the chapter grid, the reader and Settings); reader verses expose Bookmark, Highlight, Add note and Cross-references actions to VoiceOver and announce their state; section labels are headings; decorative and state icons are hidden or labelled; Sepia and Light use slightly deeper muted ink and gold so small text meets 4.5:1 (Dark already did). VoiceOver itself was not run.
+- App Store listing draft and pre-submission checklist: `docs/APP_STORE.md`. README and `PRIVACY.md` updated (translations, notifications, widget).
 

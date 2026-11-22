@@ -29,18 +29,37 @@ consistently, or with greater understanding, then its purpose is fulfilled.
 
 <img width="500" height="1082" alt="IMG_1041 copy" src="https://github.com/user-attachments/assets/1279e02c-ea99-46cc-867d-597584dae7d4" />
 
+### What’s inside
+
+- **Reading:** a book-style reader with a serif page, an illuminated first letter,
+  focus mode, reading time, adjustable text, and the words of Jesus in red.
+- **Home:** a verse for every day, today’s reading from your plans, and where you
+  left off.
+- **Plans:** reading plans (the Bible in a year, the New Testament, the Gospels,
+  Psalms, Proverbs) with progress, streaks, and progress through every book.
+- **Study:** favorite verses and notes with colored tags, light formatting, and
+  verse references that open the passage; cross-references; places and journeys
+  on a map.
+- **Achievements:** badges that celebrate faithfulness. Nothing is ranked.
+- **Daily verse:** an optional reminder and a Home Screen / Lock Screen widget.
+- **Themes:** Dark, Sepia, Light, or follow the device.
+
+The design, data and plans come from [biblewish.com](https://biblewish.com).
+Everything stays on your device. See [`docs/REDESIGN_PLAN.md`](docs/REDESIGN_PLAN.md)
+for how the app was rebuilt around the website, and [`docs/WIDGET.md`](docs/WIDGET.md)
+for the widget.
+
 ### Bible Translation Support
 
-At the moment, BibleWish supports the **King James Version (KJV)** of the Bible.
+BibleWish includes the **King James Version (KJV)** and **World English Bible
+(WEBU)** in English, **Biblia Livre (BLIV)** in Portuguese, and a **Hebrew Bible**.
 
-This choice is intentional. The KJV text is in the public domain, which allows
-it to be freely used, shared, and distributed without licensing restrictions.
-This aligns with the core mission of BibleWish: providing free and unrestricted
-access to God’s Word.
+The KJV text is in the public domain, which allows it to be freely used, shared,
+and distributed without licensing restrictions. This aligns with the core mission
+of BibleWish: providing free and unrestricted access to God’s Word.
 
-Support for additional Bible translations is planned for the future. Any new
-translations added will be limited to versions that are legally open and free
-to distribute, respecting both copyright law and the integrity of Scripture.
+Any new translations added will be limited to versions that are legally open and
+free to distribute, respecting both copyright law and the integrity of Scripture.
 
 Our goal is to expand translation support responsibly, while preserving the
 principle of free access for everyone.
