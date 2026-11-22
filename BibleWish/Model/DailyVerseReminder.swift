@@ -59,6 +59,32 @@ final class DailyVerseReminder: ObservableObject {
         if granted { await reschedule(books: books) }
     }
 
+    /// One reminder to schedule.
+    struct Planned: Equatable {
+        let identifier: String
+        let body: String
+        let components: DateComponents
+    }
+
+    /// The reminders for the next days at `time`: one per day, skipping a time that has already
+    /// passed today. Pure, so it can be checked without the notification center.
+    static func planned(books: [BibleBook], time: Date, now: Date = Date(), calendar: Calendar = .current) -> [Planned] {
+        let clock = calendar.dateComponents([.hour, .minute], from: time)
+
+        return (0..<daysAhead).compactMap { offset in
+            guard let day = calendar.date(byAdding: .day, value: offset, to: now),
+                  let fireDate = calendar.date(bySettingHour: clock.hour ?? 8, minute: clock.minute ?? 0, second: 0, of: day),
+                  fireDate > now,
+                  let verse = VerseOfTheDay.load(from: books, date: fireDate) else { return nil }
+
+            return Planned(
+                identifier: identifierPrefix + PlansStore.isoDay(fireDate),
+                body: "\u{201C}\(verse.text)\u{201D}\n\u{2014} \(verse.label)",
+                components: calendar.dateComponents([.year, .month, .day, .hour, .minute], from: fireDate)
+            )
+        }
+    }
+
     /// Replaces the scheduled reminders with the next days' verses.
     @MainActor
     func reschedule(books: [BibleBook], now: Date = Date()) async {
@@ -69,25 +95,16 @@ final class DailyVerseReminder: ObservableObject {
         guard mine == generation, isEnabled, !books.isEmpty else { return }
 
         let center = UNUserNotificationCenter.current()
-        let calendar = Calendar.current
-        let clock = calendar.dateComponents([.hour, .minute], from: time)
-
-        for offset in 0..<Self.daysAhead {
-            guard let day = calendar.date(byAdding: .day, value: offset, to: now),
-                  let fireDate = calendar.date(bySettingHour: clock.hour ?? 8, minute: clock.minute ?? 0, second: 0, of: day),
-                  fireDate > now,
-                  let verse = VerseOfTheDay.load(from: books, date: fireDate) else { continue }
-
+        for reminder in Self.planned(books: books, time: time, now: now) {
             let content = UNMutableNotificationContent()
             content.title = "Verse of the Day"
-            content.body = "\u{201C}\(verse.text)\u{201D}\n\u{2014} \(verse.label)"
+            content.body = reminder.body
             content.sound = .default
 
-            let parts = calendar.dateComponents([.year, .month, .day, .hour, .minute], from: fireDate)
             let request = UNNotificationRequest(
-                identifier: Self.identifierPrefix + PlansStore.isoDay(fireDate),
+                identifier: reminder.identifier,
                 content: content,
-                trigger: UNCalendarNotificationTrigger(dateMatching: parts, repeats: false)
+                trigger: UNCalendarNotificationTrigger(dateMatching: reminder.components, repeats: false)
             )
             guard mine == generation else { return }
             try? await center.add(request)
