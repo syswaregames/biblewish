@@ -88,6 +88,7 @@
 		A6AE8E4F356088632734539F /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = 7ECDFA1553EDBAA5BEBF1E64 /* PrivacyInfo.xcprivacy */; };
 		B091D009BB4DC5768F7A4A8B /* VerseLibrary.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0FDCC472C67F882419CA4611 /* VerseLibrary.swift */; };
 		CBA41874341E014307997991 /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = EB864C3AFF590D8698A05CA9 /* PrivacyInfo.xcprivacy */; };
+		D1C77A58355CDBC16BDD752F /* SelfTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8D26807FF18B9FCFE3092E85 /* SelfTest.swift */; };
 		EF928E9A3883CC7C91AC3E23 /* APIClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = E13CDB28A55487D545F0F5B9 /* APIClient.swift */; };
 		F7303382E197140B82FFBA7C /* SharedConfig.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7E47020590BF77B69E94FADA /* SharedConfig.swift */; };
 /* End PBXBuildFile section */
@@ -125,6 +126,7 @@
 		79B7E44CF86DB7FED700B6ED /* SwiftUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SwiftUI.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS26.0.sdk/System/Library/Frameworks/SwiftUI.framework; sourceTree = DEVELOPER_DIR; };
 		7E47020590BF77B69E94FADA /* SharedConfig.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = SharedConfig.swift; sourceTree = "<group>"; };
 		7ECDFA1553EDBAA5BEBF1E64 /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; includeInIndex = 1; path = PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
+		8D26807FF18B9FCFE3092E85 /* SelfTest.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = SelfTest.swift; sourceTree = "<group>"; };
 		9653ECD52F4E65110054C315 /* bible_en_webu.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = bible_en_webu.json; sourceTree = "<group>"; };
 		9653ECD92F4E690D0054C315 /* bible_he_heb.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = bible_he_heb.json; sourceTree = "<group>"; };
 		9653ECDB2F4E8ABC0054C315 /* red_letter_ranges.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = red_letter_ranges.json; sourceTree = "<group>"; };
@@ -380,6 +382,7 @@
 			children = (
 				E13CDB28A55487D545F0F5B9 /* APIClient.swift */,
 				D681B96C312819CCD0ABB420 /* AuthStore.swift */,
+				8D26807FF18B9FCFE3092E85 /* SelfTest.swift */,
 			);
 			name = Sync;
 			path = Sync;
@@ -580,6 +583,7 @@
 				88E14ACDA1C3683DD891F874 /* AuthStore.swift in Sources */,
 				41E6E796789C7F13A845176B /* SignInView.swift in Sources */,
 				88FE1F68E93BBC9ABA18DB5B /* AccountView.swift in Sources */,
+				D1C77A58355CDBC16BDD752F /* SelfTest.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

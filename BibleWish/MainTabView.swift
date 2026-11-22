@@ -64,6 +64,14 @@ struct MainTabView: View {
         .environmentObject(reminder)
         .environmentObject(auth)
         .task { await auth.restore() }
+        #if DEBUG
+        .task {
+            guard ProcessInfo.processInfo.environment["BW_SELFTEST"] != nil else { return }
+            try? await Task.sleep(nanoseconds: 3_000_000_000)
+            let test = SelfTest(auth: auth)
+            await test.run()
+        }
+        #endif
         .task(id: bibleVM.books.count) { await reminder.reschedule(books: bibleVM.books) }
         .task(id: bibleVM.selectedTranslation) {
             WidgetSync.publish(bibleVM.selectedTranslation)
