@@ -94,6 +94,7 @@ struct JourneysView: View {
                 }
             }
             .padding(16)
+            .readableWidth()
         }
         .themedScreen()
         .navigationTitle("Bible Maps")

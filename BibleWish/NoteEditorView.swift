@@ -71,6 +71,7 @@ struct NoteEditorView: View {
                     }
                 }
                 .padding(16)
+                .readableWidth()
             }
             .themedScreen()
             .navigationTitle(isNew ? "New Note" : "Note")

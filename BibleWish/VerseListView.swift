@@ -80,6 +80,7 @@ struct VerseListView: View {
                 .padding(.horizontal, readerSettings.bookPage ? 10 : 12)
                 .padding(.vertical, readerSettings.bookPage ? 12 : 0)
                 .padding(.top, 8)
+                .readableWidth(720)
                 
                 .opacity(isAnimating ? 0 : 1)
                 .offset(x: isAnimating ? slideDirection * 12 : 0)

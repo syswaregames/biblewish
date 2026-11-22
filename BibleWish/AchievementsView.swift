@@ -36,6 +36,7 @@ struct AchievementsView: View {
                 }
             }
             .padding(16)
+            .readableWidth()
         }
         .themedScreen()
         .navigationTitle("Achievements")

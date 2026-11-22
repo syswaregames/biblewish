@@ -42,6 +42,7 @@ struct CrossReferencesView: View {
                     }
                 }
                 .padding(16)
+                .readableWidth()
             }
             .themedScreen()
             .navigationTitle(title)

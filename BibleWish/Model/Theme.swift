@@ -222,7 +222,23 @@ struct ThemedRowBackground: View {
     }
 }
 
+/// Keeps content to a comfortable reading width and centers it on wide screens (iPad). On an iPhone
+/// the screen is already narrower, so nothing changes.
+struct ReadableWidth: ViewModifier {
+    var maxWidth: CGFloat
+
+    func body(content: Content) -> some View {
+        content
+            .frame(maxWidth: maxWidth)
+            .frame(maxWidth: .infinity)
+    }
+}
+
 extension View {
+    func readableWidth(_ maxWidth: CGFloat = 680) -> some View {
+        modifier(ReadableWidth(maxWidth: maxWidth))
+    }
+
     /// Apply to list rows or to a whole `Section`.
     func themedRows() -> some View { listRowBackground(ThemedRowBackground()) }
 

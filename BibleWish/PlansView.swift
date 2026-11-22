@@ -46,6 +46,7 @@ struct PlansView: View {
                 }
             }
             .padding(16)
+            .readableWidth()
         }
         .themedScreen()
         .navigationTitle("Reading Plans")

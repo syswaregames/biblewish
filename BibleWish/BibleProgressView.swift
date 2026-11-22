@@ -67,6 +67,7 @@ struct BibleProgressView: View {
                 section("New Testament", range: 39..<66, read: read)
             }
             .padding(16)
+            .readableWidth()
         }
         .themedScreen()
         .navigationTitle("Bible Progress")

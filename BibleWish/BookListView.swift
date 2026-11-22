@@ -21,10 +21,12 @@ struct BookListView: View {
     }
 
 
-    let columns = [
-        GridItem(.flexible()),
-        GridItem(.flexible())
-    ]
+    /// Two columns on an iPhone, more on an iPad; the minimum grows with the text size.
+    @ScaledMetric(relativeTo: .body) private var cardMinimum: CGFloat = 150
+
+    private var columns: [GridItem] {
+        [GridItem(.adaptive(minimum: cardMinimum), spacing: 16)]
+    }
 
     var oldTestamentBooks: [BibleBook] {
         Array(viewModel.books.prefix(39))

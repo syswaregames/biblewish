@@ -75,7 +75,7 @@ Done: Today's reading card on Home; Bible progress by book (Plans tab; chapters 
 
 - Reader: a true wrapped drop cap (SwiftUI `Text` can't wrap around an initial)
 - Phase 4 (accounts and sync)
-- Phase 5: a VoiceOver walkthrough on a device, and checking the iPad layouts
+- Phase 5: a VoiceOver walkthrough on a device; iPad landscape, split view and the 13-inch size
 
 ## Phase 5 so far (2026-11-22)
 
@@ -83,4 +83,5 @@ Done: Today's reading card on Home; Bible progress by book (Plans tab; chapters 
 - Verse of the Day widget: see `docs/WIDGET.md`. Needs the App Group registered in the Apple Developer account.
 - Accessibility pass: fixed font sizes now scale with Dynamic Type (checked at the largest accessibility size on Home, the chapter grid, the reader and Settings); reader verses expose Bookmark, Highlight, Add note and Cross-references actions to VoiceOver and announce their state; section labels are headings; decorative and state icons are hidden or labelled; Sepia and Light use slightly deeper muted ink and gold so small text meets 4.5:1 (Dark already did). VoiceOver itself was not run.
 - App Store listing draft and pre-submission checklist: `docs/APP_STORE.md`. README and `PRIVACY.md` updated (translations, notifications, widget).
+- Pre-submission checks: Release build for a device compiles; deprecation warnings cleared (three old model-file warnings remain on purpose: changing them would change how the Bible JSON decodes); privacy manifests for the app and widget (UserDefaults reasons CA92.1 and 1C8F.1; no other required-reason API is used); AccentColor asset; iPad portrait layout fixed (readable width, adaptive Bible grid).
 

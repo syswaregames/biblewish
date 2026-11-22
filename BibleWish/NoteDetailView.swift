@@ -255,6 +255,7 @@ struct NoteDetailView: View {
             }
             .padding(20)
             .frame(maxWidth: .infinity, alignment: .leading)
+            .readableWidth()
         }
     }
 }

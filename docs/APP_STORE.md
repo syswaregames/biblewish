@@ -89,8 +89,9 @@ Use the largest iPhone size Apple asks for, in the warm Dark theme, plus one Sep
 
 ## Before submitting
 
+- [x] Release build for a real device compiles with no errors; privacy manifests (`PrivacyInfo.xcprivacy`) added for the app and the widget (UserDefaults only, no data collected)
 - [ ] Register the App Group and the widget's App ID (see `WIDGET.md`) and archive with signing
 - [ ] Bump the version/build for **both** the app and the widget (they must match)
 - [ ] Try the flows the automated checks couldn't: start a plan, tick chapters, save and edit a note, long-press a verse, turn on the reminder, add the widget
-- [ ] Check iPad if iPad stays enabled (the layouts haven't been looked at)
+- [x] iPad: checked on an 11-inch iPad Pro simulator (portrait). Content is capped to a readable width and centered, and the Bible grid uses more columns. Landscape, split view and the 13-inch size haven't been looked at
 - [ ] VoiceOver walkthrough on a device

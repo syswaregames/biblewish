@@ -42,6 +42,7 @@ struct PlanDetailView: View {
                         .padding(.top, 8)
                     }
                     .padding(16)
+                    .readableWidth()
                 } else {
                     Text("This plan isn\u{2019}t started.")
                         .foregroundStyle(palette.inkMuted)
