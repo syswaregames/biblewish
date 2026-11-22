@@ -99,3 +99,9 @@ Optional sign-in to biblewish.com (email code), then favorites, notes, highlight
 
 Not checked: running against production (the website changes aren't deployed), the real email delivery, and every flow on a physical device.
 
+## Note formatting (2026-11-22)
+
+Notes use the website's syntax: `# headings`, `**bold**`, `*italic*` / `_italic_`, bullets (`-`, `*`, `•`), numbers (`1.` or `1)`), `> quotes`, `[links](https://…)`, `{red|colored words}`, `{=gold|highlighted words}`, boxes (`::: gold Title` … `:::`) and verse cards (`::: verse John 3:16 · KJV` … `:::`). The inline part is a port of the website's own pattern (`NoteInline`), and Debug builds check it against the website's real regex on 54 tricky lines (`node tools/gen_note_fixtures.mjs` regenerates the cases; run it when the website's syntax changes). Where the website is quirky the app matches it on purpose, for example `[**bold**](url)` shows the asterisks inside a link, and `***text***` reads as bold `*text` followed by `*`. The Study list and the title of an untitled note show plain words, not markup.
+
+Not in the app: the website editor's color toolbar and its "Insert verse" button (the app renders those notes; you type the syntax by hand).
+
