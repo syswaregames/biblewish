@@ -114,6 +114,15 @@ struct BookListView: View {
         }
         
         .toolbar {
+            ToolbarItem(placement: .topBarLeading) {
+                NavigationLink {
+                    SearchView()
+                } label: {
+                    Image(systemName: "magnifyingglass")
+                }
+                .accessibilityLabel("Search the Bible")
+            }
+
             ToolbarItem(placement: .principal) {
                 Text("BibleWish")
                     .font(.headline)

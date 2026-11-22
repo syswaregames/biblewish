@@ -7,6 +7,10 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		96F1A5132F4F111100A1B2D0 /* PlanDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 96F1A4132F4F111100A1B2C0 /* PlanDetailView.swift */; };
+		96F1A5122F4F111100A1B2D0 /* PlansView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 96F1A4122F4F111100A1B2C0 /* PlansView.swift */; };
+		96F1A5112F4F111100A1B2D0 /* ReadingPlans.swift in Sources */ = {isa = PBXBuildFile; fileRef = 96F1A4112F4F111100A1B2C0 /* ReadingPlans.swift */; };
+		96F1A5102F4F111100A1B2D0 /* reading_plans.json in Resources */ = {isa = PBXBuildFile; fileRef = 96F1A4102F4F111100A1B2C0 /* reading_plans.json */; };
 		96F1A5042F4F111100A1B2D0 /* HomeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 96F1A4042F4F111100A1B2C0 /* HomeView.swift */; };
 		96F1A5032F4F111100A1B2D0 /* PassageReference.swift in Sources */ = {isa = PBXBuildFile; fileRef = 96F1A4032F4F111100A1B2C0 /* PassageReference.swift */; };
 		96F1A5022F4F111100A1B2D0 /* VerseOfTheDay.swift in Sources */ = {isa = PBXBuildFile; fileRef = 96F1A4022F4F111100A1B2C0 /* VerseOfTheDay.swift */; };
@@ -58,6 +62,10 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		96F1A4132F4F111100A1B2C0 /* PlanDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlanDetailView.swift; sourceTree = "<group>"; };
+		96F1A4122F4F111100A1B2C0 /* PlansView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlansView.swift; sourceTree = "<group>"; };
+		96F1A4112F4F111100A1B2C0 /* ReadingPlans.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReadingPlans.swift; sourceTree = "<group>"; };
+		96F1A4102F4F111100A1B2C0 /* reading_plans.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = reading_plans.json; sourceTree = "<group>"; };
 		96F1A4042F4F111100A1B2C0 /* HomeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeView.swift; sourceTree = "<group>"; };
 		96F1A4032F4F111100A1B2C0 /* PassageReference.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PassageReference.swift; sourceTree = "<group>"; };
 		96F1A4022F4F111100A1B2C0 /* VerseOfTheDay.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VerseOfTheDay.swift; sourceTree = "<group>"; };
@@ -139,6 +147,8 @@
 		96A32B782F1BC78B0053CD0D /* BibleWish */ = {
 			isa = PBXGroup;
 			children = (
+				96F1A4132F4F111100A1B2C0 /* PlanDetailView.swift */,
+				96F1A4122F4F111100A1B2C0 /* PlansView.swift */,
 				96F1A4042F4F111100A1B2C0 /* HomeView.swift */,
 				96A32BD02F1C7E1D0053CD0D /* Preview Content */,
 				96A32BCE2F1C7BA70053CD0D /* AppIcon.xcassets */,
@@ -176,6 +186,7 @@
 		96A32BA22F1BD73B0053CD0D /* Model */ = {
 			isa = PBXGroup;
 			children = (
+				96F1A4112F4F111100A1B2C0 /* ReadingPlans.swift */,
 				96F1A4032F4F111100A1B2C0 /* PassageReference.swift */,
 				96F1A4022F4F111100A1B2C0 /* VerseOfTheDay.swift */,
 				96A32B8C2F1BCD390053CD0D /* Verse.swift */,
@@ -198,6 +209,7 @@
 		96A32BCB2F1C01520053CD0D /* Data */ = {
 			isa = PBXGroup;
 			children = (
+				96F1A4102F4F111100A1B2C0 /* reading_plans.json */,
 				96F1A4012F4F111100A1B2C0 /* votd_references.json */,
 				9653ECDB2F4E8ABC0054C315 /* red_letter_ranges.json */,
 				9653ECD92F4E690D0054C315 /* bible_he_heb.json */,
@@ -273,6 +285,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				96F1A5102F4F111100A1B2D0 /* reading_plans.json in Resources */,
 				96F1A5012F4F111100A1B2D0 /* votd_references.json in Resources */,
 				96A32BCF2F1C7BA70053CD0D /* AppIcon.xcassets in Resources */,
 				96C098C02F1C8CA900FD74E9 /* BibleIcon.xcassets in Resources */,
@@ -291,6 +304,9 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				96F1A5132F4F111100A1B2D0 /* PlanDetailView.swift in Sources */,
+				96F1A5122F4F111100A1B2D0 /* PlansView.swift in Sources */,
+				96F1A5112F4F111100A1B2D0 /* ReadingPlans.swift in Sources */,
 				96F1A5042F4F111100A1B2D0 /* HomeView.swift in Sources */,
 				96F1A5032F4F111100A1B2D0 /* PassageReference.swift in Sources */,
 				96F1A5022F4F111100A1B2D0 /* VerseOfTheDay.swift in Sources */,

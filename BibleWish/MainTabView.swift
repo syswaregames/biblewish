@@ -14,6 +14,7 @@ struct MainTabView: View {
     @StateObject private var highlightManager = HighlightManager()
     @StateObject private var readerSettings = ReaderSettings()
     @StateObject private var versionStore = VersionStore()
+    @StateObject private var plansStore = PlansStore()
     @Environment(\.palette) private var palette
 
 
@@ -32,10 +33,9 @@ struct MainTabView: View {
             .tabItem { Label("Bible", systemImage: "book") }
 
             NavigationStack {
-                SearchView()
-                    .environmentObject(bibleVM)
+                PlansView()
             }
-            .tabItem { Label("Search", systemImage: "magnifyingglass") }
+            .tabItem { Label("Plans", systemImage: "checklist") }
 
             NavigationStack {
                 BookmarksView()
@@ -53,6 +53,7 @@ struct MainTabView: View {
         .environmentObject(highlightManager)
         .environmentObject(readerSettings)
         .environmentObject(versionStore)
+        .environmentObject(plansStore)
         .tint(palette.gold)
         .onAppear {
             // Sync BibleViewModel with VersionStore on launch

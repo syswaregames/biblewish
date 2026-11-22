@@ -42,7 +42,7 @@ Goal: bring the iOS app in line with the identity and features of biblewish.com 
 - [ ] Tab bar: Home · Bible · Plans · Study · More (Home added; Plans and Study arrive in Phase 3)
 
 ### Phase 3 — Offline features
-- [ ] Reading plans (`data/plans`) with progress, streaks, per-book Bible progress. Never change a published plan's days; add a new plan id
+- [x] Reading plans (`tools/build_plans.py` → `reading_plans.json`): catalog, start/stop, per-chapter checklist, on track/ahead/behind and streaks (ported from `js/plans.js`). Search moved into the Bible tab's toolbar to keep five tabs. Still to do: per-book Bible progress. Never change a published plan's days; add a new plan id
 - [ ] Study: favorites + notes (colored tags), replacing Bookmarks
 - [ ] Achievements (badge definitions from the website's `api/lib/badges.php`, computed locally)
 - [ ] Cross-references and places (`data/crossrefs`, `data/places`) in the verse detail
