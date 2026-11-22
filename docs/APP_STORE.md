@@ -5,7 +5,7 @@ Draft copy for the next release. Edit freely; limits are Apple's (name 30, subti
 ## Name and subtitle
 
 - **Name:** BibleWish
-- **Subtitle:** A daily verse and quiet reading *(29)*
+- **Subtitle:** Daily verse & quiet reading *(27)*
 
 ## Promotional text *(≤170; can change without a new build)*
 
@@ -32,7 +32,7 @@ STAY ON TRACK
 • Achievements that celebrate faithfulness. Nothing is ranked or compared
 
 STUDY
-• Save favorite verses and highlight in five colors
+• Save favorite verses and highlight in four colors
 • Write notes with tags (Insight, Question, Prayer, Sermon, Promise), light formatting, and verse references that open the passage
 • Cross-references for every verse
 • Places named in each chapter, and the journeys of Abraham, the Exodus, Jesus and Paul on a map
