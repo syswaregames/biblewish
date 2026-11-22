@@ -156,6 +156,7 @@ struct ThemedScreen: ViewModifier {
     func body(content: Content) -> some View {
         content
             .background(palette.pageGradient.ignoresSafeArea())
+            .navigationBarTitleDisplayMode(.inline)
             .toolbarBackground(palette.panel, for: .navigationBar)
             .toolbarBackground(.visible, for: .navigationBar)
             .toolbarBackground(palette.panel, for: .tabBar)
