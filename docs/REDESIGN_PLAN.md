@@ -1,6 +1,6 @@
 # BibleWish App Redesign — Plan
 
-Status: **Phases 0–3 done; theme walkthrough done (2026-11-22)** · Created 2026-11-22
+Status: **Phases 0–3, polish, Phase 5 and Phase 4 (tier B) built (2026-11-22); on-device testing and website deployment pending** · Created 2026-11-22
 
 Goal: bring the iOS app in line with the identity and features of biblewish.com (source: `../BibleWish_Website`, see its `docs/PORTAL_PLAN.md` and `CLAUDE.md`).
 
@@ -84,4 +84,18 @@ Done: Today's reading card on Home; Bible progress by book (Plans tab; chapters 
 - Accessibility pass: fixed font sizes now scale with Dynamic Type (checked at the largest accessibility size on Home, the chapter grid, the reader and Settings); reader verses expose Bookmark, Highlight, Add note and Cross-references actions to VoiceOver and announce their state; section labels are headings; decorative and state icons are hidden or labelled; Sepia and Light use slightly deeper muted ink and gold so small text meets 4.5:1 (Dark already did). VoiceOver itself was not run.
 - App Store listing draft and pre-submission checklist: `docs/APP_STORE.md`. README and `PRIVACY.md` updated (translations, notifications, widget).
 - Pre-submission checks: Release build for a device compiles; deprecation warnings cleared (three old model-file warnings remain on purpose: changing them would change how the Bible JSON decodes); privacy manifests for the app and widget (UserDefaults reasons CA92.1 and 1C8F.1; no other required-reason API is used); AccentColor asset; iPad portrait layout fixed (readable width, adaptive Bible grid).
+
+## Phase 4 — accounts and sync (tier B, built 2026-11-22)
+
+Optional sign-in to biblewish.com (email code), then favorites, notes, highlights, reading progress, reading plans and a new private prayer list stay in step with the website. Decisions: tier B; highlight colors stored on the server. Details: `PHASE4_PLAN.md`, `PHASE4_SERVER.md`.
+
+- **Offline first:** the device is the source of truth; every change is queued (`SyncOp`) and sent first, and only then is the server's state pulled. Signed out, the app behaves exactly as before.
+- **Safe by construction:** a plan or the highlights are overwritten or removed by the server only after it has acknowledged them; a different account starts clean; a sync request during a pass waits and goes round again.
+- **Website changes** (tested locally, **not committed or deployed**): highlight colors (migration 017), a reading import and a plans import that keep real dates and make no read events today.
+- **Account screen:** export my data, sign out, delete account (typed confirmation), sync status and Sync now.
+- **Privacy:** manifest, `PRIVACY.md` and the App Store label draft now describe optional sign-in (email, user id, user content, reading progress).
+- **Tests:** a Debug-only harness (`BibleWish/Sync/SelfTest.swift`) signs in through the local server and runs 117 checks, in the shipping Release build it isn't present.
+- **Found and fixed on the way:** progress counting ignored real chapter keys (`kjv|John-3`), so Home, Bible progress and the reading badges had counted nothing for real reading history.
+
+Not checked: running against production (the website changes aren't deployed), the real email delivery, and every flow on a physical device.
 
