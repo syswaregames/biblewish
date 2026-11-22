@@ -26,8 +26,10 @@ final class SyncEngine: ObservableObject {
     var pendingCount: Int { outbox.ops.count }
 
     private var outbox = SyncOutbox()
-    private var running = false
     private var pending: Task<Void, Never>?
+    /// The pass in progress, if any. A request that arrives meanwhile waits for it and asks for one more.
+    private var currentPass: Task<Void, Never>?
+    private var runAgain = false
 
     private let api = APIClient.shared
     private weak var auth: AuthStore?
@@ -35,6 +37,7 @@ final class SyncEngine: ObservableObject {
     private weak var bookmarks: BookmarkManager?
     private weak var highlights: HighlightManager?
     private weak var notes: NoteStore?
+    private weak var plans: PlansStore?
 
     private let accountKey = "sync_account_id"
     private let initialKey = "sync_initial_done_account"
@@ -52,17 +55,20 @@ final class SyncEngine: ObservableObject {
         viewModel: BibleViewModel,
         bookmarks: BookmarkManager,
         highlights: HighlightManager,
-        notes: NoteStore
+        notes: NoteStore,
+        plans: PlansStore
     ) {
         self.auth = auth
         self.viewModel = viewModel
         self.bookmarks = bookmarks
         self.highlights = highlights
         self.notes = notes
+        self.plans = plans
 
         bookmarks.onChange = { [weak self] op in self?.enqueue(op) }
         highlights.onChange = { [weak self] op in self?.enqueue(op) }
         notes.onChange = { [weak self] op in self?.enqueue(op) }
+        plans.onChange = { [weak self] op in self?.enqueue(op) }
         viewModel.onReadChange = { [weak self] op in self?.enqueue(op) }
         auth.onSignedOut = { [weak self] in self?.signedOut() }
         auth.onAccountDeleted = { [weak self] in self?.accountDeleted() }
@@ -124,6 +130,9 @@ final class SyncEngine: ObservableObject {
         for note in notes?.notes ?? [] {
             outbox.add(.pushNote(note.id))
         }
+        for plan in plans?.userPlans ?? [] {
+            outbox.add(.importPlan(plan.id))
+        }
     }
 
     private func scheduleSync() {
@@ -138,10 +147,27 @@ final class SyncEngine: ObservableObject {
     // MARK: - Sync
 
     func syncNow() async {
-        guard auth?.isSignedIn == true, !running else { return }
-        running = true
+        guard auth?.isSignedIn == true else { return }
+        if let currentPass {
+            // Changes made during a pass may have missed it: go round once more.
+            runAgain = true
+            await currentPass.value
+            return
+        }
+        let pass = Task { @MainActor [weak self] in
+            guard let self else { return }
+            repeat {
+                self.runAgain = false
+                await self.runOnePass()
+            } while self.runAgain && self.auth?.isSignedIn == true
+        }
+        currentPass = pass
+        await pass.value
+        currentPass = nil
+    }
+
+    private func runOnePass() async {
         status = .syncing
-        defer { running = false }
 
         do {
             try await flush()
@@ -217,6 +243,28 @@ final class SyncEngine: ObservableObject {
 
         case .deleteNote(let serverId):
             try await api.send("DELETE", "api/notes.php", query: ["id": String(serverId)])
+
+        case .startPlan(let planId):
+            guard let plan = plans?.userPlan(planId) else { return }
+            try await api.send("POST", "api/plans.php", query: ["action": "import"], json: [
+                "plan_id": planId, "started_on": plan.startedOn, "progress": [Any](),
+            ])
+
+        case .importPlan(let planId):
+            guard let plan = plans?.userPlan(planId) else { return }
+            let progress: [[Any]] = plan.progress.prefix(1500).map { [$0.day, $0.item, ISO8601DateFormatter.plain.string(from: $0.completedAt)] }
+            try await api.send("POST", "api/plans.php", query: ["action": "import"], json: [
+                "plan_id": planId, "started_on": plan.startedOn, "progress": progress,
+            ])
+
+        case .checkPlanItem(let planId, let day, let item):
+            guard let plans, plans.userPlan(planId) != nil else { return }
+            try await api.send("POST", "api/plans.php", query: ["action": "check"], json: [
+                "plan_id": planId, "day": day, "item": item, "done": plans.isTicked(planId: planId, day: day, item: item),
+            ])
+
+        case .deletePlan(let planId):
+            try await api.send("DELETE", "api/plans.php", query: ["plan_id": planId])
         }
     }
 
@@ -236,6 +284,50 @@ final class SyncEngine: ObservableObject {
 
         let serverNotes = try await api.request(NotesResponse.self, "GET", "api/notes.php")
         notes?.apply(serverNotes: serverNotes.notes.map(\.asNote))
+
+        let serverPlans = try await api.request(PlansResponse.self, "GET", "api/plans.php")
+        plans?.apply(serverPlans: serverPlans.plans.map(\.asPlan))
+    }
+
+    // MARK: - Plans mapping
+
+    private struct PlansResponse: Decodable { let plans: [ServerPlan] }
+
+    private struct ServerPlan: Decodable {
+        let planId: String
+        let startedOn: String
+        let ticks: [PlanTick]
+
+        /// Each tick arrives as [day, item, completed_at].
+        struct PlanTick: Decodable {
+            let day: Int
+            let item: Int
+            let completedAt: Date
+
+            init(from decoder: Decoder) throws {
+                var container = try decoder.unkeyedContainer()
+                day = try container.decode(Int.self)
+                item = try container.decode(Int.self)
+                let text = try container.decode(String.self)
+                completedAt = ISO8601DateFormatter.plain.date(from: text) ?? ISO8601DateFormatter.fractional.date(from: text) ?? Date()
+            }
+        }
+
+        enum CodingKeys: String, CodingKey { case planId, startedOn, progress }
+
+        init(from decoder: Decoder) throws {
+            let container = try decoder.container(keyedBy: CodingKeys.self)
+            planId = try container.decode(String.self, forKey: .planId)
+            startedOn = try container.decode(String.self, forKey: .startedOn)
+            ticks = try container.decode([PlanTick].self, forKey: .progress)
+        }
+
+        var asPlan: UserPlan {
+            UserPlan(
+                id: planId, startedOn: startedOn,
+                progress: ticks.map { PlanProgressEntry(day: $0.day, item: $0.item, completedAt: $0.completedAt) }
+            )
+        }
     }
 
     // MARK: - Highlights mapping

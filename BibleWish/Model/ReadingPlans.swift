@@ -98,6 +98,9 @@ final class PlansStore: ObservableObject {
         didSet { save() }
     }
 
+    /// Set by the sync engine to hear about changes made by the reader (not ones applied from the server).
+    var onChange: ((SyncOp) -> Void)?
+
     private let storageKey = "reading_plans_v1"
 
     init() {
@@ -152,10 +155,13 @@ final class PlansStore: ObservableObject {
     func start(_ id: String, on date: Date = Date()) {
         guard info(id) != nil, userPlan(id) == nil else { return }
         userPlans.append(UserPlan(id: id, startedOn: Self.isoDay(date), progress: []))
+        onChange?(.startPlan(id))
     }
 
     func stop(_ id: String) {
+        guard userPlan(id) != nil else { return }
         userPlans.removeAll { $0.id == id }
+        onChange?(.deletePlan(id))
     }
 
     func toggle(planId: String, day: Int, item: Int, at date: Date = Date()) {
@@ -168,6 +174,29 @@ final class PlansStore: ObservableObject {
             plan.progress.append(PlanProgressEntry(day: day, item: item, completedAt: date))
         }
         userPlans[index] = plan
+        onChange?(.checkPlanItem(planId: planId, day: day, item: item))
+    }
+
+    // MARK: - Sync (these never call onChange)
+
+    /// Whether a chapter of a plan is ticked (what the server should be told).
+    func isTicked(planId: String, day: Int, item: Int) -> Bool {
+        userPlan(planId)?.progress.contains { $0.day == day && $0.item == item } ?? false
+    }
+
+    /// Makes the plans match the server's. Plans this app doesn't know are left alone.
+    func apply(serverPlans: [UserPlan]) {
+        let known = serverPlans.filter { info($0.id) != nil }
+        let sorted = known.sorted { $0.id < $1.id }
+        let current = userPlans.sorted { $0.id < $1.id }
+        if sorted != current {
+            userPlans = known
+        }
+    }
+
+    func removeAllLocal() {
+        guard !userPlans.isEmpty else { return }
+        userPlans = []
     }
 
     // MARK: - Progress

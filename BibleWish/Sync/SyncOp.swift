@@ -20,11 +20,19 @@ enum SyncOp: Codable, Hashable {
     case mergeHighlights
     case pushNote(UUID)
     case deleteNote(serverId: Int)
+    /// A plan started on this device: sent with its real start date.
+    case startPlan(String)
+    /// One-time upload of a plan (and its ticks, with their dates) that existed before signing in.
+    case importPlan(String)
+    /// A chapter ticked or unticked in a plan; the current state is what counts.
+    case checkPlanItem(planId: String, day: Int, item: Int)
+    case deletePlan(String)
 
     /// Operations that describe the same target replace each other, so the queue stays short.
     var supersedeKey: String? {
         switch self {
         case .readChapter(let book, let chapter, _): return "read-\(book)-\(chapter)"
+        case .checkPlanItem(let plan, let day, let item): return "check-\(plan)-\(day)-\(item)"
         default: return nil
         }
     }

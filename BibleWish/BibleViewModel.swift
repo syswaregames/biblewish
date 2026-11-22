@@ -347,17 +347,13 @@ class BibleViewModel: ObservableObject {
         }
     }
 
-    /// Adds chapters read on biblewish.com (or another device) to this device's progress.
-    /// Names come from the open translation; nothing is sent back.
+    /// Adds chapters read on biblewish.com (or another device) to this device's progress, under the
+    /// open translation (the Bible tab checks progress per translation). Nothing is sent back.
     func applyServerChapters(_ pairs: [[Int]]) {
         guard !books.isEmpty else { return }
-        let have = AchievementMetrics.chapterRefs(fromKeys: readingProgress.completedChapters)
         var progress = readingProgress
         for pair in pairs where pair.count == 2 && pair[0] < books.count {
-            let ref = ChapterRef(book: pair[0], chapter: pair[1])
-            if !have.contains(ref) {
-                progress.completedChapters.insert(chapterKey(book: books[pair[0]].name, chapter: pair[1]))
-            }
+            progress.completedChapters.insert(chapterKey(book: books[pair[0]].name, chapter: pair[1]))
         }
         if progress != readingProgress { readingProgress = progress }
     }

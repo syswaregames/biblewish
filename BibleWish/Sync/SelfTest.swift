@@ -22,16 +22,18 @@ final class SelfTest {
     let bookmarks: BookmarkManager
     let highlights: HighlightManager
     let notes: NoteStore
+    let plans: PlansStore
 
     private(set) var failures = 0
 
-    init(auth: AuthStore, sync: SyncEngine, bibleVM: BibleViewModel, bookmarks: BookmarkManager, highlights: HighlightManager, notes: NoteStore) {
+    init(auth: AuthStore, sync: SyncEngine, bibleVM: BibleViewModel, bookmarks: BookmarkManager, highlights: HighlightManager, notes: NoteStore, plans: PlansStore) {
         self.auth = auth
         self.sync = sync
         self.bibleVM = bibleVM
         self.bookmarks = bookmarks
         self.highlights = highlights
         self.notes = notes
+        self.plans = plans
     }
 
     /// Reads from the server as the signed-in test account.
@@ -88,6 +90,7 @@ final class SelfTest {
         await runFavoritesAndReading()
         await runHighlights()
         await runNotes()
+        await runPlans()
         emit(failures == 0 ? "SELFTEST ALL PASSED" : "SELFTEST \(failures) FAILED")
         emit("SELFTEST DONE")
     }
@@ -425,6 +428,104 @@ final class SelfTest {
         check("no duplicates locally", notes.notes.count == onDevice, "\(notes.notes.count)")
         _ = await auth.deleteAccount()
         notes.removeAllLocal()
+    }
+
+    // MARK: - Reading plans
+
+    private struct SrvPlan: Decodable {
+        let planId: String
+        let startedOn: String
+        let completedAt: String?
+        let progress: [[PlanCell]]
+        // progress items are [day, item, completed_at]; only day and item are read here
+        var cells: [[Int]] { progress.map { $0.compactMap(\.number) } }
+    }
+    private struct PlanCell: Decodable {
+        let number: Int?
+        init(from decoder: Decoder) throws { number = try? decoder.singleValueContainer().decode(Int.self) }
+    }
+    private struct SrvPlans: Decodable { let plans: [SrvPlan] }
+
+    private func serverPlans() async -> [SrvPlan] { await get(SrvPlans.self, "api/plans.php")?.plans ?? [] }
+
+    private func runPlans() async {
+        if auth.isSignedIn { await auth.signOut() }
+        for plan in plans.userPlans { plans.stop(plan.id) }
+        let calendar = Calendar.current
+        let tenDaysAgo = calendar.date(byAdding: .day, value: -10, to: Date())!
+        let fiveDaysAgo = calendar.date(byAdding: .day, value: -5, to: Date())!
+        let startedOnTen = PlansStore.isoDay(tenDaysAgo)
+
+        // Made on the device before signing in, with real dates.
+        plans.start("gospels-30", on: tenDaysAgo)
+        plans.toggle(planId: "gospels-30", day: 1, item: 0, at: fiveDaysAgo)
+        plans.toggle(planId: "gospels-30", day: 1, item: 1, at: fiveDaysAgo)
+        plans.toggle(planId: "gospels-30", day: 2, item: 0, at: fiveDaysAgo)
+        plans.start("proverbs-31")
+        check("nothing queued while signed out (plans)", sync.pendingCount == 0, "\(sync.pendingCount)")
+
+        guard await signInFreshAccount("plans") != nil else { check("sign in for plan tests", false); return }
+        await sync.signedIn()
+        var server = await serverPlans()
+        let gospels = server.first { $0.planId == "gospels-30" }
+        check("both plans reached the server", Set(server.map(\.planId)) == ["gospels-30", "proverbs-31"], "\(server.map(\.planId))")
+        check("the real start date was kept", gospels?.startedOn == startedOnTen, "\(String(describing: gospels?.startedOn)) vs \(startedOnTen)")
+        check("ticks arrived", Set((gospels?.cells ?? []).map { "\($0[0]):\($0[1])" }) == ["1:0", "1:1", "2:0"], "\(String(describing: gospels?.cells))")
+        var reading = await get(Reading.self, "api/reading.php")
+        check("importing old ticks did not count as reading today", reading?.today.isEmpty == true, "\(String(describing: reading?.today))")
+        check("ticked chapters are in Bible progress", reading?.chapters.contains([39, 1]) == true, "\(String(describing: reading?.chapters.prefix(6)))")
+        check("and came back to the device's progress", bibleVM.isChapterCompleted(book: "Matthew", chapter: 1))
+
+        // Ticking and unticking while signed in.
+        plans.toggle(planId: "gospels-30", day: 2, item: 1)
+        await sync.syncNow()
+        server = await serverPlans()
+        check("new tick reached the server", server.first { $0.planId == "gospels-30" }?.cells.contains([2, 1]) == true)
+        reading = await get(Reading.self, "api/reading.php")
+        check("a live tick counts as reading today", (reading?.today.count ?? 0) >= 1, "\(String(describing: reading?.today))")
+        plans.toggle(planId: "gospels-30", day: 2, item: 1)
+        await sync.syncNow()
+        server = await serverPlans()
+        check("untick reached the server", server.first { $0.planId == "gospels-30" }?.cells.contains([2, 1]) == false)
+
+        // Stopping and starting.
+        plans.stop("proverbs-31")
+        plans.start("new-testament-90")
+        await sync.syncNow()
+        server = await serverPlans()
+        check("stopped plan removed and new plan added", Set(server.map(\.planId)) == ["gospels-30", "new-testament-90"], "\(server.map(\.planId))")
+        check("new plan starts today", server.first { $0.planId == "new-testament-90" }?.startedOn == PlansStore.isoDay(Date()))
+
+        // Made on the website.
+        _ = try? await APIClient.shared.send("POST", "api/plans.php", json: ["plan_id": "psalms-30", "start_date": PlansStore.isoDay(Date())])
+        _ = try? await APIClient.shared.send("POST", "api/plans.php", query: ["action": "check"], json: ["plan_id": "psalms-30", "day": 1, "item": 0, "done": true])
+        await sync.syncNow()
+        check("plan started on the website arrived with its tick", plans.userPlan("psalms-30")?.progress.contains { $0.day == 1 && $0.item == 0 } == true)
+        _ = try? await APIClient.shared.send("DELETE", "api/plans.php", query: ["plan_id": "gospels-30"])
+        await sync.syncNow()
+        check("plan stopped on the website disappears", plans.userPlan("gospels-30") == nil)
+
+        // Offline.
+        setenv("BW_API_BASE", "http://localhost:9", 1)
+        plans.toggle(planId: "psalms-30", day: 1, item: 1)
+        await sync.syncNow()
+        check("offline tick stays queued", sync.pendingCount >= 1 && plans.isTicked(planId: "psalms-30", day: 1, item: 1))
+        setenv("BW_API_BASE", "http://localhost:8088", 1)
+        await sync.syncNow()
+        server = await serverPlans()
+        check("offline tick delivered and kept", sync.pendingCount == 0 && server.first { $0.planId == "psalms-30" }?.cells.contains([1, 1]) == true && plans.isTicked(planId: "psalms-30", day: 1, item: 1))
+
+        // Another account gets the plans with their dates.
+        await auth.signOut()
+        let onDevice = Set(plans.userPlans.map(\.id))
+        let psalmsStart = plans.userPlan("psalms-30")?.startedOn
+        guard await signInFreshAccount("plans2") != nil else { check("second account for plans", false); return }
+        await sync.signedIn()
+        server = await serverPlans()
+        check("second account received the plans", Set(server.map(\.planId)) == onDevice && !onDevice.isEmpty, "\(server.map(\.planId)) vs \(onDevice)")
+        check("dates intact on the second account", server.first { $0.planId == "psalms-30" }?.startedOn == psalmsStart)
+        _ = await auth.deleteAccount()
+        for plan in plans.userPlans { plans.stop(plan.id) }
     }
 }
 #endif
