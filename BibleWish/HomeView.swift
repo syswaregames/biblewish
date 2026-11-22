@@ -17,6 +17,8 @@ struct HomeView: View {
     @State private var passageText = ""
     @State private var passageNotFound = false
     @State private var target: PassageReference?
+    /// The photo grows with the text size so a large greeting still fits on it.
+    @ScaledMetric(relativeTo: .largeTitle) private var heroHeight: CGFloat = 300
 
     var body: some View {
         ScrollView {
@@ -91,7 +93,7 @@ struct HomeView: View {
         // The photo sits in an overlay so its fill size can't widen the column.
         return Color.clear
             .frame(maxWidth: .infinity)
-            .frame(height: 300)
+            .frame(height: heroHeight)
             .overlay {
                 Image(timeOfDay.imageName)
                     .resizable()
