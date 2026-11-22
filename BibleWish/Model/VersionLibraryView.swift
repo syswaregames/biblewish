@@ -52,6 +52,7 @@ struct VersionLibraryView: View {
                             }
                         }
                     }
+                        .themedRows()
                 }
             }
             .searchable(text: $query, placement: .navigationBarDrawer(displayMode: .automatic))

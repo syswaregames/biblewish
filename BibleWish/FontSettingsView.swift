@@ -23,6 +23,7 @@ struct FontSettingsView: View {
                 Text("Size: \(Int(readerSettings.fontSize))")
                     .font(.caption)
             }
+                .themedRows()
 
             Section(header: Text("Font Style")) {
                 Picker("Font", selection: $readerSettings.font) {
@@ -32,6 +33,7 @@ struct FontSettingsView: View {
                 }
                 .pickerStyle(.segmented)
             }
+                .themedRows()
 
 
             // MARK: - Preview
@@ -46,6 +48,7 @@ struct FontSettingsView: View {
                                 .lineSpacing(6)
                                 .padding(.vertical)
                         }
+                            .themedRows()
                     }
                     .themedList()
                     .navigationTitle("Reading Font")

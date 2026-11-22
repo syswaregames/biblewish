@@ -51,12 +51,14 @@ struct SettingsView: View {
                     }
                 }
             }
+                .themedRows()
 
             // MARK: - Appearance
             Section(header: Text("Appearance")) {
                 ThemePicker()
                     .listRowInsets(EdgeInsets(top: 12, leading: 16, bottom: 12, trailing: 16))
             }
+                .themedRows()
 
             // MARK: - Reading Settings
             Section(header: Text("Reading")) {
@@ -84,6 +86,7 @@ struct SettingsView: View {
                 .disabled(!readerSettings.redLetterEnabled)
                 .opacity(readerSettings.redLetterEnabled ? 1 : 0.5)
             }
+                .themedRows()
 
             // MARK: - Progress
             Section(
@@ -97,6 +100,7 @@ struct SettingsView: View {
                           systemImage: "arrow.counterclockwise")
                 }
             }
+            .themedRows()
 
             // MARK: - About
             Section {
@@ -144,6 +148,7 @@ struct SettingsView: View {
                 .frame(maxWidth: .infinity)
                 .padding(.vertical, 12)
             }
+                .themedRows()
         }
         .themedList()
         .navigationTitle("Settings")

@@ -75,6 +75,7 @@ struct SearchView: View {
                             .lineLimit(2)
                         }
                     }
+                    .themedRows()
                 }
                 .themedList()
             }

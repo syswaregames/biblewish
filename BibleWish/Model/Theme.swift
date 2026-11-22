@@ -210,7 +210,19 @@ private struct ThemedListRows: ViewModifier {
     }
 }
 
+/// Row background for list rows: a warm panel instead of the system's grey.
+struct ThemedRowBackground: View {
+    @Environment(\.palette) private var palette
+
+    var body: some View {
+        palette.panel.opacity(0.7)
+    }
+}
+
 extension View {
+    /// Apply to list rows or to a whole `Section`.
+    func themedRows() -> some View { listRowBackground(ThemedRowBackground()) }
+
     func themedScreen() -> some View { modifier(ThemedScreen()) }
 
     func themedList() -> some View {

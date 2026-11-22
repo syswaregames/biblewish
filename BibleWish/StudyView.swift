@@ -93,6 +93,7 @@ struct StudyView: View {
                             noteRow(note)
                         }
                         .buttonStyle(.plain)
+                        .themedRows()
                     }
                     .onDelete { offsets in
                         let ids = offsets.map { visibleNotes[$0].id }

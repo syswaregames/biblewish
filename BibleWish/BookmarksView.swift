@@ -16,6 +16,7 @@ struct BookmarksView: View {
             if bookmarkManager.bookmarks.isEmpty {
                 Text("No bookmarks yet")
                     .foregroundStyle(.secondary)
+                    .themedRows()
             } else {
                 ForEach(bookmarkManager.bookmarks) { bookmark in
                     NavigationLink {
@@ -30,6 +31,7 @@ struct BookmarksView: View {
                                 .lineLimit(2)
                         }
                     }
+                    .themedRows()
                 }
                 .onDelete { indexSet in
                     bookmarkManager.delete(at: indexSet)

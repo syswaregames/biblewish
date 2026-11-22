@@ -46,6 +46,7 @@ struct TranslationSettingsView: View {
             } footer: {
                 Text("Changing translation also updates search and reading progress for that translation.")
             }
+                .themedRows()
         }
         .themedList()
         .navigationTitle("Language & Version")
