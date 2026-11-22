@@ -63,3 +63,7 @@ fastlane/test_output
 
 # macOS
 .DS_Store
+
+# Apple push key and its notes: secrets, never committed (see the website repo docs/PUSH.md)
+APN/
+*.p8

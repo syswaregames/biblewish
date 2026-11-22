@@ -124,8 +124,10 @@ final class PushManager: ObservableObject {
             let summary = try await api.request(Summary.self, "POST", "api/devices.php", query: ["action": "test"])
             serverAvailable = summary.push.available
             if !summary.push.available { return "Push is not set up on the server yet, so nothing was sent." }
-            return (summary.delivered ?? 0) > 0
-                ? "Sent. It should arrive in a moment."
+            if (summary.delivered ?? 0) > 0 { return "Sent. It should arrive in a moment." }
+            // A build run from Xcode uses Apple's sandbox service, which a Production-only key refuses.
+            return PushEnvironment.current == "sandbox"
+                ? "Apple did not accept it. Builds run from Xcode use Apple's sandbox service, which needs a push key that allows Sandbox; a Production-only key works for TestFlight and App Store builds."
                 : "Apple did not accept it for this phone. Try turning push off and on, then again."
         } catch {
             return CommunityStore.message(error)
