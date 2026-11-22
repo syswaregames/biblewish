@@ -144,10 +144,12 @@ struct NoteEditorView: View {
                         .font(.caption)
                         .foregroundStyle(palette.inkMuted)
                 }
+                .padding(.horizontal, 16)
             }
 
             if showVersePanel, !preview {
                 versePanel
+                    .padding(.horizontal, 16)
             }
 
             ScrollView(.horizontal, showsIndicators: false) {
@@ -265,6 +267,7 @@ struct NoteEditorView: View {
                     ForEach(BibleTranslation.allCases) { Text($0.widgetId.uppercased()).tag($0) }
                 }
                 .pickerStyle(.menu)
+                .fixedSize()
 
                 Button {
                     Task { await insertVerse() }

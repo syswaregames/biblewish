@@ -103,5 +103,11 @@ Not checked: running against production (the website changes aren't deployed), t
 
 Notes use the website's syntax: `# headings`, `**bold**`, `*italic*` / `_italic_`, bullets (`-`, `*`, `•`), numbers (`1.` or `1)`), `> quotes`, `[links](https://…)`, `{red|colored words}`, `{=gold|highlighted words}`, boxes (`::: gold Title` … `:::`) and verse cards (`::: verse John 3:16 · KJV` … `:::`). The inline part is a port of the website's own pattern (`NoteInline`), and Debug builds check it against the website's real regex on 54 tricky lines (`node tools/gen_note_fixtures.mjs` regenerates the cases; run it when the website's syntax changes). Where the website is quirky the app matches it on purpose, for example `[**bold**](url)` shows the asterisks inside a link, and `***text***` reads as bold `*text` followed by `*`. The Study list and the title of an untitled note show plain words, not markup.
 
-Not in the app: the website editor's color toolbar and its "Insert verse" button (the app renders those notes; you type the syntax by hand).
+
+
+## Note editor toolbar (2026-11-22)
+
+The editor has the website's formatting actions: bold, italic, heading, bullets, numbers, quote, link, text color, highlighter, colored box, Insert a verse and a preview. The actions are pure functions (`NoteEditing`, a port of the website's `attachNoteTools`) tested without any screen; the text box is a `UITextView` (SwiftUI's `TextEditor` can't expose the selection on iOS 17) so the toolbar can act on the selection and keep undo. Return in a list starts the next item. Insert a verse works offline in any translation (the verse text comes from the app's own files, not `api/passage.php`) and writes the same `::: verse John 3:16 · KJV` card the website does.
+
+Not checked: typing and tapping the toolbar on a device (the logic and the text-view integration are covered by the Debug self-test, 176 checks).
 
