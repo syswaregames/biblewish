@@ -23,7 +23,7 @@ struct BookmarksView: View {
                         BookmarkDetailView(bookmark: bookmark)
                     } label: {
                         VStack(alignment: .leading, spacing: 4) {
-                            Text("\(bookmark.bookName) \(bookmark.chapterNumber):\(bookmark.verseNumber)")
+                            Text(bookmark.reference)
                                 .font(.caption)
                                 .foregroundStyle(.secondary)
 

@@ -145,7 +145,7 @@ class BibleViewModel: ObservableObject {
     private var hasBuiltIndex = false
     private let selectedTranslationKey = "selected_bible_translation"
 
-    struct ReadingProgress: Codable {
+    struct ReadingProgress: Codable, Equatable {
         var completedChapters: Set<String>
     }
 
@@ -316,6 +316,9 @@ class BibleViewModel: ObservableObject {
         return readingProgress.completedChapters.contains(key)
     }
 
+    /// Set by the sync engine to hear when the reader marks a chapter read or unread.
+    var onReadChange: ((SyncOp) -> Void)?
+
     func toggleChapterCompleted(book: String, chapter: Int) {
         let key = chapterKey(book: book, chapter: chapter)
 
@@ -338,6 +341,25 @@ class BibleViewModel: ObservableObject {
         }
 
         readingProgress = progress
+
+        if let bookIndex {
+            onReadChange?(.readChapter(book: bookIndex, chapter: chapter, read: progress.completedChapters.contains(key)))
+        }
+    }
+
+    /// Adds chapters read on biblewish.com (or another device) to this device's progress.
+    /// Names come from the open translation; nothing is sent back.
+    func applyServerChapters(_ pairs: [[Int]]) {
+        guard !books.isEmpty else { return }
+        let have = AchievementMetrics.chapterRefs(fromKeys: readingProgress.completedChapters)
+        var progress = readingProgress
+        for pair in pairs where pair.count == 2 && pair[0] < books.count {
+            let ref = ChapterRef(book: pair[0], chapter: pair[1])
+            if !have.contains(ref) {
+                progress.completedChapters.insert(chapterKey(book: books[pair[0]].name, chapter: pair[1]))
+            }
+        }
+        if progress != readingProgress { readingProgress = progress }
     }
 
     private func saveReadingLog() {

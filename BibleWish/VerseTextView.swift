@@ -37,7 +37,8 @@ struct VerseTextView: View {
             bookName: bookName,
             chapterNumber: chapterNumber,
             verseNumber: verse.number,
-            verseText: verse.text
+            verseText: verse.text,
+            translation: viewModel.selectedTranslation.widgetId
         )
 
         let highlight = highlightManager.highlightFor(

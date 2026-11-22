@@ -13,7 +13,7 @@ struct BookmarkDetailView: View {
     var body: some View {
         ScrollView {
             VStack(alignment: .leading, spacing: 16) {
-                Text("\(bookmark.bookName) \(bookmark.chapterNumber):\(bookmark.verseNumber)")
+                Text(bookmark.reference)
                     .font(.headline)
 
                 Text(bookmark.verseText)

@@ -22,6 +22,8 @@ final class AuthStore: ObservableObject {
 
     /// Called after sign-out or account deletion so local sync bookkeeping can be reset.
     var onSignedOut: (() -> Void)?
+    /// Called after the account was deleted on the server.
+    var onAccountDeleted: (() -> Void)?
 
     private let cacheKey = "auth_cached_user_v1"
     private let api = APIClient.shared
@@ -92,7 +94,10 @@ final class AuthStore: ObservableObject {
         let done = await perform {
             try await self.api.send("DELETE", "api/account.php", json: ["confirm": "DELETE"])
         }
-        if done { clearLocalSession() }
+        if done {
+            onAccountDeleted?()
+            clearLocalSession()
+        }
         return done
     }
 

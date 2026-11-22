@@ -70,14 +70,16 @@ enum AchievementMetrics {
         ChapterRef(book: 42, chapter: 20), ChapterRef(book: 45, chapter: 15),
     ]
 
-    /// Turns the saved "Book-Chapter" keys into chapter references, whatever the translation's
-    /// book names were when they were saved.
+    /// Turns the saved chapter keys into chapter references, whatever the translation's book names
+    /// were when they were saved. The app saves "kjv|John-3" (translation, book, chapter); a key
+    /// without the "kjv|" part is accepted too.
     static func chapterRefs(fromKeys keys: Set<String>) -> Set<ChapterRef> {
         var refs: Set<ChapterRef> = []
         for key in keys {
-            guard let dash = key.lastIndex(of: "-"),
-                  let chapter = Int(key[key.index(after: dash)...]),
-                  let id = BookNameMapper.bookId(for: String(key[..<dash])),
+            let bookAndChapter = key.split(separator: "|", maxSplits: 1).last.map(String.init) ?? key
+            guard let dash = bookAndChapter.lastIndex(of: "-"),
+                  let chapter = Int(bookAndChapter[bookAndChapter.index(after: dash)...]),
+                  let id = BookNameMapper.bookId(for: String(bookAndChapter[..<dash])),
                   let book = bookIds.firstIndex(of: id) else { continue }
             refs.insert(ChapterRef(book: book, chapter: chapter))
         }
