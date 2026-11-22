@@ -130,6 +130,54 @@ struct PassageReference: Hashable {
         return map
     }()
 
+    // MARK: - References inside text
+
+    /// One alternation of every book name and abbreviation, longest first, followed by a chapter and
+    /// an optional verse or verse range. Same shape as the website's note-format.js.
+    private static let scanner: NSRegularExpression? = {
+        var patterns = Set<String>()
+        for row in aliasTable {
+            let parts = row.split(separator: "|", omittingEmptySubsequences: true).map(String.init)
+            guard let name = parts.first else { continue }
+            let number = name.first.flatMap { $0.isNumber ? Int(String($0)) : nil } ?? 0
+            let base = number > 0 ? String(name.dropFirst(2)) : name
+
+            for alias in [base] + parts.dropFirst() {
+                for variant in Set([alias, alias.folding(options: .diacriticInsensitive, locale: nil)]) {
+                    let body = variant.split(separator: " ")
+                        .map { NSRegularExpression.escapedPattern(for: String($0)) }
+                        .joined(separator: "\\s+")
+                    patterns.insert(number > 0 ? "(?:\(number)\\s*|\(romanPrefixes[number])\\s+)\(body)" : body)
+                }
+            }
+        }
+        let names = patterns.sorted { $0.count > $1.count }.joined(separator: "|")
+        let pattern = "(?<![\\p{L}\\p{N}])(\(names))\\.?\\s*(\\d{1,3})(?:\\s?(?::\\s*|\\.(?=\\d)|,(?=\\d))(\\d{1,3})(?:\\s*[-\u{2013}]\\s*(\\d{1,3}))?)?(?![\\p{N}])"
+        return try? NSRegularExpression(pattern: pattern, options: [.caseInsensitive])
+    }()
+
+    /// Passages named in `text` ("John 3:16", "Rom 8:28-30", "Sl 23"), with where they appear. Only
+    /// references to a chapter that exists are returned.
+    static func references(in text: String, books: [BibleBook]) -> [(range: Range<String.Index>, reference: PassageReference)] {
+        guard let scanner else { return [] }
+        let whole = NSRange(text.startIndex..., in: text)
+
+        return scanner.matches(in: text, range: whole).compactMap { match in
+            guard let full = Range(match.range, in: text),
+                  let nameRange = Range(match.range(at: 1), in: text),
+                  let chapterRange = Range(match.range(at: 2), in: text),
+                  let chapter = Int(text[chapterRange]),
+                  let index = bookIndexByAlias[normalize(String(text[nameRange]))],
+                  index < books.count,
+                  let chapterIndex = books[index].chapters.firstIndex(where: { $0.number == chapter })
+            else { return nil }
+
+            var verse: Int?
+            if let verseRange = Range(match.range(at: 3), in: text) { verse = Int(text[verseRange]) }
+            return (full, PassageReference(bookName: books[index].name, chapterIndex: chapterIndex, verse: verse))
+        }
+    }
+
     /// Alias first, then the exact name, the same book by id (other languages), then a unique prefix.
     private static func book(matching name: String, in books: [BibleBook]) -> BibleBook? {
         let key = normalize(name)

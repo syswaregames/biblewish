@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		96F1A5512F4F111100A1B2D0 /* NoteDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 96F1A4512F4F111100A1B2C0 /* NoteDetailView.swift */; };
 		96F1A5502F4F111100A1B2D0 /* BibleProgressView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 96F1A4502F4F111100A1B2C0 /* BibleProgressView.swift */; };
 		96F1A5442F4F111100A1B2D0 /* PlacesViews.swift in Sources */ = {isa = PBXBuildFile; fileRef = 96F1A4442F4F111100A1B2C0 /* PlacesViews.swift */; };
 		96F1A5432F4F111100A1B2D0 /* CrossReferencesView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 96F1A4432F4F111100A1B2C0 /* CrossReferencesView.swift */; };
@@ -74,6 +75,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		96F1A4512F4F111100A1B2C0 /* NoteDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NoteDetailView.swift; sourceTree = "<group>"; };
 		96F1A4502F4F111100A1B2C0 /* BibleProgressView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BibleProgressView.swift; sourceTree = "<group>"; };
 		96F1A4442F4F111100A1B2C0 /* PlacesViews.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlacesViews.swift; sourceTree = "<group>"; };
 		96F1A4432F4F111100A1B2C0 /* CrossReferencesView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CrossReferencesView.swift; sourceTree = "<group>"; };
@@ -171,6 +173,7 @@
 		96A32B782F1BC78B0053CD0D /* BibleWish */ = {
 			isa = PBXGroup;
 			children = (
+				96F1A4512F4F111100A1B2C0 /* NoteDetailView.swift */,
 				96F1A4502F4F111100A1B2C0 /* BibleProgressView.swift */,
 				96F1A4442F4F111100A1B2C0 /* PlacesViews.swift */,
 				96F1A4432F4F111100A1B2C0 /* CrossReferencesView.swift */,
@@ -343,6 +346,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				96F1A5512F4F111100A1B2D0 /* NoteDetailView.swift in Sources */,
 				96F1A5502F4F111100A1B2D0 /* BibleProgressView.swift in Sources */,
 				96F1A5442F4F111100A1B2D0 /* PlacesViews.swift in Sources */,
 				96F1A5432F4F111100A1B2D0 /* CrossReferencesView.swift in Sources */,

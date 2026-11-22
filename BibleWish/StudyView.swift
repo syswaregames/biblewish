@@ -20,7 +20,6 @@ struct StudyView: View {
 
     @State private var section: Section = .favorites
     @State private var tagFilter: NoteTag?
-    @State private var editing: Note?
     @State private var showingNewNote = false
 
     var body: some View {
@@ -56,9 +55,6 @@ struct StudyView: View {
         .sheet(isPresented: $showingNewNote) {
             NoteEditorView()
         }
-        .sheet(item: $editing) { note in
-            NoteEditorView(note: note)
-        }
     }
 
     // MARK: - Notes
@@ -87,12 +83,11 @@ struct StudyView: View {
             } else {
                 List {
                     ForEach(visibleNotes) { note in
-                        Button {
-                            editing = note
+                        NavigationLink {
+                            NoteDetailView(noteID: note.id)
                         } label: {
                             noteRow(note)
                         }
-                        .buttonStyle(.plain)
                         .themedRows()
                     }
                     .onDelete { offsets in
