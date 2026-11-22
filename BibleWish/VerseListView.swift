@@ -33,6 +33,8 @@ struct VerseListView: View {
     @State private var noteReference: String?
     @State private var showCard = false
     @State private var showRelated = false
+    @State private var showWords = false
+    @State private var showSend = false
     @ScaledMetric(relativeTo: .largeTitle) private var chapterNumberSize: CGFloat = 52
     @ScaledMetric(relativeTo: .title3) private var ornamentSize: CGFloat = 22
 
@@ -136,10 +138,13 @@ struct VerseListView: View {
                     shareText: shareText,
                     allSaved: allSelectionSaved,
                     hasPlaces: !placesInChapter.isEmpty,
+                    hasCanonicalBook: canonicalBook != nil,
                     onColor: { setPenColor($0) },
                     onSave: saveOrUnsave,
                     onNote: { noteReference = selectionLabel },
                     onImage: { showCard = true },
+                    onSend: { showSend = true },
+                    onWords: { showWords = true },
                     onRelated: { showRelated = true },
                     onPlaces: { showPlaces = true },
                     onCopy: copySelection,
@@ -168,6 +173,23 @@ struct VerseListView: View {
                 reference: selectionLabel,
                 translation: translationId.uppercased()
             )
+        }
+        .sheet(isPresented: $showWords) {
+            if let canonicalBook {
+                OriginalWordsView(bookIndex: canonicalBook, chapter: chapter.number, verses: selection, reference: selectionLabel)
+            }
+        }
+        .sheet(isPresented: $showSend) {
+            if let canonicalBook, let range = SendVerse.range(of: selection) {
+                SendVerseView(
+                    translation: translationId,
+                    bookIndex: canonicalBook,
+                    chapter: chapter.number,
+                    range: range,
+                    reference: SendVerse.reference(chapter: "\(book.name) \(chapter.number)", range: range),
+                    text: VerseSelection.plainText(chapter.verses.filter { range.contains($0.number) }, selected: Array(range))
+                )
+            }
         }
         .sheet(isPresented: $showRelated) {
             CrossReferencesView(bookIndex: bookIndex, chapter: chapter.number, verse: selection.first ?? 1)
@@ -260,6 +282,9 @@ struct VerseListView: View {
 
     private var translationId: String { viewModel.selectedTranslation.widgetId }
     private var bookIndex: Int { viewModel.books.firstIndex { $0.name == book.name } ?? -1 }
+
+    /// The book's place in the 66-book order, which the word study and Send are keyed by.
+    private var canonicalBook: Int? { BookIndex.of(name: book.name) }
 
     private var selection: [Int] {
         highlightManager.selected(translation: translationId, bookIndex: bookIndex, chapter: chapter.number)

@@ -94,7 +94,9 @@ final class SelfTest {
         runNoteTextView()
         runBookNavigator()
         runVerseSelection()
+        runOriginalWords()
         await runAuth()
+        await runSendVerse()
         await runFavoritesAndReading()
         await runHighlights()
         await runNotes()
@@ -163,6 +165,64 @@ final class SelfTest {
         let again = bookmarks.save(runs: [(16...17, "x")], bookName: "John", chapter: 3, translation: "kjv")
         check("saving the same run again changes nothing", again.added == 0 && again.already == 1 && bookmarks.bookmarks.count == before + 2)
         for bookmark in bookmarks.bookmarks where bookmark.bookName == "John" && bookmark.chapterNumber == 3 { bookmarks.toggle(bookmark) }
+    }
+
+    // MARK: - Original words (Strong's)
+
+    private func runOriginalWords() {
+        let store = StrongsStore.shared
+        let genesis = store.words(book: 0, chapter: 1, verse: 1)
+        check("Genesis 1:1 has its six KJV words with Strong's numbers", genesis.map(\.number) == ["H7225", "H430", "H1254", "H8064", "H853", "H776"], genesis.map(\.number).joined(separator: ","))
+        check("the English words come with them", genesis.first?.english == "beginning" && genesis.dropFirst().first?.english == "God")
+        check("Hebrew numbers are Hebrew, Greek are Greek", genesis.allSatisfy(\.isHebrew) && !(store.words(book: 42, chapter: 3, verse: 16).first?.isHebrew ?? true))
+        let god = store.entry(for: "H430")
+        check("a Hebrew dictionary entry: lemma, transliteration and meaning", god?.lemma == "\u{05D0}\u{05B1}\u{05DC}\u{05B9}\u{05D4}\u{05B4}\u{05D9}\u{05DD}" && god?.xlit == "\u{02BC}\u{0115}l\u{014D}h\u{00EE}m" || (god?.lemma.isEmpty == false && god?.def?.isEmpty == false), "\(String(describing: god))")
+        check("elohim is used many times in the KJV", (god?.count ?? 0) > 1000)
+        let john316 = store.words(book: 42, chapter: 3, verse: 16)
+        check("John 3:16 carries Greek numbers with entries", !john316.isEmpty && john316.allSatisfy { store.entry(for: $0.number) != nil }, "\(john316.count) words")
+        check("every word of Genesis 1 and John 3 has a dictionary entry", (1...31).allSatisfy { v in store.words(book: 0, chapter: 1, verse: v).allSatisfy { store.entry(for: $0.number) != nil } } && (1...36).allSatisfy { v in store.words(book: 42, chapter: 3, verse: v).allSatisfy { store.entry(for: $0.number) != nil } })
+        check("a verse with no data, a bad book and a bad number give nothing", store.words(book: 0, chapter: 99, verse: 1).isEmpty && store.words(book: 99, chapter: 1, verse: 1).isEmpty && store.entry(for: "X1") == nil && store.entry(for: "G99999") == nil)
+        check("a long meaning is cut at a word with an ellipsis", StrongsStore.shorten("one two three four five six seven", to: 15) == "one two three\u{2026}" && StrongsStore.shorten("short") == "short")
+
+        // The word files cover the whole Bible: every book opens.
+        var empty: [Int] = []
+        for book in 0..<66 where (1...3).allSatisfy({ store.words(book: book, chapter: $0, verse: 1).isEmpty }) { empty.append(book) }
+        check("all 66 books have word data", empty.isEmpty, "empty: \(empty)")
+    }
+
+    // MARK: - Send to someone
+
+    private func runSendVerse() async {
+        check("a message covers the first to the last selected verse", SendVerse.range(of: [18, 16, 17]) == 16...18 && SendVerse.range(of: [16]) == 16...16 && SendVerse.range(of: []) == nil)
+        check("a message is capped at 30 verses like the server", SendVerse.range(of: [1, 80]) == 1...30)
+        check("the reference reads like the website's", SendVerse.reference(chapter: "John 3", range: 16...18) == "John 3:16-18" && SendVerse.reference(chapter: "John 3", range: 16...16) == "John 3:16")
+        let body = SendVerse.payload(translation: "kjv", bookIndex: 42, chapter: 3, range: 16...16, message: "  ", style: "gold", toName: " Ana ", toEmail: "", fromName: "Pat")
+        check("empty fields are sent as null, others trimmed", body["message"] is NSNull && body["to_email"] is NSNull && (body["to_name"] as? String) == "Ana" && (body["from_name"] as? String) == "Pat" && (body["book_index"] as? Int) == 42 && (body["verse_end"] as? Int) == 16)
+        check("long text is cut to the server's limits", ((SendVerse.payload(translation: "kjv", bookIndex: 0, chapter: 1, range: 1...1, message: String(repeating: "a", count: 600), style: "gold", toName: "", toEmail: "", fromName: "")["message"]) as? String)?.count == 500)
+        check("the line sent with the link", SendVerse.shareLine(toName: "Ana", reference: "John 3:16") == "\u{1F48C} Ana, I sent you a verse: John 3:16" && SendVerse.shareLine(toName: " ", reference: "John 3:16") == "\u{1F48C} I sent you a verse: John 3:16")
+        check("the WhatsApp link carries the text", SendVerse.whatsAppURL(line: "hi", link: "https://x.y/v/1")?.absoluteString == "https://wa.me/?text=hi%0Ahttps://x.y/v/1", SendVerse.whatsAppURL(line: "hi", link: "https://x.y/v/1")?.absoluteString ?? "nil")
+        check("email checks", SendVerse.looksLikeEmail("ana@example.com") && !SendVerse.looksLikeEmail("ana@") && !SendVerse.looksLikeEmail("ana example@x.com") && !SendVerse.looksLikeEmail("@x.com") && !SendVerse.looksLikeEmail("a@b"))
+
+        // Against the server: signed in, create a link and read it back.
+        guard await signInFreshAccount("send") != nil else { check("sign in for send tests", false); return }
+        struct Sent: Decodable { let token: String; let url: String }
+        struct Share: Decodable { let reference: String? ; let message: String? }
+        struct Shared: Decodable { let share: Share }
+        do {
+            let sent = try await APIClient.shared.request(Sent.self, "POST", "api/verses.php", json: SendVerse.payload(translation: "kjv", bookIndex: 42, chapter: 3, range: 16...17, message: "Selftest hello", style: "gold", toName: "Ana", toEmail: "", fromName: "Pat"))
+            check("the server makes a private link", sent.token.count == 32 && sent.url.contains(sent.token), sent.url)
+            let back = try await APIClient.shared.request(Shared.self, "GET", "api/verses.php", query: ["token": sent.token])
+            check("the link opens the verse with our message", (back.share.reference ?? "").contains("John 3:16-17") && back.share.message == "Selftest hello", "\(back.share)")
+        } catch {
+            check("the server makes a private link", false, "\(error)")
+        }
+        do {
+            _ = try await APIClient.shared.request(Sent.self, "POST", "api/verses.php", json: SendVerse.payload(translation: "kjv", bookIndex: 42, chapter: 3, range: 16...16, message: "", style: "gold", toName: "", toEmail: "not an email", fromName: ""))
+            check("the server refuses a bad email", false, "accepted")
+        } catch {
+            check("the server refuses a bad email", true)
+        }
+        await auth.signOut()
     }
 
     // MARK: - Book navigator (sections, search, recents)

@@ -51,10 +51,14 @@ struct VerseSelectionBar: View {
     let shareText: String
     let allSaved: Bool
     let hasPlaces: Bool
+    /// Original words and Send need the book's place in the 66-book order (as on the website).
+    let hasCanonicalBook: Bool
     let onColor: (HighlightColor) -> Void
     let onSave: () -> Void
     let onNote: () -> Void
     let onImage: () -> Void
+    let onSend: () -> Void
+    let onWords: () -> Void
     let onRelated: () -> Void
     let onPlaces: () -> Void
     let onCopy: () -> Void
@@ -97,9 +101,15 @@ struct VerseSelectionBar: View {
                 action(allSaved ? "heart.fill" : "heart", allSaved ? "Saved" : "Save", allSaved ? "Remove from favorites" : "Save to favorites", onSave)
                 action("square.and.pencil", "Note", "Write a note", onNote)
                 action("photo", "Image", "Share as an image", onImage)
+                if hasCanonicalBook {
+                    action("paperplane", "Send", "Send to someone", onSend)
+                }
 
                 Menu {
                     Button { onRelated() } label: { Label("Related verses", systemImage: "link") }
+                    if hasCanonicalBook {
+                        Button { onWords() } label: { Label("Original words", systemImage: "character.book.closed") }
+                    }
                     if hasPlaces {
                         Button { onPlaces() } label: { Label("Places in this chapter", systemImage: "map") }
                     }

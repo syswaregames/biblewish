@@ -74,7 +74,7 @@ Without signing in the app collects nothing, but the label describes the app as 
 - **User Content → Other User Content** (notes, highlights, favorites, private prayers)
 - **Usage Data → Product Interaction** (reading progress and plan progress, i.e. saved place)
 
-This matches `NSPrivacyCollectedDataTypes` in `BibleWish/PrivacyInfo.xcprivacy`; keep the two in step. Confirm the categories yourself in App Store Connect: they are the closest fit I could find, not legal advice. Notifications are scheduled locally and the widget only shares the chosen translation with the app on the device.
+Sending a verse ("Send to someone") also transmits what the sender types, including an optional recipient email address, to biblewish.com; it is user content that the sender chooses to send, covered by the same declarations (consider whether the recipient's email address needs to be called out under Contact Info in App Store Connect). This matches `NSPrivacyCollectedDataTypes` in `BibleWish/PrivacyInfo.xcprivacy`; keep the two in step. Confirm the categories yourself in App Store Connect: they are the closest fit I could find, not legal advice. Notifications are scheduled locally and the widget only shares the chosen translation with the app on the device.
 
 ## Notes for App Review
 

@@ -18,6 +18,9 @@ store on our server:
 
 - your email address (to send you a sign-in code and to identify your account), and an account ID
 - the notes, favorites, highlights, reading progress, plans, and private prayers you save
+- if you use "Send to someone": the verse, your message, the names you type, and (only if you
+  enter one) the recipient's email address, so we can make the private link and, if that person
+  has a BibleWish account, deliver it to them. We never tell you whether an address has an account.
 
 This is used only to run those features. It is never sold, shared with advertisers, used for
 tracking, or shown to anyone else. Your prayer list and notes are private. You can export

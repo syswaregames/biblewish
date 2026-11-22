@@ -26,7 +26,7 @@ enum BibleBooks {
 }
 
 /// A bundled JSON file, decoded once and kept.
-private enum BundledJSON {
+enum BundledJSON {
     static func load<T: Decodable>(_ type: T.Type, name: String, subdirectory: String) -> T? {
         guard let url = Bundle.main.url(forResource: name, withExtension: "json", subdirectory: subdirectory),
               let data = try? Data(contentsOf: url) else { return nil }

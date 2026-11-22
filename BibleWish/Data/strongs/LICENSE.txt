@@ -1,0 +1,7 @@
+BibleWish word-study data (data/strongs/)
+
+books/    KJV words tagged with Strong's numbers, from eBible.org's KJV with Strong's (public domain).
+lexicon/  Strong's Hebrew (1894) and Greek (1890) dictionaries, public domain, as digitized by
+          Open Scriptures (https://github.com/openscriptures/strongs), licensed CC BY-SA.
+          This derived data is shared under the same license: CC BY-SA 4.0
+          (https://creativecommons.org/licenses/by-sa/4.0/).
