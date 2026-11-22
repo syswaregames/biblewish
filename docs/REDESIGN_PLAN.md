@@ -184,3 +184,7 @@ A banner on the phone, even with the app closed, for: someone prays for your req
 
 Not checked: a real notification arriving (the simulator cannot take the permission prompt and no Apple key exists yet), Apple's answers (sandbox vs production, token expiry), the permission prompt itself, the badge on the icon, TestFlight.
 
+## Reader toolbar (2026-11-22)
+
+After the version pill was added, the reader's top bar held a back button, the chapter title, the version and four buttons (places, focus mode, mark read, and the pill). On a phone that did not fit: depending on the iOS version either the title disappeared or iOS folded some buttons into a "\u{22EF}" of its own, which did nothing useful. Now the bar holds only the title, the version pill and one chapter menu ("\u{22EF}": Places in this chapter, Turn focus mode on/off, Mark chapter as read/unread). The menu's icon becomes a seal when the chapter is marked read. Checked pushed behind a back button on iPhone SE, iPhone 16e and iPhone 17 Pro.
+

@@ -253,44 +253,37 @@ struct VerseListView: View {
             }
 
             ToolbarItem(placement: .navigationBarTrailing) {
-                if !placesInChapter.isEmpty {
-                    Button {
-                        showPlaces = true
-                    } label: {
-                        Image(systemName: "map")
-                    }
-                    .accessibilityLabel("Places in this chapter")
-                }
-            }
-
-            ToolbarItem(placement: .navigationBarTrailing) {
-                Button {
-                    readerSettings.focusMode.toggle()
-                } label: {
-                    Image(systemName: readerSettings.focusMode ? "eye.fill" : "eye")
-                }
-                .accessibilityLabel(readerSettings.focusMode ? "Turn focus mode off" : "Turn focus mode on")
-            }
-
-            ToolbarItem(placement: .navigationBarTrailing) {
-                Button {
-                    toggleChapterCompleted()
-                } label: {
-                    Image(systemName: isChapterCompleted
-                          ? "checkmark.seal.fill"
-                          : "circle")
-                }
-                .accessibilityLabel(
-                    isChapterCompleted
-                    ? "Mark chapter as unread"
-                    : "Mark chapter as read"
-                )
+                chapterMenu
             }
         }
-
-
     }
-    
+
+    // MARK: - Chapter options
+
+    /// Places, focus mode and read/unread in one menu. Four separate buttons did not fit beside the
+    /// back button, the title and the version on a phone, and iOS then folded some of them into a
+    /// "\u{22EF}" of its own.
+    private var chapterMenu: some View {
+        Menu {
+            if !placesInChapter.isEmpty {
+                Button { showPlaces = true } label: {
+                    Label("Places in this chapter", systemImage: "map")
+                }
+            }
+            Button { readerSettings.focusMode.toggle() } label: {
+                Label(readerSettings.focusMode ? "Turn focus mode off" : "Turn focus mode on",
+                      systemImage: readerSettings.focusMode ? "eye.fill" : "eye")
+            }
+            Button { toggleChapterCompleted() } label: {
+                Label(isChapterCompleted ? "Mark chapter as unread" : "Mark chapter as read",
+                      systemImage: isChapterCompleted ? "checkmark.seal.fill" : "checkmark.seal")
+            }
+        } label: {
+            Image(systemName: isChapterCompleted ? "checkmark.seal.fill" : "ellipsis.circle")
+        }
+        .accessibilityLabel(isChapterCompleted ? "Chapter options. This chapter is marked as read" : "Chapter options")
+    }
+
     // MARK: - Changing the Bible version
 
     /// A small pill with the open version; its menu lists the versions to switch to.
