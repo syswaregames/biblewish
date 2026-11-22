@@ -34,6 +34,9 @@ struct PlansView: View {
                     }
                 }
 
+                BibleProgressCard()
+                    .padding(.top, startedPlans.isEmpty ? 0 : 8)
+
                 if !availablePlans.isEmpty {
                     sectionLabel(startedPlans.isEmpty ? "Choose a plan" : "More plans")
                         .padding(.top, startedPlans.isEmpty ? 0 : 8)

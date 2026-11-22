@@ -11,6 +11,7 @@ struct HomeView: View {
 
     @EnvironmentObject var viewModel: BibleViewModel
     @EnvironmentObject var achievements: AchievementsStore
+    @EnvironmentObject var plansStore: PlansStore
     @Environment(\.palette) private var palette
 
     @State private var passageText = ""
@@ -26,6 +27,7 @@ struct HomeView: View {
                     if let verse = VerseOfTheDay.load(from: viewModel.books) {
                         verseOfTheDayCard(verse)
                     }
+                    todaysReadingCard
                     continueReadingCard
                     openPassageCard
                     progressCard
@@ -162,6 +164,49 @@ struct HomeView: View {
         .themedCard(cornerRadius: 16)
     }
 
+    /// The day to read next in each plan you've started and not finished.
+    @ViewBuilder
+    private var todaysReadingCard: some View {
+        let active = plansStore.catalog.compactMap { plan -> (PlanInfo, PlanSummary, Int)? in
+            guard let summary = plansStore.summary(for: plan.id), let next = summary.nextDay else { return nil }
+            return (plan, summary, next)
+        }
+
+        if !active.isEmpty {
+            VStack(alignment: .leading, spacing: 14) {
+                sectionLabel("Today\u{2019}s reading")
+
+                ForEach(active, id: \.0.id) { plan, summary, day in
+                    NavigationLink {
+                        PlanDetailView(planId: plan.id)
+                    } label: {
+                        HStack(alignment: .top) {
+                            VStack(alignment: .leading, spacing: 4) {
+                                Text(plan.title)
+                                    .font(.system(.headline, design: .serif))
+                                    .foregroundStyle(palette.ink)
+                                Text("Day \(day): \(PlansStore.label(forDay: summary.days[day - 1], bookNames: viewModel.books.map(\.name)))")
+                                    .font(.system(.subheadline, design: .serif))
+                                    .foregroundStyle(palette.goldBright)
+                                Text(summary.status.text)
+                                    .font(.caption)
+                                    .foregroundStyle(palette.inkMuted)
+                            }
+                            Spacer()
+                            Image(systemName: "chevron.right")
+                                .foregroundStyle(palette.gold)
+                                .padding(.top, 4)
+                        }
+                    }
+                    .buttonStyle(.plain)
+                }
+            }
+            .frame(maxWidth: .infinity, alignment: .leading)
+            .padding(20)
+            .themedCard(cornerRadius: 16)
+        }
+    }
+
     @ViewBuilder
     private var continueReadingCard: some View {
         if let last = viewModel.lastRead,
@@ -216,8 +261,8 @@ struct HomeView: View {
     }
 
     private var progressCard: some View {
-        let total = viewModel.books.reduce(0) { $0 + $1.chapters.count }
-        let done = viewModel.readingProgress.completedChapters.count
+        let total = BibleProgress.totalChapters(in: viewModel)
+        let done = BibleProgress.readChapters(in: viewModel).count
         let fraction = total == 0 ? 0 : Double(done) / Double(total)
 
         return VStack(alignment: .leading, spacing: 10) {
