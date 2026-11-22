@@ -67,10 +67,11 @@ Logic checked inside the real app (57 checks, all passing): passage parsing and 
 
 Not checked: tapping through the UI (no automation available), the Auto theme under a light system appearance, Search and the Favorites list in Sepia/Light, VoiceOver and Dynamic Type.
 
+## Polish round (2026-11-22)
+
+Done: Today's reading card on Home; Bible progress by book (Plans tab; chapters are counted once whatever translation they were read in); notes with Markdown and clickable verse references (tap a note to read it, Edit to change it); focus mode tap-to-peek (a tap shows verse numbers until the next chapter; while peeking, a tap bookmarks again). Verse-reference scanning and the passage-link round trip were checked inside the app; the screens were checked in Dark and Sepia.
+
 ## Still open
 
-- Today's reading card on Home; Bible progress by book on Plans
-- Notes: Markdown and clickable verse references
-- Reader: tap-to-peek in focus mode, a true wrapped drop cap
+- Reader: a true wrapped drop cap (SwiftUI `Text` can't wrap around an initial)
 - Phase 4 (accounts and sync) and Phase 5 (widgets, notifications, accessibility, App Store listing)
-
