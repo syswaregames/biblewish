@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		96F1A5602F4F111100A1B2D0 /* DailyVerseReminder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 96F1A4602F4F111100A1B2C0 /* DailyVerseReminder.swift */; };
 		96F1A5512F4F111100A1B2D0 /* NoteDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 96F1A4512F4F111100A1B2C0 /* NoteDetailView.swift */; };
 		96F1A5502F4F111100A1B2D0 /* BibleProgressView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 96F1A4502F4F111100A1B2C0 /* BibleProgressView.swift */; };
 		96F1A5442F4F111100A1B2D0 /* PlacesViews.swift in Sources */ = {isa = PBXBuildFile; fileRef = 96F1A4442F4F111100A1B2C0 /* PlacesViews.swift */; };
@@ -75,6 +76,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		96F1A4602F4F111100A1B2C0 /* DailyVerseReminder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DailyVerseReminder.swift; sourceTree = "<group>"; };
 		96F1A4512F4F111100A1B2C0 /* NoteDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NoteDetailView.swift; sourceTree = "<group>"; };
 		96F1A4502F4F111100A1B2C0 /* BibleProgressView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BibleProgressView.swift; sourceTree = "<group>"; };
 		96F1A4442F4F111100A1B2C0 /* PlacesViews.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlacesViews.swift; sourceTree = "<group>"; };
@@ -219,6 +221,7 @@
 		96A32BA22F1BD73B0053CD0D /* Model */ = {
 			isa = PBXGroup;
 			children = (
+				96F1A4602F4F111100A1B2C0 /* DailyVerseReminder.swift */,
 				96F1A4422F4F111100A1B2C0 /* BibleStudyData.swift */,
 				96F1A4312F4F111100A1B2C0 /* Achievements.swift */,
 				96F1A4202F4F111100A1B2C0 /* StudyNotes.swift */,
@@ -346,6 +349,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				96F1A5602F4F111100A1B2D0 /* DailyVerseReminder.swift in Sources */,
 				96F1A5512F4F111100A1B2D0 /* NoteDetailView.swift in Sources */,
 				96F1A5502F4F111100A1B2D0 /* BibleProgressView.swift in Sources */,
 				96F1A5442F4F111100A1B2D0 /* PlacesViews.swift in Sources */,

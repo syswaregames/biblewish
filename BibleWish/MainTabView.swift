@@ -17,6 +17,8 @@ struct MainTabView: View {
     @StateObject private var plansStore = PlansStore()
     @StateObject private var noteStore = NoteStore()
     @StateObject private var achievements = AchievementsStore()
+    @StateObject private var reminder = DailyVerseReminder()
+    @Environment(\.scenePhase) private var scenePhase
     @Environment(\.palette) private var palette
 
 
@@ -58,6 +60,17 @@ struct MainTabView: View {
         .environmentObject(plansStore)
         .environmentObject(noteStore)
         .environmentObject(achievements)
+        .environmentObject(reminder)
+        .task(id: bibleVM.books.count) { await reminder.reschedule(books: bibleVM.books) }
+        .task(id: bibleVM.selectedTranslation) { await reminder.reschedule(books: bibleVM.books) }
+        .onChange(of: reminder.time) { Task { await reminder.reschedule(books: bibleVM.books) } }
+        .onChange(of: scenePhase) {
+            guard scenePhase == .active else { return }
+            Task {
+                await reminder.refreshPermission()
+                await reminder.reschedule(books: bibleVM.books)
+            }
+        }
         .overlay(alignment: .top) {
             if let badge = achievements.toast {
                 BadgeToast(badge: badge) { achievements.dismissToast() }

@@ -13,6 +13,7 @@ struct SettingsView: View {
     @EnvironmentObject var versionStore: VersionStore
     @EnvironmentObject var readerSettings: ReaderSettings
     @EnvironmentObject var themeStore: ThemeStore
+    @EnvironmentObject var reminder: DailyVerseReminder
     @State private var showResetAlert = false
     @State private var showLibrarySheet = false
 
@@ -59,6 +60,37 @@ struct SettingsView: View {
                     .listRowInsets(EdgeInsets(top: 12, leading: 16, bottom: 12, trailing: 16))
             }
                 .themedRows()
+
+            // MARK: - Daily verse
+            Section(
+                header: Text("Daily Verse"),
+                footer: Text(reminder.permissionDenied
+                    ? "Notifications are turned off for BibleWish. Allow them in the Settings app to get the daily verse."
+                    : "A notification each day with the verse of the day, in your translation.")
+            ) {
+                Toggle(isOn: Binding(
+                    get: { reminder.isEnabled },
+                    set: { newValue in
+                        Task { await reminder.setEnabled(newValue, books: viewModel.books) }
+                    }
+                )) {
+                    Label("Verse of the Day Reminder", systemImage: "bell")
+                }
+
+                if reminder.isEnabled {
+                    DatePicker(
+                        selection: $reminder.time,
+                        displayedComponents: .hourAndMinute
+                    ) {
+                        Label("Time", systemImage: "clock")
+                    }
+                }
+
+                if reminder.permissionDenied, let url = URL(string: UIApplication.openSettingsURLString) {
+                    Link("Open Settings", destination: url)
+                }
+            }
+            .themedRows()
 
             // MARK: - Reading Settings
             Section(header: Text("Reading")) {
@@ -227,4 +259,5 @@ private struct ThemePicker: View {
         .environmentObject(VersionStore())
         .environmentObject(ReaderSettings())
         .environmentObject(ThemeStore())
+        .environmentObject(DailyVerseReminder())
 }
