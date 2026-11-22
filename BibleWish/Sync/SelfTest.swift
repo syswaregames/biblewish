@@ -89,6 +89,7 @@ final class SelfTest {
         check("base url is local", APIConfig.baseURL.absoluteString == "http://localhost:8088", APIConfig.baseURL.absoluteString)
         runKeyFormat()
         runNoteFormat()
+        runNoteEditing()
         await runAuth()
         await runFavoritesAndReading()
         await runHighlights()
@@ -111,6 +112,98 @@ final class SelfTest {
         check("junk keys are skipped", AchievementMetrics.chapterRefs(fromKeys: ["kjv|Nonsense-1", "oops", "kjv|John-x", ""]).isEmpty)
         let model = BibleViewModel()
         check("keys the app writes are the ones we read", AchievementMetrics.chapterRefs(fromKeys: [model.chapterKey(book: "John", chapter: 3)]) == [ChapterRef(book: 42, chapter: 3)], model.chapterKey(book: "John", chapter: 3))
+    }
+
+    // MARK: - Note editing (the toolbar)
+
+    private func edited(_ value: String, _ selection: NSRange, _ edit: NoteEditing.Edit) -> (text: String, selected: String) {
+        let text = NoteEditing.apply(edit, to: value)
+        let selected = edit.selection.location + edit.selection.length <= (text as NSString).length ? (text as NSString).substring(with: edit.selection) : "<out of range>"
+        return (text, selected)
+    }
+
+    private func runNoteEditing() {
+        func range(_ value: String, _ word: String) -> NSRange { (value as NSString).range(of: word) }
+
+        var r = edited("a word b", range("a word b", "word"), NoteEditing.wrap("a word b", range("a word b", "word"), marker: "**", placeholder: "bold text"))
+        check("bold wraps the selection", r.text == "a **word** b" && r.selected == "word", "\(r)")
+        let wrappedText = "a **word** b"
+        r = edited(wrappedText, range(wrappedText, "word"), NoteEditing.wrap(wrappedText, range(wrappedText, "word"), marker: "**", placeholder: "bold text"))
+        check("bold again takes it off", r.text == "a word b" && r.selected == "word", "\(r)")
+        r = edited("ab", NSRange(location: 1, length: 0), NoteEditing.wrap("ab", NSRange(location: 1, length: 0), marker: "*", placeholder: "italic text"))
+        check("italic with nothing selected inserts a placeholder, selected", r.text == "a*italic text*b" && r.selected == "italic text", "\(r)")
+        r = edited("a word b", range("a word b", "word "), NoteEditing.wrap("a word b", range("a word b", "word "), marker: "**", placeholder: "x"))
+        check("a selected trailing space stays outside the markers", r.text == "a **word** b" && r.selected == "word", "\(r)")
+        r = edited("a caf\u{00E9} \u{1F600} b", range("a caf\u{00E9} \u{1F600} b", "\u{1F600}"), NoteEditing.wrap("a caf\u{00E9} \u{1F600} b", range("a caf\u{00E9} \u{1F600} b", "\u{1F600}"), marker: "**", placeholder: "x"))
+        check("bold works around an emoji (UTF-16 positions)", r.text == "a caf\u{00E9} **\u{1F600}** b" && r.selected == "\u{1F600}", "\(r)")
+
+        r = edited("hello world", range("hello world", "world"), NoteEditing.color("hello world", range("hello world", "world"), id: "red", mark: false))
+        check("text color wraps the selection", r.text == "hello {red|world}" && r.selected == "world", "\(r)")
+        let colored = "hello {red|world}"
+        r = edited(colored, range(colored, "world"), NoteEditing.color(colored, range(colored, "world"), id: "gold", mark: false))
+        check("a different color replaces the old one", r.text == "hello {gold|world}" && r.selected == "world", "\(r)")
+        r = edited(colored, range(colored, "world"), NoteEditing.color(colored, range(colored, "world"), id: "red", mark: false))
+        check("the same color takes it off", r.text == "hello world" && r.selected == "world", "\(r)")
+        r = edited("hello world", range("hello world", "world"), NoteEditing.color("hello world", range("hello world", "world"), id: "teal", mark: true))
+        check("highlighter uses {=color|…}", r.text == "hello {=teal|world}" && r.selected == "world", "\(r)")
+        let marked = "hello {=teal|world}"
+        r = edited(marked, range(marked, "world"), NoteEditing.color(marked, range(marked, "world"), id: "red", mark: false))
+        check("a text color doesn't replace a highlight", r.text == "hello {=teal|{red|world}}", "\(r)")
+        r = edited("", NSRange(location: 0, length: 0), NoteEditing.color("", NSRange(location: 0, length: 0), id: "green", mark: false))
+        check("color with nothing selected inserts a placeholder", r.text == "{green|colored text}" && r.selected == "colored text", "\(r)")
+
+        r = edited("intro", NSRange(location: 5, length: 0), NoteEditing.box("intro", NSRange(location: 5, length: 0), id: "gold"))
+        check("a box starts on its own line", r.text == "intro\n::: gold\nYour text\n:::\n" && r.selected == "Your text", "\(r)")
+        r = edited("see this now", range("see this now", "this"), NoteEditing.box("see this now", range("see this now", "this"), id: "red"))
+        check("a box takes the selection", r.text == "see \n::: red\nthis\n:::\n now" && r.selected == "this", "\(r)")
+        let card = NoteEditing.verseCard("a\n", NSRange(location: 2, length: 0), reference: "John 3:16", translation: "KJV", text: "For God so loved")
+        check("a verse card with its reference", NoteEditing.apply(card, to: "a\n") == "a\n::: verse John 3:16 \u{00B7} KJV\nFor God so loved\n:::\n" && card.selection.length == 0, "\(card)")
+
+        r = edited("one\ntwo", NSRange(location: 0, length: 7), NoteEditing.lines("one\ntwo", NSRange(location: 0, length: 7), style: .bullet))
+        check("bullets on every selected line", r.text == "- one\n- two", "\(r)")
+        r = edited("- one\n- two", NSRange(location: 0, length: 11), NoteEditing.lines("- one\n- two", NSRange(location: 0, length: 11), style: .bullet))
+        check("bullets again take them off", r.text == "one\ntwo", "\(r)")
+        r = edited("a\nb\nc", NSRange(location: 0, length: 5), NoteEditing.lines("a\nb\nc", NSRange(location: 0, length: 5), style: .numbered))
+        check("numbers count up", r.text == "1. a\n2. b\n3. c", "\(r)")
+        r = edited("- a\n- b", NSRange(location: 0, length: 7), NoteEditing.lines("- a\n- b", NSRange(location: 0, length: 7), style: .numbered))
+        check("a different list style replaces the old one", r.text == "1. a\n2. b", "\(r)")
+        r = edited("title", NSRange(location: 2, length: 0), NoteEditing.lines("title", NSRange(location: 2, length: 0), style: .heading))
+        check("a heading on the caret's line", r.text == "## title", "\(r)")
+        r = edited("first\nsecond", NSRange(location: 8, length: 0), NoteEditing.lines("first\nsecond", NSRange(location: 8, length: 0), style: .quote))
+        check("only the caret's line is quoted", r.text == "first\n> second", "\(r)")
+        r = edited("a\n\nb", NSRange(location: 0, length: 4), NoteEditing.lines("a\n\nb", NSRange(location: 0, length: 4), style: .bullet))
+        check("blank lines are left alone", r.text == "- a\n\n- b", "\(r)")
+
+        r = edited("see site", range("see site", "site"), NoteEditing.link("see site", range("see site", "site")))
+        check("a link with the selection as its text", r.text == "see [site](https://)" && r.selected == "https://", "\(r)")
+        r = edited("go https://x.com now", range("go https://x.com now", "https://x.com"), NoteEditing.link("go https://x.com now", range("go https://x.com now", "https://x.com")))
+        check("a selected address becomes the target", r.text == "go [link text](https://x.com) now" && r.selected == "link text", "\(r)")
+        r = edited("", NSRange(location: 0, length: 0), NoteEditing.link("", NSRange(location: 0, length: 0)))
+        check("a link with nothing selected", r.text == "[link text](https://)" && r.selected == "https://", "\(r)")
+
+        var key = NoteEditing.returnKey("- one", caret: 5)
+        check("return continues a bullet list", key.map { NoteEditing.apply($0, to: "- one") } == "- one\n- ", "\(String(describing: key))")
+        key = NoteEditing.returnKey("1. one", caret: 6)
+        check("return continues a numbered list", key.map { NoteEditing.apply($0, to: "1. one") } == "1. one\n2. ", "\(String(describing: key))")
+        key = NoteEditing.returnKey("3) x", caret: 4)
+        check("numbering keeps its style", key.map { NoteEditing.apply($0, to: "3) x") } == "3) x\n4) ", "\(String(describing: key))")
+        key = NoteEditing.returnKey("a\n- ", caret: 4)
+        check("return on an empty item ends the list", key.map { NoteEditing.apply($0, to: "a\n- ") } == "a\n", "\(String(describing: key))")
+        key = NoteEditing.returnKey("  - nested", caret: 10)
+        check("indent is kept", key.map { NoteEditing.apply($0, to: "  - nested") } == "  - nested\n  - ", "\(String(describing: key))")
+        check("return in plain text is left to the editor", NoteEditing.returnKey("just text", caret: 9) == nil)
+        key = NoteEditing.returnKey("> quote", caret: 7)
+        check("return continues a quote", key.map { NoteEditing.apply($0, to: "> quote") } == "> quote\n> ", "\(String(describing: key))")
+
+        // Verse ranges for "Insert a verse".
+        let books = bibleVM.books
+        let single = PassageReference.parse("John 3:16", in: books)
+        let range = PassageReference.parse("Psalm 23:1-3", in: books)
+        let dashed = PassageReference.parse("Rom 8:28\u{2013}30", in: books)
+        check("a verse reference has no range end", single?.verse == 16 && single?.verseEnd == nil, "\(String(describing: single))")
+        check("a verse range is read", range?.verse == 1 && range?.verseEnd == 3 && range?.chapterIndex == 22, "\(String(describing: range))")
+        check("an en dash range is read too", dashed?.verse == 28 && dashed?.verseEnd == 30, "\(String(describing: dashed))")
+        check("a backwards range is not a range", PassageReference.parse("John 3:16-12", in: books)?.verseEnd == nil)
     }
 
     // MARK: - Note formatting

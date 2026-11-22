@@ -11,9 +11,18 @@ struct PassageReference: Hashable {
     let bookName: String
     let chapterIndex: Int
     let verse: Int?
+    /// The last verse of a range ("Psalm 23:1-3"); nil for one verse or a whole chapter.
+    let verseEnd: Int?
+
+    init(bookName: String, chapterIndex: Int, verse: Int?, verseEnd: Int? = nil) {
+        self.bookName = bookName
+        self.chapterIndex = chapterIndex
+        self.verse = verse
+        self.verseEnd = verseEnd
+    }
 
     static func parse(_ input: String, in books: [BibleBook]) -> PassageReference? {
-        let pattern = #"^\s*(.+?)\s+(\d+)(?:\s*[:.]\s*(\d+))?\s*$"#
+        let pattern = #"^\s*(.+?)\s+(\d+)(?:\s*[:.]\s*(\d+)(?:\s*[-\x{2013}]\s*(\d+))?)?\s*$"#
         guard let regex = try? NSRegularExpression(pattern: pattern),
               let match = regex.firstMatch(in: input, range: NSRange(input.startIndex..., in: input)),
               let nameRange = Range(match.range(at: 1), in: input),
@@ -27,7 +36,11 @@ struct PassageReference: Hashable {
         if let verseRange = Range(match.range(at: 3), in: input) {
             verse = Int(input[verseRange])
         }
-        return PassageReference(bookName: book.name, chapterIndex: chapterIndex, verse: verse)
+        var verseEnd: Int?
+        if let endRange = Range(match.range(at: 4), in: input), let end = Int(input[endRange]), let verse, end > verse {
+            verseEnd = end
+        }
+        return PassageReference(bookName: book.name, chapterIndex: chapterIndex, verse: verse, verseEnd: verseEnd)
     }
 
     private static func normalize(_ text: String) -> String {
