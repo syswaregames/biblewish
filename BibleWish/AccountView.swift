@@ -10,6 +10,7 @@ import SwiftUI
 struct AccountView: View {
 
     @EnvironmentObject var auth: AuthStore
+    @EnvironmentObject var push: PushManager
     @Environment(\.palette) private var palette
     @Environment(\.dismiss) private var dismiss
 
@@ -91,7 +92,11 @@ struct AccountView: View {
         .navigationTitle("Account")
         .confirmationDialog("Sign out of BibleWish?", isPresented: $confirmSignOut, titleVisibility: .visible) {
             Button("Sign out", role: .destructive) {
-                Task { await auth.signOut(); dismiss() }
+                Task {
+                    await push.unregister()
+                    await auth.signOut()
+                    dismiss()
+                }
             }
         }
         .alert("Delete your account?", isPresented: $showDelete) {

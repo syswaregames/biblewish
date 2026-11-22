@@ -11,6 +11,7 @@ struct NotificationsView: View {
 
     @EnvironmentObject var store: CommunityStore
     @EnvironmentObject var auth: AuthStore
+    @EnvironmentObject var push: PushManager
     @Environment(\.palette) private var palette
     @Environment(\.openURL) private var openURL
 
@@ -23,23 +24,9 @@ struct NotificationsView: View {
     struct PrayerRoute: Identifiable, Hashable { let id: Int }
 
     var body: some View {
-        Group {
-            if !auth.isSignedIn {
-                signedOut
-            } else if !loaded {
-                ProgressView().frame(maxWidth: .infinity, maxHeight: .infinity)
-            } else if let failure, items.isEmpty {
-                Text(failure).font(.subheadline).foregroundStyle(palette.inkMuted).multilineTextAlignment(.center).padding()
-            } else if items.isEmpty {
-                Text("Nothing yet. When someone prays for you, encourages you or opens a verse you sent, it appears here.")
-                    .font(.subheadline).foregroundStyle(palette.inkMuted).multilineTextAlignment(.center).padding(30)
-            } else {
-                List(items) { item in
-                    Button { open(item) } label: { row(item) }
-                        .themedRows()
-                }
-                .themedList()
-            }
+        VStack(spacing: 0) {
+            if auth.isSignedIn && push.authorization == .notDetermined { pushPrompt }
+            content
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
         .themedScreen()
@@ -59,7 +46,52 @@ struct NotificationsView: View {
         }
         .navigationDestination(item: $prayerRoute) { PrayerLoadingView(id: $0.id) }
         .sheet(isPresented: $showSignIn) { SignInView() }
-        .task(id: auth.user?.id ?? 0) { await load() }
+        .task(id: auth.user?.id ?? 0) {
+            await push.refreshAuthorization()
+            await load()
+        }
+    }
+
+    /// Before the first permission prompt: say what it is for.
+    private var pushPrompt: some View {
+        HStack(spacing: 12) {
+            Image(systemName: "bell.badge").foregroundStyle(palette.gold)
+            Text("Get a notification on this phone when someone prays for you.")
+                .font(.footnote).foregroundStyle(palette.inkSoft)
+            Spacer(minLength: 4)
+            Button("Turn on") {
+                Task {
+                    await push.enable()
+                    await push.syncRegistration()
+                }
+            }
+            .font(.footnote.weight(.semibold))
+        }
+        .padding(12)
+        .themedCard(cornerRadius: 12)
+        .padding(.horizontal, 16)
+        .padding(.top, 8)
+    }
+
+    @ViewBuilder private var content: some View {
+        Group {
+            if !auth.isSignedIn {
+                signedOut
+            } else if !loaded {
+                ProgressView().frame(maxWidth: .infinity, maxHeight: .infinity)
+            } else if let failure, items.isEmpty {
+                Text(failure).font(.subheadline).foregroundStyle(palette.inkMuted).multilineTextAlignment(.center).padding()
+            } else if items.isEmpty {
+                Text("Nothing yet. When someone prays for you, encourages you or opens a verse you sent, it appears here.")
+                    .font(.subheadline).foregroundStyle(palette.inkMuted).multilineTextAlignment(.center).padding(30)
+            } else {
+                List(items) { item in
+                    Button { open(item) } label: { row(item) }
+                        .themedRows()
+                }
+                .themedList()
+            }
+        }
     }
 
     private var signedOut: some View {

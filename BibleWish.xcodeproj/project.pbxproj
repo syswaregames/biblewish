@@ -18,6 +18,7 @@
 		41E6E796789C7F13A845176B /* SignInView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 20483F9AEB2004EB42EDF122 /* SignInView.swift */; };
 		4259E29C5D64FEF923DBF3E3 /* CommunityStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1F534C0A01C6FC973E6BC8ED /* CommunityStore.swift */; };
 		4D47D94BC818C78030DF7D7C /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F1553558A44AD513ACA31169 /* Foundation.framework */; };
+		64E509AFF3924BD8ABBE2075 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9F12B1E301A311EB76C5F53 /* AppDelegate.swift */; };
 		69B5B6423C93DF94FD639B4B /* NoteEditing.swift in Sources */ = {isa = PBXBuildFile; fileRef = 47BABA0DFE2B60515C7D1B4D /* NoteEditing.swift */; };
 		726C62E89FD312F043E1256F /* VerseWidgetViews.swift in Sources */ = {isa = PBXBuildFile; fileRef = D809CA7C24BF42A1C821E777 /* VerseWidgetViews.swift */; };
 		7606AB7E655217D4A5050AC2 /* NoteTextView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 831B532E71FB2B231BFD0645 /* NoteTextView.swift */; };
@@ -30,6 +31,7 @@
 		88FE1F68E93BBC9ABA18DB5B /* AccountView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0CF4D7276E9D3CC5811425F /* AccountView.swift */; };
 		89DB1736B877F7A8C389F766 /* BibleWishWidget.swift in Sources */ = {isa = PBXBuildFile; fileRef = 62FD2D2745A31B61EEA56508 /* BibleWishWidget.swift */; };
 		8B4067954AAF12C483B9B6CC /* BibleSearch.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A509F24CFB1C9EFC5C1139D /* BibleSearch.swift */; };
+		8BD62D0C73E4971FCD22A5A3 /* PushRoute.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2E8B65AD5947BE8DFC75E1F4 /* PushRoute.swift */; };
 		8CE5E7950CF1C906211F793A /* SyncStatusView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 36B4C43724B3CB313115E608 /* SyncStatusView.swift */; };
 		8D5D23F7D1095A95F3F38A37 /* Prayers.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7864A1BDC9B3944F10714BD0 /* Prayers.swift */; };
 		8F718FFBCEDFD1D9B3B16F24 /* CommunityView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95235D5521A2A2136E5DFA7C /* CommunityView.swift */; };
@@ -103,16 +105,19 @@
 		9CB4FF4A062DB27844762B45 /* Strongs.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22D9042954D38D02EAAE3D29 /* Strongs.swift */; };
 		A1A30FD2F8EED20A9A85287C /* VerseCardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9D3EE9E7F2223D7D179B811B /* VerseCardView.swift */; };
 		A6AE8E4F356088632734539F /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = 7ECDFA1553EDBAA5BEBF1E64 /* PrivacyInfo.xcprivacy */; };
+		B02D4253C41194E3FB4E688F /* PushManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 426C7A5F142FEDD7E1A77AC0 /* PushManager.swift */; };
 		B091D009BB4DC5768F7A4A8B /* VerseLibrary.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0FDCC472C67F882419CA4611 /* VerseLibrary.swift */; };
 		B11B6D4113E0364F689520DE /* SendVerseView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 88A49D33DF9CA8468D2CB601 /* SendVerseView.swift */; };
 		B749B482DAC7D82754295CB9 /* CommunityModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = D6723330D6126BD51E179ABB /* CommunityModels.swift */; };
 		BD8BB551CB201DBADF302658 /* countries.json in Resources */ = {isa = PBXBuildFile; fileRef = 7595087BE531539CB801F197 /* countries.json */; };
 		BE45B5EB4FF84D6061714424 /* VerseSelection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 855D086055BBC84504733DDC /* VerseSelection.swift */; };
+		C7C19B7BFEB979A0C5F30672 /* NotificationSettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C567846E433DDAEFFE762758 /* NotificationSettingsView.swift */; };
 		CBA41874341E014307997991 /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = EB864C3AFF590D8698A05CA9 /* PrivacyInfo.xcprivacy */; };
 		CD01120F1D54430F6D3D96CC /* OriginalWordsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5ED953979F9167EA8AF06CCE /* OriginalWordsView.swift */; };
 		CEB80B61B3B5CD81B732B58E /* VerseFixtures.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7EDF58B4D2327A1D1FA3DB97 /* VerseFixtures.swift */; };
 		D1C77A58355CDBC16BDD752F /* SelfTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8D26807FF18B9FCFE3092E85 /* SelfTest.swift */; };
 		E0917C7AB280E44953473160 /* SendVerse.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9F5AD16CD80D4BCD0D4141D /* SendVerse.swift */; };
+		E8C97596D51528F77464595D /* AppRouter.swift in Sources */ = {isa = PBXBuildFile; fileRef = D3B4B799D852652601761552 /* AppRouter.swift */; };
 		EBCAE28FB37F3CCCFBC2B2A8 /* PrayerWallView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 415C9A673EBE4A0FA177C5E3 /* PrayerWallView.swift */; };
 		EF928E9A3883CC7C91AC3E23 /* APIClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = E13CDB28A55487D545F0F5B9 /* APIClient.swift */; };
 		F2D678D89910403A65F5EAFD /* NotificationsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1685A435C65DBBE2986C67D /* NotificationsView.swift */; };
@@ -151,10 +156,12 @@
 		1F534C0A01C6FC973E6BC8ED /* CommunityStore.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = CommunityStore.swift; sourceTree = "<group>"; };
 		20483F9AEB2004EB42EDF122 /* SignInView.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = SignInView.swift; sourceTree = "<group>"; };
 		22D9042954D38D02EAAE3D29 /* Strongs.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = Strongs.swift; sourceTree = "<group>"; };
+		2E8B65AD5947BE8DFC75E1F4 /* PushRoute.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = PushRoute.swift; sourceTree = "<group>"; };
 		362E0406DA0D1B2D99AF92A0 /* CommunitySettingsView.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = CommunitySettingsView.swift; sourceTree = "<group>"; };
 		36B4C43724B3CB313115E608 /* SyncStatusView.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = SyncStatusView.swift; sourceTree = "<group>"; };
 		3B79F46A1DE423D7E4576416 /* NoteInline.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = NoteInline.swift; sourceTree = "<group>"; };
 		415C9A673EBE4A0FA177C5E3 /* PrayerWallView.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = PrayerWallView.swift; sourceTree = "<group>"; };
+		426C7A5F142FEDD7E1A77AC0 /* PushManager.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = PushManager.swift; sourceTree = "<group>"; };
 		47BABA0DFE2B60515C7D1B4D /* NoteEditing.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = NoteEditing.swift; sourceTree = "<group>"; };
 		4AC2B1F2D8025037233D4C1E /* WidgetKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WidgetKit.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS26.0.sdk/System/Library/Frameworks/WidgetKit.framework; sourceTree = DEVELOPER_DIR; };
 		5110D69EF9E3A5C85A94E842 /* votd */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = folder; name = votd; path = Data/votd; sourceTree = "<group>"; };
@@ -250,13 +257,16 @@
 		AFE66F6BCC0D9B2BD7A44041 /* VerseSelectionBar.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = VerseSelectionBar.swift; sourceTree = "<group>"; };
 		B5820E1C1E4D99B9017FCCEC /* BookNavigatorView.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = BookNavigatorView.swift; sourceTree = "<group>"; };
 		C0CF4D7276E9D3CC5811425F /* AccountView.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = AccountView.swift; sourceTree = "<group>"; };
+		C567846E433DDAEFFE762758 /* NotificationSettingsView.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = NotificationSettingsView.swift; sourceTree = "<group>"; };
 		C777CBED4552926826181C21 /* PrayerDetailView.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = PrayerDetailView.swift; sourceTree = "<group>"; };
 		C9F5AD16CD80D4BCD0D4141D /* SendVerse.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = SendVerse.swift; sourceTree = "<group>"; };
+		D3B4B799D852652601761552 /* AppRouter.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = AppRouter.swift; sourceTree = "<group>"; };
 		D6723330D6126BD51E179ABB /* CommunityModels.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = CommunityModels.swift; sourceTree = "<group>"; };
 		D681B96C312819CCD0ABB420 /* AuthStore.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = AuthStore.swift; sourceTree = "<group>"; };
 		D7039628356A04F06010C531 /* BibleWishWidget.entitlements */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.plist.entitlements; path = BibleWishWidget.entitlements; sourceTree = "<group>"; };
 		D809CA7C24BF42A1C821E777 /* VerseWidgetViews.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = VerseWidgetViews.swift; sourceTree = "<group>"; };
 		E13CDB28A55487D545F0F5B9 /* APIClient.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = APIClient.swift; sourceTree = "<group>"; };
+		E9F12B1E301A311EB76C5F53 /* AppDelegate.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		EB1AEE4906D1A271AE5CB7ED /* strongs */ = {isa = PBXFileReference; lastKnownFileType = folder; path = strongs; sourceTree = "<group>"; };
 		EB864C3AFF590D8698A05CA9 /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; includeInIndex = 1; path = PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
 		F0386BBB6DB1BEA6E46CBCD1 /* LeaderboardView.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = LeaderboardView.swift; sourceTree = "<group>"; };
@@ -299,6 +309,19 @@
 			);
 			name = Community;
 			path = Community;
+			sourceTree = "<group>";
+		};
+		65D4DF29A4B829959846AFDD /* Push */ = {
+			isa = PBXGroup;
+			children = (
+				2E8B65AD5947BE8DFC75E1F4 /* PushRoute.swift */,
+				D3B4B799D852652601761552 /* AppRouter.swift */,
+				426C7A5F142FEDD7E1A77AC0 /* PushManager.swift */,
+				E9F12B1E301A311EB76C5F53 /* AppDelegate.swift */,
+				C567846E433DDAEFFE762758 /* NotificationSettingsView.swift */,
+			);
+			name = Push;
+			path = Push;
 			sourceTree = "<group>";
 		};
 		675EF307D2D9629EAEA35EE0 /* Shared */ = {
@@ -384,6 +407,7 @@
 				5ED953979F9167EA8AF06CCE /* OriginalWordsView.swift */,
 				88A49D33DF9CA8468D2CB601 /* SendVerseView.swift */,
 				1A60969774A8118AD4638A78 /* Community */,
+				65D4DF29A4B829959846AFDD /* Push */,
 			);
 			path = BibleWish;
 			sourceTree = "<group>";
@@ -718,6 +742,11 @@
 				F2D678D89910403A65F5EAFD /* NotificationsView.swift in Sources */,
 				8F718FFBCEDFD1D9B3B16F24 /* CommunityView.swift in Sources */,
 				0B81DFE0ED94292B9C78803E /* CommunitySettingsView.swift in Sources */,
+				8BD62D0C73E4971FCD22A5A3 /* PushRoute.swift in Sources */,
+				E8C97596D51528F77464595D /* AppRouter.swift in Sources */,
+				B02D4253C41194E3FB4E688F /* PushManager.swift in Sources */,
+				64E509AFF3924BD8ABBE2075 /* AppDelegate.swift in Sources */,
+				C7C19B7BFEB979A0C5F30672 /* NotificationSettingsView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

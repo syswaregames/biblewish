@@ -16,10 +16,13 @@ struct CommunityView: View {
 
     @EnvironmentObject var store: CommunityStore
     @EnvironmentObject var auth: AuthStore
+    @EnvironmentObject var router: AppRouter
     @Environment(\.palette) private var palette
 
     @AppStorage("community_section") private var sectionName = Section.wall.rawValue
     @State private var reload = 0
+    /// A request opened from a notification.
+    @State private var prayerRoute: NotificationsView.PrayerRoute?
 
     private var section: Section { Section(rawValue: sectionName) ?? .wall }
 
@@ -68,6 +71,13 @@ struct CommunityView: View {
                 }
                 .accessibilityLabel(store.unreadNotifications > 0 ? "Notifications, \(store.unreadNotifications) unread" : "Notifications")
             }
+        }
+        .navigationDestination(item: $prayerRoute) { PrayerLoadingView(id: $0.id) }
+        .onChange(of: router.prayerToOpen, initial: true) {
+            guard let id = router.prayerToOpen else { return }
+            router.prayerToOpen = nil
+            sectionName = Section.wall.rawValue
+            prayerRoute = NotificationsView.PrayerRoute(id: id)
         }
         .task(id: auth.user?.id ?? 0) { if auth.isSignedIn { await store.refreshUnread() } }
     }

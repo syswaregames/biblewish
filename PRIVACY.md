@@ -27,6 +27,9 @@ store on our server:
   biblewish.com and in the app. Anonymous requests hide your name and country, but we still keep
   who wrote them so we can moderate. Reports and blocks you make are stored so they can be acted on.
 - how many chapters you read, for the reading leaderboard, unless you turn it off in Settings
+- if you turn on push notifications: this phone's push token (an identifier Apple gives this app on
+  this phone, used only to send you notifications) and your notification choices. Signing out or
+  turning push off removes the token. Notifications are sent through Apple's push service
 
 This is used only to run those features. It is never sold, shared with advertisers, used for
 tracking, or shown to anyone else. Your prayer list and notes are private. You can export

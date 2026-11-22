@@ -107,6 +107,7 @@ final class SelfTest {
         await runAuth()
         await runSendVerse()
         await runCommunity()
+        await runPush()
         await runFavoritesAndReading()
         await runHighlights()
         await runNotes()
@@ -345,6 +346,76 @@ final class SelfTest {
             check("community bell and leaderboard", false, "\(error)")
         }
         if auth.isSignedIn { await auth.signOut() }
+    }
+
+    // MARK: - Push notifications
+
+    private struct DeviceSummary: Decodable {
+        struct Push: Decodable { let available: Bool }
+        let devices: Int
+        let push: Push
+        let delivered: Int?
+    }
+
+    private func runPush() async {
+        // Where a notification leads.
+        let base = URL(string: "https://biblewish.com")!
+        func route(_ text: String?) -> PushRoute { PushRoute.parse(text, base: base) }
+        check("a prayer link opens that request", route("/community/?prayer=12") == .prayer(12))
+        check("the wall and the board open their screens", route("/community/") == .community && route("/leaderboard/") == .leaderboard)
+        check("a plan's reading opens Plans, the Bible opens the Bible", route("/read.html?plan=bible-in-a-year&day=3") == .plans && route("/read.html") == .bible && route("/plans/") == .plans)
+        check("a sent verse opens on the website", route("/v/0123456789abcdef0123456789abcdef") == .web(URL(string: "https://biblewish.com/v/0123456789abcdef0123456789abcdef")!))
+        check("nothing, or the root, opens Home", route(nil) == .home && route("") == .home && route("/") == .home)
+        check("an address on our site is read by its path", route("https://biblewish.com/community/?prayer=5") == .prayer(5))
+        check("an address elsewhere opens there", route("https://example.org/page") == .web(URL(string: "https://example.org/page")!))
+
+        // Which Apple push service the build uses.
+        func profile(_ env: String?) -> Data {
+            let entitlements = env.map { "<key>Entitlements</key><dict><key>aps-environment</key><string>\($0)</string></dict>" } ?? "<key>Entitlements</key><dict/>"
+            let xml = "<?xml version=\"1.0\" encoding=\"UTF-8\"?><plist version=\"1.0\"><dict><key>Name</key><string>x</string>\(entitlements)</dict></plist>"
+            return Data([0x30, 0x82, 0x01, 0xFF, 0x00]) + Data(xml.utf8) + Data([0xAA, 0xBB, 0x00])
+        }
+        check("a development profile means sandbox tokens", PushEnvironment.apsEnvironment(inProfile: profile("development")) == "development")
+        check("a production profile means production tokens", PushEnvironment.apsEnvironment(inProfile: profile("production")) == "production")
+        check("a profile without push, or without a list, says nothing", PushEnvironment.apsEnvironment(inProfile: profile(nil)) == nil && PushEnvironment.apsEnvironment(inProfile: Data([1, 2, 3])) == nil)
+        check("a device token is written as lowercase hex", PushEnvironment.hex(Data([0x01, 0xAB, 0xFF, 0x00])) == "01abff00")
+
+        // The server's side of it, signed in.
+        guard await signInFreshAccount("push") != nil else { check("sign in for push tests", false); return }
+        let token = String(repeating: "ab", count: 32)
+        let other = String(repeating: "cd", count: 32)
+        func call(_ method: String, _ query: [String: String] = [:], _ json: Any? = nil) async -> DeviceSummary? {
+            try? await APIClient.shared.request(DeviceSummary.self, method, "api/devices.php", query: query, json: json)
+        }
+        check("a new account has no phones", await call("GET")?.devices == 0)
+        let registered = await call("POST", [:], ["token": token, "environment": "sandbox", "app_version": "1.0"])
+        check("a phone can be registered", registered?.devices == 1)
+        check("registering it again does not add another", await call("POST", [:], ["token": token, "environment": "sandbox"])?.devices == 1)
+        check("a second phone is counted", await call("POST", [:], ["token": other, "environment": "production"])?.devices == 2)
+        check("the server says whether it can send yet", registered?.push.available == false, "\(String(describing: registered?.push.available))")
+        let notHex = await call("POST", [:], ["token": "not-a-token"])
+        let tooShort = await call("POST", [:], ["token": "ab12"])
+        check("a token that is not hex, or too short, is refused", notHex == nil && tooShort == nil)
+        check("an unknown environment is refused", await call("POST", [:], ["token": token, "environment": "moon"]) == nil)
+        let test = await call("POST", ["action": "test"])
+        check("a test says it was not sent while the server has no Apple key", test?.delivered == 0 && test?.push.available == false)
+        check("a phone can be removed", await call("DELETE", [:], ["token": other])?.devices == 1)
+        await auth.signOut()
+
+        // The same phone signed in as someone else moves to that account.
+        guard await signInFreshAccount("push2") != nil else { check("sign in a second account", false); return }
+        check("the second account takes the phone over", await call("POST", [:], ["token": token, "environment": "sandbox"])?.devices == 1)
+        await auth.signOut()
+
+        // Settings that follow the member between the site and the app.
+        guard await signInFreshAccount("push3") != nil else { check("sign in a third account", false); return }
+        check("community push starts on", auth.user?.pushCommunity != false)
+        check("push settings are saved", await auth.updateProfile(["push_community": false, "weekly_recap": false, "reminder_hour": 9, "timezone": "America/Sao_Paulo"]) && auth.user?.pushCommunity == false && auth.user?.weeklyRecap == false && auth.user?.reminderHour == 9 && auth.user?.timezone == "America/Sao_Paulo")
+        check("the reminder can be turned off", await auth.updateProfile(["reminder_hour": NSNull()]) && auth.user?.reminderHour == nil)
+        check("an hour outside the day is refused", await auth.updateProfile(["reminder_hour": 25]) == false)
+        check("an unknown time zone is refused", await auth.updateProfile(["timezone": "Mars/Olympus"]) == false)
+        check("the hour is written for the reader", NotificationSettingsView.hourLabel(9).contains("9"))
+        await auth.signOut()
     }
 
     // MARK: - Changing version in the reader

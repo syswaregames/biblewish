@@ -9,7 +9,8 @@ import SwiftUI
 
 @main
 struct BibleWishApp: App {
-    
+
+    @UIApplicationDelegateAdaptor(AppDelegate.self) private var appDelegate
     @StateObject private var viewModel = BibleViewModel()
     @StateObject private var themeStore = ThemeStore()
     

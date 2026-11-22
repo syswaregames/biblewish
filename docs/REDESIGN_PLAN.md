@@ -172,3 +172,15 @@ Debug self-test: 309 checks, 53 of them for this, run with real accounts against
 
 Not checked: tapping through the screens and the share/report sheets on a device; a request with a long text or a profile photo; the app against the production server (the block endpoint is not deployed); the Achievements list for community badges.
 
+## Push notifications (2026-11-22)
+
+A banner on the phone, even with the app closed, for: someone prays for your request, encourages you, opens/reacts to/replies to a verse you sent (or sends you one); your daily reading reminder; your weekly recap. Needs Apple's push key on the server first (`BibleWish_Website/docs/PUSH.md`); until then the app says push is not switched on yet and nothing is sent.
+
+- **App:** Settings → Notifications (turn on, choose what to be told about, send yourself a test); a soft prompt in the bell screen before the first permission request; the phone registers itself with `api/devices.php` while signed in and is removed on sign-out; a tap on a notification opens the right screen (a prayer request, the leaderboard, Plans, the Bible, or the website for a sent verse), also from a cold start; the app icon's badge is the bell's unread count; a notification arriving while the app is open still shows a banner and refreshes the bell.
+- **Server** (committed in the website repo, **not deployed yet**): `api/lib/push.php` (APNs over HTTP/2 with a signed token, best-effort, sent after the page is delivered, dead phones forgotten), `api/devices.php`, `notify()` pushes whatever the bell records, the reading-reminder cron goes to the phone instead of email when the member has one, the weekly recap goes to both; migration 023 (`push_devices`, `users.push_community`).
+- **Same settings as the website:** community push (`push_community`), the weekly recap, the reminder hour (and the phone's time zone is sent with it).
+- Debug self-test: 336 checks (12 new here: where each notification leads, sandbox vs production detection from a provisioning profile, registering, moving and removing a phone, settings). The server's own checks (34, `scripts/test-push.php`) run without Apple: the signed token verifies against its public key, dead phones are forgotten, community push can be turned off.
+- Checked in the simulator: a notification's link opening a prayer, the leaderboard and Plans from a cold start, and the settings screen.
+
+Not checked: a real notification arriving (the simulator cannot take the permission prompt and no Apple key exists yet), Apple's answers (sandbox vs production, token expiry), the permission prompt itself, the badge on the icon, TestFlight.
+

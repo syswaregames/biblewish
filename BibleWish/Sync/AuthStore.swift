@@ -18,6 +18,10 @@ struct ServerUser: Codable, Equatable {
     var showOnLeaderboard: Bool? = nil
     var notifyPrayers: Bool? = nil
     var allowVerses: Bool? = nil
+    var pushCommunity: Bool? = nil
+    var weeklyRecap: Bool? = nil
+    var reminderHour: Int? = nil
+    var timezone: String? = nil
 }
 
 @MainActor

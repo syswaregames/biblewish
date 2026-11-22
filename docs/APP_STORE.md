@@ -98,6 +98,7 @@ Use the largest iPhone size Apple asks for, in the warm Dark theme, plus one Sep
 ## Before submitting
 
 - [x] Website changes for sync are deployed (see `docs/PHASE4_SERVER.md`); verified file-by-file, but the authenticated endpoints were only tested locally, not yet from a phone against production
+- [ ] Push notifications: turn on the Push Notifications capability for the App ID, create the APNs key and give it to the server as described in the website repo's `docs/PUSH.md`, then try Settings → Notifications → Send me a test notification on a real iPhone (a TestFlight build too: it uses Apple's production service, Xcode builds the sandbox). The push token is declared as **Device ID** (linked to the user, app functionality, not tracking) in `PrivacyInfo.xcprivacy`; add it in App Store Connect too
 - [ ] Update the App Privacy answers in App Store Connect as above (the Community adds user content that other people can see: prayers, encouragement, display name, optional country and photo)
 - [ ] User-generated content (Guideline 1.2): the app has a Report on every request and reply, Block on every member (even anonymous ones), community guidelines shown where you post and in the Community settings, and a moderator who is emailed each report and can remove content. Confirm in App Store Connect's review notes how to reach the moderator (the support address in the listing) and that reports are answered within a day
 

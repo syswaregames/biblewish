@@ -88,6 +88,18 @@ struct SettingsView: View {
             }
                 .themedRows()
 
+            // MARK: - Notifications
+            Section {
+                NavigationLink {
+                    NotificationSettingsView()
+                } label: {
+                    Label("Notifications", systemImage: "bell.badge")
+                }
+            } footer: {
+                Text("Prayers, encouragement, your reading reminder and your weekly recap, on this phone.")
+            }
+            .themedRows()
+
             // MARK: - Daily verse
             Section(
                 header: Text("Daily Verse"),

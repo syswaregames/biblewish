@@ -22,6 +22,8 @@ struct MainTabView: View {
     @StateObject private var auth = AuthStore()
     @StateObject private var sync = SyncEngine()
     @StateObject private var community = CommunityStore()
+    @ObservedObject private var router = AppRouter.shared
+    @ObservedObject private var push = PushManager.shared
     @Environment(\.scenePhase) private var scenePhase
     @Environment(\.palette) private var palette
 
@@ -33,35 +35,40 @@ struct MainTabView: View {
     }
 
     private var tabs: some View {
-        TabView {
+        TabView(selection: $router.tab) {
 
             NavigationStack {
                 HomeView()
             }
             .tabItem { Label("Home", systemImage: "house") }
+            .tag(AppTab.home)
 
             NavigationStack {
                 BookListView()
                     .environmentObject(bibleVM)
             }
             .tabItem { Label("Bible", systemImage: "book") }
+            .tag(AppTab.bible)
 
             NavigationStack {
                 PlansView()
             }
             .tabItem { Label("Plans", systemImage: "checklist") }
+            .tag(AppTab.plans)
 
             NavigationStack {
                 StudyView()
                     .environmentObject(bookmarkManager)
             }
             .tabItem { Label("Study", systemImage: "text.book.closed") }
+            .tag(AppTab.study)
 
             NavigationStack {
                 CommunityView()
             }
             .tabItem { Label("Community", systemImage: "person.3") }
             .badge(community.unreadNotifications)
+            .tag(AppTab.community)
         }
     }
 
@@ -80,6 +87,8 @@ struct MainTabView: View {
             .environmentObject(auth)
             .environmentObject(sync)
             .environmentObject(community)
+            .environmentObject(push)
+            .environmentObject(router)
     }
 
     /// Signing in, syncing, and the Debug-only self-tests.
@@ -91,17 +100,27 @@ struct MainTabView: View {
                 community.onNewBadges = { badges in achievements.celebrate(badges.map(\.definition)) }
                 await auth.restore()
                 await sync.signedIn()
+                await push.registerIfAllowed()
+                if auth.isSignedIn { await push.syncRegistration() }
             }
             .onChange(of: auth.user?.id) {
-                guard auth.isSignedIn else { community.reset(); return }
-                Task { await sync.signedIn() }
+                guard auth.isSignedIn else { community.reset(); push.setBadge(0); return }
+                Task {
+                    await sync.signedIn()
+                    await push.syncRegistration()
+                }
             }
             .onChange(of: scenePhase) {
                 guard scenePhase == .active else { return }
                 Task {
                     await sync.syncNow()
+                    await push.registerIfAllowed()
                     if auth.isSignedIn { await community.refreshUnread() }
                 }
+            }
+            .onChange(of: community.unreadNotifications) { push.setBadge(community.unreadNotifications) }
+            .onReceive(NotificationCenter.default.publisher(for: .bibleWishPushArrived)) { _ in
+                Task { await community.refreshUnread() }
             }
             #if DEBUG
             .task {
