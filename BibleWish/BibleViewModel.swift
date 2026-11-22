@@ -117,14 +117,9 @@ enum WidgetSync {
 
 class BibleViewModel: ObservableObject {
 
-    @Published var books: [BibleBook] = [] {
-        didSet {
-            onBooksUpdated()
-        }
-    }
+    @Published var books: [BibleBook] = []
 
     @Published var errorMessage: String?
-    @Published private(set) var verseIndex: [IndexedVerse] = []
     @Published var selectedTranslation: BibleTranslation {
         didSet {
             guard oldValue != selectedTranslation else { return }
@@ -157,7 +152,6 @@ class BibleViewModel: ObservableObject {
     private let recentKey = "recent_chapters_v1"
     static let recentLimit = 6
 
-    private var hasBuiltIndex = false
     private let selectedTranslationKey = "selected_bible_translation"
 
     struct ReadingProgress: Codable, Equatable {
@@ -254,8 +248,6 @@ class BibleViewModel: ObservableObject {
             let data = try Data(contentsOf: url)
             let decoded = try JSONDecoder().decode(BibleData.self, from: data)
 
-            hasBuiltIndex = false
-            verseIndex = []
             errorMessage = nil
 
             DispatchQueue.main.async {
@@ -265,66 +257,6 @@ class BibleViewModel: ObservableObject {
             errorMessage = "Failed to load Bible: \(error.localizedDescription)"
             print(error)
         }
-    }
-
-    func search(query: String, limit: Int = 100) -> [SearchResult] {
-        let q = query
-            .lowercased()
-            .trimmingCharacters(in: .whitespacesAndNewlines)
-
-        guard q.count >= 2 else { return [] }
-
-        var results: [SearchResult] = []
-
-        for verse in verseIndex {
-            if verse.searchableText.contains(q) {
-                results.append(
-                    SearchResult(
-                        bookName: verse.book,
-                        chapterNumber: verse.chapter,
-                        verseNumber: verse.verse,
-                        verseText: verse.text
-                    )
-                )
-
-                if results.count >= limit {
-                    break
-                }
-            }
-        }
-
-        return results
-    }
-
-    func onBooksUpdated() {
-        guard !hasBuiltIndex else { return }
-        guard !books.isEmpty else { return }
-
-        hasBuiltIndex = true
-        buildSearchIndex()
-    }
-
-    private func buildSearchIndex() {
-        var index: [IndexedVerse] = []
-
-        for book in books {
-            for chapter in book.chapters {
-                for verse in chapter.verses {
-                    index.append(
-                        IndexedVerse(
-                            book: book.name,
-                            chapter: chapter.number,
-                            verse: verse.number,
-                            text: verse.text,
-                            searchableText: verse.text.lowercased()
-                        )
-                    )
-                }
-            }
-        }
-
-        verseIndex = index
-        print("🔍 Search index built: \(index.count) verses")
     }
 
     func chapterFor(

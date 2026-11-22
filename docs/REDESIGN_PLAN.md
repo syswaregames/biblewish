@@ -134,3 +134,13 @@ Send and Original words follow below. Not checked: tapping through the bar and t
 
 Debug self-test: 230 checks, including a live round trip (the server makes a link and reads it back; refuses a bad email). Not checked: tapping through the sheets and the share sheet on a device; opening a sent link in a browser.
 
+
+## Search (2026-11-22)
+
+Rebuilt after the website's search sheet (read.html) and its server search (`api/search.php`). Before: every keystroke scanned all 31,000 verses on the main thread for the raw text typed, so "he" found "the" and "she", only the first 100 hits in Bible order were kept, accents weren't folded ("coração"), only the whole query was highlighted, and every refresh gave each row a new id so the whole list redrew.
+
+Now: every word must appear, in any order; `"quoted words"` must appear together; a word matches whole words plus a plural ending ("bread" finds "breads", not "breadth"); `love*` searches word starts; capitals, accents and Hebrew vowel points are ignored; in Hebrew a word matches anywhere. Each translation gets an inverted index (word -> verses), built once off the main thread (about 1.2 s the first time after launch), so a search is a few lookups (25 ms or less). The screen: a field that also takes a reference ("John 3:16" offers Open; a book name offers Open), recent searches (or a few to try), "283 verses in 49 books", a chip per book in its section color with counts to filter, results with every matched word marked, 30 at a time with "More verses". The old index in `BibleViewModel` (built on the main thread at load) is gone.
+
+Checks (Debug self-test): the app's search and the website's `search.php` are run on 30 queries in four translations and must agree on the total, the per-book counts and the first page of results. The one known difference is data, not search: the website supplies 15 Biblia Livre verses (Matthew 17:21, Acts 8:37, ...) that the app's copy of the text still has as "—".
+
+Not checked: typing on a device, VoiceOver on the results, and the Release-build index time on a device.

@@ -95,6 +95,7 @@ final class SelfTest {
         runBookNavigator()
         runVerseSelection()
         runOriginalWords()
+        await runSearch()
         await runAuth()
         await runSendVerse()
         await runFavoritesAndReading()
@@ -165,6 +166,90 @@ final class SelfTest {
         let again = bookmarks.save(runs: [(16...17, "x")], bookName: "John", chapter: 3, translation: "kjv")
         check("saving the same run again changes nothing", again.added == 0 && again.already == 1 && bookmarks.bookmarks.count == before + 2)
         for bookmark in bookmarks.bookmarks where bookmark.bookName == "John" && bookmark.chapterNumber == 3 { bookmarks.toggle(bookmark) }
+    }
+
+    // MARK: - Search
+
+    private struct ServerHit: Decodable { let bookIndex: Int; let chapter: Int; let verse: Int }
+    private struct ServerBook: Decodable { let bookIndex: Int; let count: Int }
+    private struct ServerSearch: Decodable { let total: Int; let books: [ServerBook]; let results: [ServerHit] }
+
+    private func runSearch() async {
+        // Terms
+        check("words are separate terms, quotes make a phrase, a star a word start", SearchText.terms("bread of life") == ["bread", "of", "life"] && SearchText.terms("\"bread of life\"") == ["bread of life"] && SearchText.terms("Love*") == ["love*"])
+        check("one-letter words are dropped, numbers kept", SearchText.terms("a god 7 b") == ["god", "7"])
+        check("accents and capitals are ignored", SearchText.normalize("  Coraç\u{00E3}o  DE   Jo\u{00E3}o ") == "coracao de joao")
+        check("Hebrew vowel points and the maqaf are ignored", SearchText.normalize("\u{05D1}\u{05B0}\u{05BC}\u{05E8}\u{05B5}\u{05D0}\u{05E9}\u{05C1}\u{05B4}\u{05D9}\u{05EA}") == "\u{05D1}\u{05E8}\u{05D0}\u{05E9}\u{05D9}\u{05EA}")
+        check("at most 8 terms", SearchText.terms("aa bb cc dd ee ff gg hh ii jj").count == 8)
+
+        // Highlighting
+        func marked(_ text: String, _ query: String, hebrew: Bool = false) -> [String] {
+            SearchHighlight.ranges(in: text, terms: SearchText.terms(query), isHebrew: hebrew).map { String(text[$0]) }
+        }
+        check("matched words are marked, punctuation is not", marked("Jesus wept.", "jesus wept") == ["Jesus", "wept"])
+        check("a plural ending is marked with the word", marked("Give us bread, and loaves of breads.", "bread") == ["bread", "breads"])
+        check("a word start marks the whole word", marked("The lovely, loved love.", "love*") == ["lovely", "loved", "love"])
+        check("a part of a longer word is not a match", marked("The breadth of it", "bread").isEmpty)
+        check("accented text is marked in the original spelling", marked("Meu Cora\u{00E7}\u{00E3}o \u{00E9} teu", "coracao") == ["Cora\u{00E7}\u{00E3}o"])
+        check("a phrase is marked as one", marked("I am the bread of life, said he", "\"bread of life\"") == ["bread of life"])
+
+        // Against the website's own search, on the same queries.
+        let cases: [(BibleTranslation, [String])] = [
+            (.kjv, ["bread of life", "\"bread of life\"", "love*", "Jesus wept", "faith hope", "grace", "Jerusalem", "God's", "lord god*", "\"in the beginning\"", "the", "he", "peace be unto you", "pray* without", "kingdom heaven", "1 john", "amen"]),
+            (.webu, ["grace", "love*", "\"in the beginning\"", "shepherd"]),
+            (.bliv, ["cora\u{00E7}\u{00E3}o", "coracao", "amor*", "Jesus chorou", "f\u{00E9} esperan\u{00E7}a", "pastor"]),
+            (.heb, ["\u{05D0}\u{05DC}\u{05D4}\u{05D9}\u{05DD}", "\u{05D9}\u{05D4}\u{05D5}\u{05D4}", "\u{05D1}\u{05E8}\u{05D0}\u{05E9}\u{05D9}\u{05EA}"]),
+        ]
+        var mismatches: [String] = []
+        var compared = 0
+        var knownDrift = 0
+        var slowest: (String, Double) = ("", 0)
+        for (translation, queries) in cases {
+            guard let books = translation.loadBooks() else { mismatches.append("\(translation) did not load"); continue }
+            let isHebrew = translation == .heb
+            let started = ContinuousClock.now
+            let index = await SearchEngine.shared.index(key: translation.widgetId, books: books, isHebrew: isHebrew)
+            let built = started.duration(to: .now)
+            let builtMs = Int(Double(built.components.attoseconds) / 1e15 + Double(built.components.seconds) * 1000)
+            check("\(translation.widgetId) index built (\(index.verseCount) verses) in \(builtMs) ms, under 5 s", built < .seconds(5) && index.verseCount > 20000)
+
+            for query in queries {
+                let begin = ContinuousClock.now
+                let outcome = index.search(SearchText.terms(query))
+                let took = begin.duration(to: .now)
+                let ms = Double(took.components.attoseconds) / 1e15 + Double(took.components.seconds) * 1000
+                if ms > slowest.1 { slowest = ("\(translation.widgetId) \(query)", ms) }
+
+                guard let server = try? await APIClient.shared.request(ServerSearch.self, "GET", "api/search.php", query: ["q": query, "t": translation.widgetId, "offset": "0"]) else {
+                    mismatches.append("\(translation.widgetId) \"\(query)\": the server did not answer")
+                    continue
+                }
+                compared += 1
+                // The website supplies 15 Biblia Livre verses the app's copy leaves as "\u{2014}" (Acts 8:37...).
+                if translation == .bliv, server.total > outcome.ids.count, server.total - outcome.ids.count <= 15 {
+                    knownDrift += 1
+                    continue
+                }
+                if server.total != outcome.ids.count {
+                    mismatches.append("\(translation.widgetId) \"\(query)\": \(outcome.ids.count) here, \(server.total) on the website")
+                    continue
+                }
+                if !isHebrew {
+                    let mine = outcome.bookCounts.map { "\($0.book):\($0.count)" }
+                    let theirs = server.books.map { "\($0.bookIndex):\($0.count)" }
+                    if mine != theirs { mismatches.append("\(translation.widgetId) \"\(query)\": per-book counts differ") }
+                    let first = outcome.ids.prefix(server.results.count).map { id -> String in
+                        let hit = index.verse(of: id)
+                        return "\(hit.location.book).\(hit.chapterNumber).\(hit.verse.number)"
+                    }
+                    let firstTheirs = server.results.map { "\($0.bookIndex).\($0.chapter).\($0.verse)" }
+                    if first != firstTheirs { mismatches.append("\(translation.widgetId) \"\(query)\": the first results differ") }
+                }
+            }
+        }
+        check("search agrees with the website on \(compared) queries in four translations (totals, per-book counts, first results)", mismatches.isEmpty && compared >= 25, mismatches.prefix(4).joined(separator: " | "))
+        check("only the 15 verses the website supplies in Biblia Livre differ (\(knownDrift) queries touch them)", knownDrift <= 3)
+        check("every search takes under 150 ms (slowest: \(slowest.0) \(Int(slowest.1)) ms)", slowest.1 < 150)
     }
 
     // MARK: - Original words (Strong's)
