@@ -98,13 +98,13 @@ struct MainTabView: View {
                 bibleVM.selectedTranslation = selected
             }
         }
-        .onChange(of: versionStore.selectedVersionID) { newID in
+        .onChange(of: versionStore.selectedVersionID) { _, newID in
             // When VersionStore changes, reflect in BibleViewModel
             if let t = BibleTranslation(rawValue: newID), t != bibleVM.selectedTranslation {
                 bibleVM.selectedTranslation = t
             }
         }
-        .onChange(of: bibleVM.selectedTranslation) { t in
+        .onChange(of: bibleVM.selectedTranslation) { _, t in
             // When BibleViewModel changes, reflect in VersionStore
             if versionStore.selectedVersionID != t.rawValue {
                 versionStore.selectedVersionID = t.rawValue

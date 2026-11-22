@@ -99,11 +99,11 @@ struct VerseListView: View {
             }
             
             
-            .onChange(of: readerSettings.focusMode) { _ in
+            .onChange(of: readerSettings.focusMode) {
                 focusPeek = false
             }
 
-            .onChange(of: currentChapterIndex) { _ in
+            .onChange(of: currentChapterIndex) {
                 didAutoCompleteChapter = false
                 focusPeek = false
                 viewModel.recordLastRead(bookName: book.name, chapterNumber: chapter.number)

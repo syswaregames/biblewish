@@ -248,7 +248,7 @@ struct HomeView: View {
                 .autocorrectionDisabled()
                 .submitLabel(.go)
                 .onSubmit(openPassage)
-                .onChange(of: passageText) { _ in passageNotFound = false }
+                .onChange(of: passageText) { passageNotFound = false }
                 .padding(12)
                 .themedCard(cornerRadius: 10)
 

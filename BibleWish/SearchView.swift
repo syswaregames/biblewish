@@ -24,7 +24,7 @@ struct SearchView: View {
                 .padding(12)
                 .themedCard(cornerRadius: 10)
                 .padding()
-                .onChange(of: searchText) { newValue in
+                .onChange(of: searchText) { _, newValue in
                     searchTask?.cancel()
                     searchTask = Task {
                         try? await Task.sleep(nanoseconds: 300_000_000) // 300 ms debounce
@@ -49,10 +49,10 @@ struct SearchView: View {
                 
                 List($results, id: \.id) { $result in
                     NavigationLink {
-                        if let chapter = viewModel.chapterFor(
+                        if viewModel.chapterFor(
                             bookName: result.bookName,
                             chapterNumber: result.chapterNumber
-                        ) {
+                        ) != nil {
                             if let book = viewModel.book(named: result.bookName) {
                                 VerseListView(
                                     book: book,
