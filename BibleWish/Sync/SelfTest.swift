@@ -193,6 +193,16 @@ final class SelfTest {
         check("accented text is marked in the original spelling", marked("Meu Cora\u{00E7}\u{00E3}o \u{00E9} teu", "coracao") == ["Cora\u{00E7}\u{00E3}o"])
         check("a phrase is marked as one", marked("I am the bread of life, said he", "\"bread of life\"") == ["bread of life"])
 
+        if let bliv = BibleTranslation.bliv.loadBooks() {
+            let omitted = bliv.flatMap { book in book.chapters.flatMap { chapter in chapter.verses.filter { $0.omitted == true }.map { (book.name, chapter.number, $0.number, $0.text) } } }
+            check("Biblia Livre has its 15 omitted verses, flagged", omitted.count == 15, "\(omitted.count)")
+            check("none of them is left as a dash", omitted.allSatisfy { $0.3.count > 10 && $0.3 != "\u{2014}" })
+            let acts = bliv.first { $0.name == "Atos" }?.chapters.first { $0.number == 8 }?.verses.first { $0.number == 37 }
+            check("Atos 8:37 is there", acts?.omitted == true && acts?.text.contains("Filipe") == true)
+            let plain = bliv.first { $0.name == "Atos" }?.chapters.first { $0.number == 8 }?.verses.first { $0.number == 36 }
+            check("other verses carry no flag", plain != nil && plain?.omitted == nil)
+        } else { check("Biblia Livre loads", false) }
+
         // Against the website's own search, on the same queries.
         let cases: [(BibleTranslation, [String])] = [
             (.kjv, ["bread of life", "\"bread of life\"", "love*", "Jesus wept", "faith hope", "grace", "Jerusalem", "God's", "lord god*", "\"in the beginning\"", "the", "he", "peace be unto you", "pray* without", "kingdom heaven", "1 john", "amen"]),
@@ -202,7 +212,6 @@ final class SelfTest {
         ]
         var mismatches: [String] = []
         var compared = 0
-        var knownDrift = 0
         var slowest: (String, Double) = ("", 0)
         for (translation, queries) in cases {
             guard let books = translation.loadBooks() else { mismatches.append("\(translation) did not load"); continue }
@@ -225,11 +234,6 @@ final class SelfTest {
                     continue
                 }
                 compared += 1
-                // The website supplies 15 Biblia Livre verses the app's copy leaves as "\u{2014}" (Acts 8:37...).
-                if translation == .bliv, server.total > outcome.ids.count, server.total - outcome.ids.count <= 15 {
-                    knownDrift += 1
-                    continue
-                }
                 if server.total != outcome.ids.count {
                     mismatches.append("\(translation.widgetId) \"\(query)\": \(outcome.ids.count) here, \(server.total) on the website")
                     continue
@@ -247,8 +251,8 @@ final class SelfTest {
                 }
             }
         }
+        // Biblia Livre's 15 omitted verses (Acts 8:37 ...) are supplied from the website's data, so even "cora\u{00E7}\u{00E3}o" agrees now.
         check("search agrees with the website on \(compared) queries in four translations (totals, per-book counts, first results)", mismatches.isEmpty && compared >= 25, mismatches.prefix(4).joined(separator: " | "))
-        check("only the 15 verses the website supplies in Biblia Livre differ (\(knownDrift) queries touch them)", knownDrift <= 3)
         check("every search takes under 150 ms (slowest: \(slowest.0) \(Int(slowest.1)) ms)", slowest.1 < 150)
     }
 

@@ -80,8 +80,12 @@ struct VerseListView: View {
                     }
                     }
 
+                    if !omittedVerses.isEmpty && (!readerSettings.focusMode || focusPeek) {
+                        omittedFootnote
+                    }
+
                     if readerSettings.bookPage {
-                        Text("\u{2766}")
+                        Text("\u{2766}\u{FE0E}")
                             .font(.system(size: ornamentSize, design: .serif))
                             .accessibilityHidden(true)
                             .foregroundStyle(palette.gold)
@@ -275,6 +279,24 @@ struct VerseListView: View {
 
     }
     
+    // MARK: - Verses Biblia Livre leaves out
+
+    private var omittedVerses: [Int] { chapter.verses.filter { $0.omitted == true }.map(\.number) }
+
+    /// The website's footnote, in Portuguese like the text it explains.
+    private var omittedFootnote: some View {
+        let numbers = omittedVerses
+        let many = numbers.count > 1
+        return Text("* \(many ? "vv." : "v.") \(numbers.map(String.init).joined(separator: ", ")): \(many ? "estes vers\u{00ED}culos n\u{00E3}o aparecem" : "este vers\u{00ED}culo n\u{00E3}o aparece") nos manuscritos mais antigos, por isso a B\u{00ED}blia Livre \(many ? "os omite" : "o omite"). Tradu\u{00E7}\u{00E3}o do BibleWish.")
+            .font(.footnote.italic())
+            .foregroundStyle(palette.inkSoft)
+            .environment(\.locale, Locale(identifier: "pt"))
+            .frame(maxWidth: .infinity, alignment: .leading)
+            .padding(.top, 12)
+            .overlay(alignment: .top) { Rectangle().fill(palette.goldLine).frame(height: 1) }
+            .padding(.top, 20)
+    }
+
     // MARK: - Selecting verses
     //
     // As on the website, a selected verse is a highlighted one: tap to select, tap again to

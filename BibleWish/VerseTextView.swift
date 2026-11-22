@@ -45,6 +45,8 @@ struct VerseTextView: View {
             +
             verseText
             +
+            omittedMark
+            +
             heartText
         )
         .font(
@@ -66,7 +68,7 @@ struct VerseTextView: View {
         .cornerRadius(6)
         .contentShape(Rectangle())
         .accessibilityElement(children: .combine)
-        .accessibilityLabel("Verse \(verse.number). \(verse.text)")
+        .accessibilityLabel("Verse \(verse.number). \(verse.text)" + (verse.omitted == true ? " Not in the oldest manuscripts; supplied by BibleWish." : ""))
         .accessibilityValue(accessibilityState(highlighted: highlight != nil))
         .accessibilityHint(highlight != nil ? "Double tap to deselect" : "Double tap to select")
         .accessibilityAddTraits(.isButton)
@@ -87,6 +89,12 @@ struct VerseTextView: View {
         [highlighted ? "Selected" : nil, isFavorite ? "In favorites" : nil]
             .compactMap { $0 }
             .joined(separator: ", ")
+    }
+
+    /// A verse BibleWish supplies in Biblia Livre: a small gold * (the footnote is at the chapter's end).
+    private var omittedMark: Text {
+        guard verse.omitted == true else { return Text("") }
+        return Text("*").font(.caption.weight(.semibold)).foregroundColor(palette.gold).baselineOffset(6)
     }
 
     private var heartText: Text {
