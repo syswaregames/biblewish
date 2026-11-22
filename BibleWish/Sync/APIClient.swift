@@ -55,6 +55,12 @@ final class APIClient {
 
     private let session: URLSession
 
+    #if DEBUG
+    /// Requests the test harness wants refused, as "POST api/plans.php?action=import" (what an older
+    /// server does with an endpoint it doesn't have).
+    static var simulatedRefusals: Set<String> = []
+    #endif
+
     init() {
         let configuration = URLSessionConfiguration.default
         configuration.httpCookieStorage = HTTPCookieStorage.shared
@@ -80,6 +86,13 @@ final class APIClient {
         query: [String: String] = [:],
         json: Any? = nil
     ) async throws -> Data {
+        #if DEBUG
+        let tag = "\(method) \(path)" + (query["action"].map { "?\($0)" } ?? "")
+        if Self.simulatedRefusals.contains(tag) {
+            throw APIError.server(status: 404, code: "not_found", message: "Simulated refusal of \(tag)")
+        }
+        #endif
+
         var components = URLComponents(url: APIConfig.baseURL.appendingPathComponent(path), resolvingAgainstBaseURL: false)!
         if !query.isEmpty {
             components.queryItems = query.sorted { $0.key < $1.key }.map { URLQueryItem(name: $0.key, value: $0.value) }

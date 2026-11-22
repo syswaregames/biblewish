@@ -33,6 +33,11 @@ struct AccountView: View {
             }
             .themedRows()
 
+            Section(footer: Text("Notes, favorites, highlights, reading progress, plans and prayers are kept in step with biblewish.com.")) {
+                SyncStatusView()
+            }
+            .themedRows()
+
             Section(footer: Text("Everything BibleWish keeps for your account, as a file you can save.")) {
                 if let exportURL {
                     ShareLink(item: exportURL) {

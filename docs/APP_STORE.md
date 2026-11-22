@@ -9,11 +9,11 @@ Draft copy for the next release. Edit freely; limits are Apple's (name 30, subti
 
 ## Promotional text *(≤170; can change without a new build)*
 
-Read the Bible without distraction. A verse for every day, reading plans, notes and maps, free for everyone: no ads, no accounts, no subscriptions.
+Read the Bible without distraction. A verse for every day, reading plans, notes and maps, free for everyone: no ads, no subscriptions, no account needed.
 
 ## Description
 
-BibleWish is a free Bible app made as a gift. There are no ads, no subscriptions and no accounts. Everything stays on your device.
+BibleWish is a free Bible app made as a gift. There are no ads and no subscriptions, and you never need an account: everything works on your device. If you like, sign in with just your email to keep your notes, progress and prayers in step with biblewish.com.
 
 READ
 • A book-style reader: a serif page, a gold frame and an illuminated first letter
@@ -34,6 +34,7 @@ STAY ON TRACK
 STUDY
 • Save favorite verses and highlight in four colors
 • Write notes with tags (Insight, Question, Prayer, Sermon, Promise), light formatting, and verse references that open the passage
+• A private prayer list, with a place to write down how a prayer was answered
 • Cross-references for every verse
 • Places named in each chapter, and the journeys of Abraham, the Exodus, Jesus and Paul on a map
 
@@ -66,11 +67,18 @@ A new look, matching biblewish.com: warm Dark, Sepia and Light themes and a book
 
 ## App Privacy ("nutrition label")
 
-Answer **Data Not Collected**. The app does not collect or send any data. Notifications are scheduled locally, and the widget only shares the chosen translation with the app on the device. If Phase 4 (accounts and sync) is ever added, this changes: update the label and `PRIVACY.md` first.
+Without signing in the app collects nothing, but the label describes the app as shipped, and signing in is a feature, so declare what it collects. All of it is **linked to the user**, used for **App Functionality** only, **not used for tracking**:
+
+- **Contact Info → Email Address** (sign-in code, account identity)
+- **Identifiers → User ID** (the account number)
+- **User Content → Other User Content** (notes, highlights, favorites, private prayers)
+- **Usage Data → Product Interaction** (reading progress and plan progress, i.e. saved place)
+
+This matches `NSPrivacyCollectedDataTypes` in `BibleWish/PrivacyInfo.xcprivacy`; keep the two in step. Confirm the categories yourself in App Store Connect: they are the closest fit I could find, not legal advice. Notifications are scheduled locally and the widget only shares the chosen translation with the app on the device.
 
 ## Notes for App Review
 
-- No account is needed; everything works offline.
+- No account is needed; everything works offline. Signing in is optional (Settings → Account): it asks for an email, then a 6-digit code we send. For review, create an account with any address you can read. Account deletion and data export are in Settings → Account → Account.
 - The daily verse reminder is off by default. Turn it on in Settings → Daily Verse (it asks for notification permission).
 - The Verse of the Day widget is added from the Home Screen or Lock Screen widget gallery.
 - The Bible maps use Apple Maps and need a network connection to draw the map tiles; everything else works offline.
@@ -88,6 +96,9 @@ Use the largest iPhone size Apple asks for, in the warm Dark theme, plus one Sep
 7. Widget on a Home Screen (medium)
 
 ## Before submitting
+
+- [ ] **Deploy the website changes first** (see `docs/PHASE4_SERVER.md`): highlight colors, reading import and plans import. The app works without them, but colors stay on the device and plans/reading uploaded before signing in won't sync until they're live
+- [ ] Update the App Privacy answers in App Store Connect as above
 
 - [x] Release build for a real device compiles with no errors; privacy manifests (`PrivacyInfo.xcprivacy`) added for the app and the widget (UserDefaults only, no data collected)
 - [ ] Register the App Group and the widget's App ID (see `WIDGET.md`) and archive with signing

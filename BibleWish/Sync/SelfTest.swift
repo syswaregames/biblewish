@@ -94,6 +94,7 @@ final class SelfTest {
         await runNotes()
         await runPlans()
         await runPrayers()
+        await runRefusingServer()
         emit(failures == 0 ? "SELFTEST ALL PASSED" : "SELFTEST \(failures) FAILED")
         emit("SELFTEST DONE")
     }
@@ -636,6 +637,57 @@ final class SelfTest {
 
         _ = await auth.deleteAccount()
         prayers.removeAllLocal()
+    }
+
+    // MARK: - A server that refuses the uploads (not updated yet)
+
+    /// An older website refuses the import endpoints. Nothing on the device may be deleted because of that.
+    private func runRefusingServer() async {
+        if auth.isSignedIn { await auth.signOut() }
+        for plan in plans.userPlans { plans.stop(plan.id) }
+        highlights.removeAllLocal()
+        plans.clearConfirmed()
+
+        let fiveDaysAgo = Calendar.current.date(byAdding: .day, value: -5, to: Date())!
+        plans.start("gospels-30", on: fiveDaysAgo)
+        plans.toggle(planId: "gospels-30", day: 1, item: 0, at: fiveDaysAgo)
+        plans.start("psalms-30", on: fiveDaysAgo)
+        plans.toggle(planId: "psalms-30", day: 1, item: 1, at: fiveDaysAgo)
+        highlights.highlight(translation: "kjv", bookIndex: 42, bookName: "John", chapter: 3, verse: 16, color: .green)
+
+        APIClient.simulatedRefusals = ["POST api/plans.php?action=import", "POST api/highlights.php?action=merge"]
+        guard await signInFreshAccount("refuse") != nil else { check("sign in for refusal tests", false); return }
+        // psalms-30 also exists on the server (started on the website) with a different tick.
+        _ = try? await APIClient.shared.send("POST", "api/plans.php", json: ["plan_id": "psalms-30", "start_date": PlansStore.isoDay(Date())])
+        _ = try? await APIClient.shared.send("POST", "api/plans.php", query: ["action": "check"], json: ["plan_id": "psalms-30", "day": 1, "item": 0, "done": true])
+        await sync.signedIn()
+        await sync.syncNow()
+
+        check("plan the server refused is still on the device", plans.userPlan("gospels-30")?.progress.count == 1)
+        check("plan on both sides keeps ticks from both", Set(plans.userPlan("psalms-30")?.progress.map { $0.item } ?? []) == [0, 1], "\(String(describing: plans.userPlan("psalms-30")?.progress))")
+        check("highlight the server refused is still on the device", highlights.highlightFor(translation: "kjv", bookIndex: 42, chapter: 3, verse: 16)?.color == .green)
+
+        // The server catches up.
+        APIClient.simulatedRefusals = []
+        await sync.syncNow()
+        await sync.syncNow()
+        let server = await serverPlans()
+        check("plan reaches the server once it accepts it", server.contains { $0.planId == "gospels-30" } && plans.userPlan("gospels-30") != nil, "\(server.map(\.planId))")
+        let psalms = server.first { $0.planId == "psalms-30" }
+        check("server has both ticks of the shared plan", Set((psalms?.cells ?? []).map { $0[1] }) == [0, 1], "\(String(describing: psalms?.cells))")
+        let hl = await serverHighlights()
+        check("highlight reaches the server once it accepts it", hl.verses["kjv:42:3"] == [16] && highlights.highlightFor(translation: "kjv", bookIndex: 42, chapter: 3, verse: 16) != nil, "\(hl.verses)")
+        check("nothing left waiting", sync.pendingCount == 0, "\(sync.pendingCount)")
+
+        // Once acknowledged, the server wins: a plan removed on the website goes from the device too.
+        _ = try? await APIClient.shared.send("DELETE", "api/plans.php", query: ["plan_id": "gospels-30"])
+        await sync.syncNow()
+        check("acknowledged plan removed on the website goes from the device", plans.userPlan("gospels-30") == nil)
+
+        _ = await auth.deleteAccount()
+        for plan in plans.userPlans { plans.stop(plan.id) }
+        highlights.removeAllLocal()
+        plans.clearConfirmed()
     }
 }
 #endif

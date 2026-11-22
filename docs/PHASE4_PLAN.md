@@ -1,6 +1,6 @@
 # Phase 4 — Accounts and sync (plan)
 
-Status: **proposal, nothing built** · 2026-11-22
+Status: **tier B built and tested against the local server; website changes not deployed** (2026-11-22). Decisions: tier B (private sync plus the private prayer list), highlight colors stored on the server. Server changes and how to test: `PHASE4_SERVER.md`.
 
 Goal: sign in to biblewish.com from the app so favorites, notes, highlights, reading progress and plans follow the reader across the website and the app (and, if wanted, the prayer features).
 

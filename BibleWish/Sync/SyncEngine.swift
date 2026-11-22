@@ -43,6 +43,7 @@ final class SyncEngine: ObservableObject {
     private let accountKey = "sync_account_id"
     private let initialKey = "sync_initial_done_account"
     private let lastSyncedKey = "sync_last_synced"
+    private let highlightsMergedKey = "sync_highlights_merged_account"
 
     init() {
         let saved = UserDefaults.standard.double(forKey: lastSyncedKey)
@@ -87,6 +88,8 @@ final class SyncEngine: ObservableObject {
             bookmarks?.clearServerIds()
             notes?.clearServerIds()
             prayers?.clearServerIds()
+            plans?.clearConfirmed()
+            UserDefaults.standard.removeObject(forKey: highlightsMergedKey)
             outbox.removeAll()
             UserDefaults.standard.set(user.id, forKey: accountKey)
             UserDefaults.standard.removeObject(forKey: initialKey)
@@ -111,6 +114,8 @@ final class SyncEngine: ObservableObject {
         bookmarks?.clearServerIds()
         notes?.clearServerIds()
         prayers?.clearServerIds()
+        plans?.clearConfirmed()
+        UserDefaults.standard.removeObject(forKey: highlightsMergedKey)
         outbox.removeAll()
         UserDefaults.standard.removeObject(forKey: accountKey)
         UserDefaults.standard.removeObject(forKey: initialKey)
@@ -239,6 +244,7 @@ final class SyncEngine: ObservableObject {
 
         case .mergeHighlights:
             try await mergeHighlights()
+            if let user = auth?.user { UserDefaults.standard.set(user.id, forKey: highlightsMergedKey) }
 
         case .pushNote(let id):
             guard let note = notes?.note(id: id) else { return }
@@ -258,6 +264,7 @@ final class SyncEngine: ObservableObject {
             try await api.send("POST", "api/plans.php", query: ["action": "import"], json: [
                 "plan_id": planId, "started_on": plan.startedOn, "progress": [Any](),
             ])
+            plans?.markConfirmed(planId)
 
         case .importPlan(let planId):
             guard let plan = plans?.userPlan(planId) else { return }
@@ -265,6 +272,7 @@ final class SyncEngine: ObservableObject {
             try await api.send("POST", "api/plans.php", query: ["action": "import"], json: [
                 "plan_id": planId, "started_on": plan.startedOn, "progress": progress,
             ])
+            plans?.markConfirmed(planId)
 
         case .checkPlanItem(let planId, let day, let item):
             guard let plans, plans.userPlan(planId) != nil else { return }
@@ -311,15 +319,23 @@ final class SyncEngine: ObservableObject {
         viewModel.applyServerChapters(reading.chapters)
 
         let serverHighlights = try await api.request(HighlightsResponse.self, "GET", "api/highlights.php")
-        highlights?.apply(server: serverHighlights.asChapters, bookName: { index in
-            index < viewModel.books.count ? viewModel.books[index].name : nil
-        })
+        let merged = auth?.user.map { UserDefaults.standard.integer(forKey: highlightsMergedKey) == $0.id } ?? false
+        if merged || (highlights?.highlights.isEmpty ?? true) {
+            highlights?.apply(server: serverHighlights.asChapters, bookName: { index in
+                index < viewModel.books.count ? viewModel.books[index].name : nil
+            })
+        } else {
+            // The device's highlights haven't reached the server yet: keep them and try again.
+            outbox.add(.mergeHighlights)
+        }
 
         let serverNotes = try await api.request(NotesResponse.self, "GET", "api/notes.php")
         notes?.apply(serverNotes: serverNotes.notes.map(\.asNote))
 
         let serverPlans = try await api.request(PlansResponse.self, "GET", "api/plans.php")
-        plans?.apply(serverPlans: serverPlans.plans.map(\.asPlan))
+        for planId in plans?.apply(serverPlans: serverPlans.plans.map(\.asPlan)) ?? [] {
+            outbox.add(.importPlan(planId))
+        }
 
         let serverPrayers = try await api.request(PrayersResponse.self, "GET", "api/prayers.php")
         prayers?.apply(serverPrayers: serverPrayers.prayers.map(\.asPrayer))

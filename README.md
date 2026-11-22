@@ -37,15 +37,16 @@ consistently, or with greater understanding, then its purpose is fulfilled.
   left off.
 - **Plans:** reading plans (the Bible in a year, the New Testament, the Gospels,
   Psalms, Proverbs) with progress, streaks, and progress through every book.
-- **Study:** favorite verses and notes with colored tags, light formatting, and
-  verse references that open the passage; cross-references; places and journeys
-  on a map.
+- **Study:** favorite verses, notes with colored tags and light formatting (verse
+  references open the passage), and a private prayer list; cross-references;
+  places and journeys on a map.
 - **Achievements:** badges that celebrate faithfulness. Nothing is ranked.
 - **Daily verse:** an optional reminder and a Home Screen / Lock Screen widget.
 - **Themes:** Dark, Sepia, Light, or follow the device.
 
 The design, data and plans come from [biblewish.com](https://biblewish.com).
-Everything stays on your device. See [`docs/REDESIGN_PLAN.md`](docs/REDESIGN_PLAN.md)
+Everything works on your device. Signing in is optional and keeps your notes,
+favorites, highlights, progress, plans and prayers in step with the website. See [`docs/REDESIGN_PLAN.md`](docs/REDESIGN_PLAN.md)
 for how the app was rebuilt around the website, and [`docs/WIDGET.md`](docs/WIDGET.md)
 for the widget.
 

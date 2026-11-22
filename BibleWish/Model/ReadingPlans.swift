@@ -184,14 +184,60 @@ final class PlansStore: ObservableObject {
         userPlan(planId)?.progress.contains { $0.day == day && $0.item == item } ?? false
     }
 
-    /// Makes the plans match the server's. Plans this app doesn't know are left alone.
-    func apply(serverPlans: [UserPlan]) {
-        let known = serverPlans.filter { info($0.id) != nil }
-        let sorted = known.sorted { $0.id < $1.id }
-        let current = userPlans.sorted { $0.id < $1.id }
-        if sorted != current {
-            userPlans = known
+    /// Plans the server has acknowledged (we sent them, or it sent them to us). Until then a plan is
+    /// only merged with the server's, never overwritten or deleted by it.
+    private(set) var confirmed: Set<String> = {
+        Set(UserDefaults.standard.stringArray(forKey: "plans_confirmed_v1") ?? [])
+    }()
+
+    func markConfirmed(_ id: String) {
+        guard !confirmed.contains(id) else { return }
+        confirmed.insert(id)
+        UserDefaults.standard.set(Array(confirmed), forKey: "plans_confirmed_v1")
+    }
+
+    func clearConfirmed() {
+        confirmed = []
+        UserDefaults.standard.removeObject(forKey: "plans_confirmed_v1")
+    }
+
+    /// Brings the plans in line with the server's and returns the ids of plans the server still
+    /// needs to be sent (ones it has not acknowledged yet). Plans this app doesn't know are left alone.
+    @discardableResult
+    func apply(serverPlans: [UserPlan]) -> [String] {
+        let fromServer = serverPlans.filter { info($0.id) != nil }
+        let serverById = Dictionary(uniqueKeysWithValues: fromServer.map { ($0.id, $0) })
+        var result: [UserPlan] = []
+        var toSend: [String] = []
+
+        for server in fromServer {
+            if let local = userPlan(server.id), !confirmed.contains(server.id) {
+                // Both have it and the server hasn't acknowledged ours: keep everything from both.
+                var ticks: [String: PlanProgressEntry] = [:]
+                for entry in server.progress + local.progress {
+                    let key = "\(entry.day):\(entry.item)"
+                    if let existing = ticks[key], existing.completedAt <= entry.completedAt { continue }
+                    ticks[key] = entry
+                }
+                let merged = ticks.values.sorted { ($0.day, $0.item) < ($1.day, $1.item) }
+                result.append(UserPlan(id: server.id, startedOn: min(local.startedOn, server.startedOn), progress: merged))
+                toSend.append(server.id)
+            } else {
+                result.append(server)
+                markConfirmed(server.id)
+            }
         }
+        for local in userPlans where serverById[local.id] == nil {
+            if confirmed.contains(local.id) { continue }   // it was acknowledged, so it was removed elsewhere
+            result.append(local)
+            toSend.append(local.id)
+        }
+
+        let sortedResult = result.sorted { $0.id < $1.id }
+        if sortedResult != userPlans.sorted(by: { $0.id < $1.id }) {
+            userPlans = result
+        }
+        return toSend
     }
 
     func removeAllLocal() {

@@ -15,6 +15,7 @@ struct SettingsView: View {
     @EnvironmentObject var themeStore: ThemeStore
     @EnvironmentObject var reminder: DailyVerseReminder
     @EnvironmentObject var auth: AuthStore
+    @EnvironmentObject var sync: SyncEngine
     @State private var showSignIn = false
     @State private var showResetAlert = false
     @State private var showLibrarySheet = false
@@ -35,6 +36,7 @@ struct SettingsView: View {
                     } label: {
                         Label(auth.user?.email ?? "Account", systemImage: "person.crop.circle")
                     }
+                    SyncStatusView()
                 } else {
                     Button {
                         showSignIn = true
@@ -148,7 +150,9 @@ struct SettingsView: View {
             // MARK: - Progress
             Section(
                 header: Text("Progress"),
-                footer: Text("This will remove all reading completion marks.")
+                footer: Text(auth.isSignedIn
+                    ? "Your reading progress is kept in step with your account, so it can\u{2019}t be reset here. Sign out first to clear it on this device."
+                    : "This will remove all reading completion marks.")
             ) {
                 Button(role: .destructive) {
                     showResetAlert = true
@@ -156,6 +160,7 @@ struct SettingsView: View {
                     Label("Reset Reading Progress",
                           systemImage: "arrow.counterclockwise")
                 }
+                .disabled(auth.isSignedIn)
             }
             .themedRows()
 
@@ -289,4 +294,5 @@ private struct ThemePicker: View {
         .environmentObject(ThemeStore())
         .environmentObject(DailyVerseReminder())
         .environmentObject(AuthStore())
+        .environmentObject(SyncEngine())
 }

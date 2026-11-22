@@ -20,6 +20,7 @@
 		88E14ACDA1C3683DD891F874 /* AuthStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = D681B96C312819CCD0ABB420 /* AuthStore.swift */; };
 		88FE1F68E93BBC9ABA18DB5B /* AccountView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0CF4D7276E9D3CC5811425F /* AccountView.swift */; };
 		89DB1736B877F7A8C389F766 /* BibleWishWidget.swift in Sources */ = {isa = PBXBuildFile; fileRef = 62FD2D2745A31B61EEA56508 /* BibleWishWidget.swift */; };
+		8CE5E7950CF1C906211F793A /* SyncStatusView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 36B4C43724B3CB313115E608 /* SyncStatusView.swift */; };
 		8D5D23F7D1095A95F3F38A37 /* Prayers.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7864A1BDC9B3944F10714BD0 /* Prayers.swift */; };
 		9062E616B4EAB59DDC7CFA46 /* VerseWidgetViews.swift in Sources */ = {isa = PBXBuildFile; fileRef = D809CA7C24BF42A1C821E777 /* VerseWidgetViews.swift */; };
 		915D59A88B366F7F5DB002D9 /* WidgetKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4AC2B1F2D8025037233D4C1E /* WidgetKit.framework */; };
@@ -124,6 +125,7 @@
 /* Begin PBXFileReference section */
 		0FDCC472C67F882419CA4611 /* VerseLibrary.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = VerseLibrary.swift; sourceTree = "<group>"; };
 		20483F9AEB2004EB42EDF122 /* SignInView.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = SignInView.swift; sourceTree = "<group>"; };
+		36B4C43724B3CB313115E608 /* SyncStatusView.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = SyncStatusView.swift; sourceTree = "<group>"; };
 		4AC2B1F2D8025037233D4C1E /* WidgetKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WidgetKit.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS26.0.sdk/System/Library/Frameworks/WidgetKit.framework; sourceTree = DEVELOPER_DIR; };
 		5110D69EF9E3A5C85A94E842 /* votd */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = folder; name = votd; path = Data/votd; sourceTree = "<group>"; };
 		5AEFCAF1079758B9FCACD125 /* SyncOp.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = SyncOp.swift; sourceTree = "<group>"; };
@@ -394,6 +396,7 @@
 				8D26807FF18B9FCFE3092E85 /* SelfTest.swift */,
 				5AEFCAF1079758B9FCACD125 /* SyncOp.swift */,
 				A6304D99DDDFE3371DAD0099 /* SyncEngine.swift */,
+				36B4C43724B3CB313115E608 /* SyncStatusView.swift */,
 			);
 			name = Sync;
 			path = Sync;
@@ -609,6 +612,7 @@
 				3673945D4F2DA9BC54E0A14F /* SyncEngine.swift in Sources */,
 				8D5D23F7D1095A95F3F38A37 /* Prayers.swift in Sources */,
 				823CF170995770EC85ED3786 /* PrayerListView.swift in Sources */,
+				8CE5E7950CF1C906211F793A /* SyncStatusView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
