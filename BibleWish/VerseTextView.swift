@@ -14,6 +14,10 @@ struct VerseTextView: View {
     let chapterNumber: Int
     /// Verse 1 of a book-page chapter: its first letter is drawn as a large gold initial.
     var dropCap = false
+    /// In focus mode a tap brings the verse numbers back (until the next chapter) instead of
+    /// bookmarking; the chapter view owns that state.
+    var focusPeek = false
+    var onFocusTap: () -> Void = {}
 
     @EnvironmentObject var bookmarkManager: BookmarkManager
     @EnvironmentObject var highlightManager: HighlightManager
@@ -64,6 +68,10 @@ struct VerseTextView: View {
         .cornerRadius(6)
         .contentShape(Rectangle())
         .onTapGesture {
+            if readerSettings.focusMode && !focusPeek {
+                onFocusTap()
+                return
+            }
             bookmarkManager.toggle(bookmark)
             UIImpactFeedbackGenerator(style: .light).impactOccurred()
         }
@@ -120,7 +128,7 @@ struct VerseTextView: View {
 
     /// The verse number. Hidden in focus mode, and for a drop-cap verse, where the initial stands in.
     private var numberText: Text {
-        if readerSettings.focusMode || dropCap {
+        if (readerSettings.focusMode && !focusPeek) || dropCap {
             return Text("")
         }
         return Text("\(verse.number) ")

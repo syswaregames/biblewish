@@ -21,6 +21,8 @@ struct VerseListView: View {
     @State private var slideDirection: CGFloat = 0
     @State private var isAnimating = false
     @State private var showPlaces = false
+    /// Focus mode: a tap on the text shows the verse numbers until the chapter changes.
+    @State private var focusPeek = false
 
     init(
         book: BibleBook,
@@ -48,7 +50,9 @@ struct VerseListView: View {
                             verse: verse,
                             bookName: book.name,
                             chapterNumber: chapter.number,
-                            dropCap: readerSettings.bookPage && verse.number == 1
+                            dropCap: readerSettings.bookPage && verse.number == 1,
+                            focusPeek: focusPeek,
+                            onFocusTap: { withAnimation(.easeInOut(duration: 0.2)) { focusPeek = true } }
                         )
                         .id(verse.number)
                         
@@ -92,8 +96,13 @@ struct VerseListView: View {
             }
             
             
+            .onChange(of: readerSettings.focusMode) { _ in
+                focusPeek = false
+            }
+
             .onChange(of: currentChapterIndex) { _ in
                 didAutoCompleteChapter = false
+                focusPeek = false
                 viewModel.recordLastRead(bookName: book.name, chapterNumber: chapter.number)
             }
 
@@ -169,7 +178,7 @@ struct VerseListView: View {
                     .font(.system(size: 52, weight: .regular, design: .serif))
                     .foregroundStyle(palette.goldBright)
 
-                if !readerSettings.focusMode {
+                if !readerSettings.focusMode || focusPeek {
                     Text("~\(readingMinutes) min read")
                         .font(.system(.caption, design: .serif))
                         .foregroundStyle(palette.inkMuted)
@@ -185,7 +194,7 @@ struct VerseListView: View {
                 .padding(.vertical, 12)
             }
             .accessibilityElement(children: .combine)
-        } else if !readerSettings.focusMode {
+        } else if !readerSettings.focusMode || focusPeek {
             Text("~\(readingMinutes) min read")
                 .font(.caption)
                 .foregroundStyle(.secondary)
