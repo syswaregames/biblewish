@@ -16,6 +16,7 @@ struct MainTabView: View {
     @StateObject private var versionStore = VersionStore()
     @StateObject private var plansStore = PlansStore()
     @StateObject private var noteStore = NoteStore()
+    @StateObject private var prayerStore = PrayerStore()
     @StateObject private var achievements = AchievementsStore()
     @StateObject private var reminder = DailyVerseReminder()
     @StateObject private var auth = AuthStore()
@@ -72,6 +73,7 @@ struct MainTabView: View {
             .environmentObject(versionStore)
             .environmentObject(plansStore)
             .environmentObject(noteStore)
+            .environmentObject(prayerStore)
             .environmentObject(achievements)
             .environmentObject(reminder)
             .environmentObject(auth)
@@ -83,7 +85,7 @@ struct MainTabView: View {
         withEnvironment
             .task {
                 highlightManager.migrateLegacy(currentTranslation: bibleVM.selectedTranslation.widgetId)
-                sync.attach(auth: auth, viewModel: bibleVM, bookmarks: bookmarkManager, highlights: highlightManager, notes: noteStore, plans: plansStore)
+                sync.attach(auth: auth, viewModel: bibleVM, bookmarks: bookmarkManager, highlights: highlightManager, notes: noteStore, plans: plansStore, prayers: prayerStore)
                 await auth.restore()
                 await sync.signedIn()
             }
@@ -99,7 +101,7 @@ struct MainTabView: View {
             .task {
                 guard ProcessInfo.processInfo.environment["BW_SELFTEST"] != nil else { return }
                 try? await Task.sleep(nanoseconds: 3_000_000_000)
-                let test = SelfTest(auth: auth, sync: sync, bibleVM: bibleVM, bookmarks: bookmarkManager, highlights: highlightManager, notes: noteStore, plans: plansStore)
+                let test = SelfTest(auth: auth, sync: sync, bibleVM: bibleVM, bookmarks: bookmarkManager, highlights: highlightManager, notes: noteStore, plans: plansStore, prayers: prayerStore)
                 await test.run()
             }
             #endif
@@ -142,6 +144,7 @@ struct MainTabView: View {
             .onChange(of: noteStore.notes) { refreshAchievements() }
             .onChange(of: bookmarkManager.bookmarks) { refreshAchievements() }
             .onChange(of: highlightManager.highlights) { refreshAchievements() }
+            .onChange(of: prayerStore.prayers) { refreshAchievements() }
             .tint(palette.gold)
     }
 
@@ -191,6 +194,8 @@ extension MainTabView {
         input.notes = noteStore.notes.count
         input.marginNotes = noteStore.notes.filter { !$0.reference.isEmpty }.count
         input.highlights = highlightManager.highlights.count
+        input.prayerItems = prayerStore.prayers.count
+        input.answeredPrayers = prayerStore.answeredCount
         achievements.update(with: input)
     }
 }

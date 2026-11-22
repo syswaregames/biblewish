@@ -15,12 +15,14 @@ struct StudyView: View {
     private enum Section: String, CaseIterable, Identifiable {
         case favorites = "Favorites"
         case notes = "Notes"
+        case prayers = "Prayers"
         var id: String { rawValue }
     }
 
     @State private var section: Section = .favorites
     @State private var tagFilter: NoteTag?
     @State private var showingNewNote = false
+    @State private var showingNewPrayer = false
 
     var body: some View {
         VStack(spacing: 0) {
@@ -36,6 +38,8 @@ struct StudyView: View {
                 BookmarksView()
             case .notes:
                 notesList
+            case .prayers:
+                PrayerListView()
             }
         }
         .themedScreen()
@@ -51,9 +55,22 @@ struct StudyView: View {
                     .accessibilityLabel("New note")
                 }
             }
+            if section == .prayers {
+                ToolbarItem(placement: .topBarTrailing) {
+                    Button {
+                        showingNewPrayer = true
+                    } label: {
+                        Image(systemName: "plus")
+                    }
+                    .accessibilityLabel("New prayer")
+                }
+            }
         }
         .sheet(isPresented: $showingNewNote) {
             NoteEditorView()
+        }
+        .sheet(isPresented: $showingNewPrayer) {
+            PrayerEditorView()
         }
     }
 

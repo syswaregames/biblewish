@@ -27,6 +27,8 @@ enum SyncOp: Codable, Hashable {
     /// A chapter ticked or unticked in a plan; the current state is what counts.
     case checkPlanItem(planId: String, day: Int, item: Int)
     case deletePlan(String)
+    case pushPrayer(UUID)
+    case deletePrayer(serverId: Int)
 
     /// Operations that describe the same target replace each other, so the queue stays short.
     var supersedeKey: String? {

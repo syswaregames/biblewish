@@ -36,6 +36,9 @@ struct AchievementInput {
     var notes = 0
     var marginNotes = 0
     var highlights = 0
+    /// Prayers on the private list, and how many of them are answered.
+    var prayerItems = 0
+    var answeredPrayers = 0
 }
 
 enum AchievementMetrics {
@@ -112,6 +115,8 @@ enum AchievementMetrics {
         values["notes"] = input.notes
         values["margin_notes"] = input.marginNotes
         values["highlights"] = input.highlights
+        values["prayer_items"] = input.prayerItems
+        values["answered"] = input.answeredPrayers
 
         values["season_christmas"] = input.log.contains {
             christmasChapters.contains(ChapterRef(book: $0.bookIndex, chapter: $0.chapter)) && isChristmasSeason($0.date, calendar)

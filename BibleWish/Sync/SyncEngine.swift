@@ -38,6 +38,7 @@ final class SyncEngine: ObservableObject {
     private weak var highlights: HighlightManager?
     private weak var notes: NoteStore?
     private weak var plans: PlansStore?
+    private weak var prayers: PrayerStore?
 
     private let accountKey = "sync_account_id"
     private let initialKey = "sync_initial_done_account"
@@ -56,7 +57,8 @@ final class SyncEngine: ObservableObject {
         bookmarks: BookmarkManager,
         highlights: HighlightManager,
         notes: NoteStore,
-        plans: PlansStore
+        plans: PlansStore,
+        prayers: PrayerStore
     ) {
         self.auth = auth
         self.viewModel = viewModel
@@ -64,11 +66,13 @@ final class SyncEngine: ObservableObject {
         self.highlights = highlights
         self.notes = notes
         self.plans = plans
+        self.prayers = prayers
 
         bookmarks.onChange = { [weak self] op in self?.enqueue(op) }
         highlights.onChange = { [weak self] op in self?.enqueue(op) }
         notes.onChange = { [weak self] op in self?.enqueue(op) }
         plans.onChange = { [weak self] op in self?.enqueue(op) }
+        prayers.onChange = { [weak self] op in self?.enqueue(op) }
         viewModel.onReadChange = { [weak self] op in self?.enqueue(op) }
         auth.onSignedOut = { [weak self] in self?.signedOut() }
         auth.onAccountDeleted = { [weak self] in self?.accountDeleted() }
@@ -82,6 +86,7 @@ final class SyncEngine: ObservableObject {
             // A different account: the links to the old one mean nothing here.
             bookmarks?.clearServerIds()
             notes?.clearServerIds()
+            prayers?.clearServerIds()
             outbox.removeAll()
             UserDefaults.standard.set(user.id, forKey: accountKey)
             UserDefaults.standard.removeObject(forKey: initialKey)
@@ -105,6 +110,7 @@ final class SyncEngine: ObservableObject {
     func accountDeleted() {
         bookmarks?.clearServerIds()
         notes?.clearServerIds()
+        prayers?.clearServerIds()
         outbox.removeAll()
         UserDefaults.standard.removeObject(forKey: accountKey)
         UserDefaults.standard.removeObject(forKey: initialKey)
@@ -132,6 +138,9 @@ final class SyncEngine: ObservableObject {
         }
         for plan in plans?.userPlans ?? [] {
             outbox.add(.importPlan(plan.id))
+        }
+        for prayer in prayers?.prayers ?? [] {
+            outbox.add(.pushPrayer(prayer.id))
         }
     }
 
@@ -265,6 +274,30 @@ final class SyncEngine: ObservableObject {
 
         case .deletePlan(let planId):
             try await api.send("DELETE", "api/plans.php", query: ["plan_id": planId])
+
+        case .pushPrayer(let id):
+            guard let prayer = prayers?.prayer(id: id) else { return }
+            var payload: [String: Any] = [
+                "title": String(prayer.title.prefix(200)),
+                "details": String(prayer.details.prefix(5000)),
+            ]
+            if let serverId = prayer.serverId {
+                payload["status"] = prayer.status.rawValue
+                payload["answer_note"] = String(prayer.answerNote.prefix(5000))
+                try await api.send("PUT", "api/prayers.php", query: ["id": String(serverId)], json: payload)
+            } else {
+                let response = try await api.request(PrayerResponse.self, "POST", "api/prayers.php", json: payload)
+                prayers?.setServerId(response.prayer.id, for: id)
+                // A new prayer starts active; one that is already answered or archived needs a second step.
+                if prayer.status != .active {
+                    payload["status"] = prayer.status.rawValue
+                    payload["answer_note"] = String(prayer.answerNote.prefix(5000))
+                    try await api.send("PUT", "api/prayers.php", query: ["id": String(response.prayer.id)], json: payload)
+                }
+            }
+
+        case .deletePrayer(let serverId):
+            try await api.send("DELETE", "api/prayers.php", query: ["id": String(serverId)])
         }
     }
 
@@ -287,6 +320,31 @@ final class SyncEngine: ObservableObject {
 
         let serverPlans = try await api.request(PlansResponse.self, "GET", "api/plans.php")
         plans?.apply(serverPlans: serverPlans.plans.map(\.asPlan))
+
+        let serverPrayers = try await api.request(PrayersResponse.self, "GET", "api/prayers.php")
+        prayers?.apply(serverPrayers: serverPrayers.prayers.map(\.asPrayer))
+    }
+
+    // MARK: - Prayers mapping
+
+    private struct PrayerResponse: Decodable { let prayer: ServerPrayer }
+    private struct PrayersResponse: Decodable { let prayers: [ServerPrayer] }
+
+    private struct ServerPrayer: Decodable {
+        let id: Int
+        let title: String
+        let details: String?
+        let status: String
+        let answeredAt: Date?
+        let answerNote: String?
+        let createdAt: Date
+
+        var asPrayer: Prayer {
+            Prayer(
+                title: title, details: details ?? "", status: PrayerStatus(rawValue: status) ?? .active,
+                answeredAt: answeredAt, answerNote: answerNote ?? "", createdAt: createdAt, serverId: id
+            )
+        }
     }
 
     // MARK: - Plans mapping

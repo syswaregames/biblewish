@@ -23,10 +23,11 @@ final class SelfTest {
     let highlights: HighlightManager
     let notes: NoteStore
     let plans: PlansStore
+    let prayers: PrayerStore
 
     private(set) var failures = 0
 
-    init(auth: AuthStore, sync: SyncEngine, bibleVM: BibleViewModel, bookmarks: BookmarkManager, highlights: HighlightManager, notes: NoteStore, plans: PlansStore) {
+    init(auth: AuthStore, sync: SyncEngine, bibleVM: BibleViewModel, bookmarks: BookmarkManager, highlights: HighlightManager, notes: NoteStore, plans: PlansStore, prayers: PrayerStore) {
         self.auth = auth
         self.sync = sync
         self.bibleVM = bibleVM
@@ -34,6 +35,7 @@ final class SelfTest {
         self.highlights = highlights
         self.notes = notes
         self.plans = plans
+        self.prayers = prayers
     }
 
     /// Reads from the server as the signed-in test account.
@@ -91,6 +93,7 @@ final class SelfTest {
         await runHighlights()
         await runNotes()
         await runPlans()
+        await runPrayers()
         emit(failures == 0 ? "SELFTEST ALL PASSED" : "SELFTEST \(failures) FAILED")
         emit("SELFTEST DONE")
     }
@@ -526,6 +529,113 @@ final class SelfTest {
         check("dates intact on the second account", server.first { $0.planId == "psalms-30" }?.startedOn == psalmsStart)
         _ = await auth.deleteAccount()
         for plan in plans.userPlans { plans.stop(plan.id) }
+    }
+
+    // MARK: - Prayer list
+
+    private struct SrvPrayer: Decodable {
+        let id: Int
+        let title: String
+        let details: String?
+        let status: String
+        let answeredAt: String?
+        let answerNote: String?
+    }
+    private struct SrvPrayers: Decodable { let prayers: [SrvPrayer] }
+
+    private func serverPrayers() async -> [SrvPrayer] { await get(SrvPrayers.self, "api/prayers.php")?.prayers ?? [] }
+
+    private func runPrayers() async {
+        if auth.isSignedIn { await auth.signOut() }
+        prayers.removeAllLocal()
+
+        // The answered date and note belong to answered prayers only.
+        var oddity = Prayer(title: "Odd", status: .archived, answeredAt: Date(), answerNote: "should clear")
+        prayers.save(oddity)
+        oddity = prayers.prayers.first!
+        check("answer details are cleared unless answered", oddity.answeredAt == nil && oddity.answerNote.isEmpty)
+        prayers.removeAllLocal()
+
+        prayers.save(Prayer(title: "Healing for a friend", details: "Please pray this week"))
+        prayers.save(Prayer(title: "A job", details: "Interview on Friday", status: .answered, answerNote: "He got the job"))
+        check("answered prayer gets its date", prayers.prayers.first { $0.title == "A job" }?.answeredAt != nil)
+        check("nothing queued while signed out (prayers)", sync.pendingCount == 0, "\(sync.pendingCount)")
+
+        guard await signInFreshAccount("pray") != nil else { check("sign in for prayer tests", false); return }
+        await sync.signedIn()
+        var server = await serverPrayers()
+        check("both prayers reached the server", server.count == 2, "\(server.count)")
+        let job = server.first { $0.title == "A job" }
+        check("an answered prayer arrives answered, with its note", job?.status == "answered" && job?.answerNote == "He got the job" && job?.answeredAt != nil, "\(String(describing: job))")
+        check("an active prayer stays active", server.first { $0.title == "Healing for a friend" }?.status == "active")
+        check("prayers are linked to the server", prayers.prayers.allSatisfy { $0.serverId != nil })
+
+        // Edits on the device.
+        var healing = prayers.prayers.first { $0.title == "Healing for a friend" }!
+        healing.title = "Healing for Sam"
+        prayers.save(healing)
+        await sync.syncNow()
+        server = await serverPrayers()
+        check("edit reached the server", server.contains { $0.title == "Healing for Sam" })
+        healing = prayers.prayers.first { $0.title == "Healing for Sam" }!
+        healing.status = .answered
+        healing.answerNote = "Sam is well"
+        prayers.save(healing)
+        await sync.syncNow()
+        server = await serverPrayers()
+        let sam = server.first { $0.title == "Healing for Sam" }
+        check("marking answered reached the server", sam?.status == "answered" && sam?.answerNote == "Sam is well" && sam?.answeredAt != nil, "\(String(describing: sam))")
+        prayers.delete(id: prayers.prayers.first { $0.title == "A job" }!.id)
+        await sync.syncNow()
+        server = await serverPrayers()
+        check("delete reached the server", server.count == 1, "\(server.count)")
+
+        // Made on the website.
+        if let response = try? await APIClient.shared.send("POST", "api/prayers.php", json: ["title": "From the web", "details": "web details"]),
+           let object = try? JSONSerialization.jsonObject(with: response) as? [String: Any],
+           let prayer = object["prayer"] as? [String: Any], let webId = prayer["id"] as? Int {
+            _ = try? await APIClient.shared.send("PUT", "api/prayers.php", query: ["id": String(webId)], json: ["title": "From the web", "details": "web details", "status": "archived"])
+            await sync.syncNow()
+            let fromWeb = prayers.prayers.first { $0.title == "From the web" }
+            check("website prayer arrived archived", fromWeb?.status == .archived && fromWeb?.serverId == webId && fromWeb?.details == "web details", "\(String(describing: fromWeb))")
+            _ = try? await APIClient.shared.send("DELETE", "api/prayers.php", query: ["id": String(webId)])
+            await sync.syncNow()
+            check("prayer deleted on the website disappears", !prayers.prayers.contains { $0.title == "From the web" } && prayers.prayers.count == 1, "\(prayers.prayers.map(\.title))")
+        } else {
+            check("create a prayer on the website", false)
+        }
+
+        // Offline.
+        setenv("BW_API_BASE", "http://localhost:9", 1)
+        var offline = prayers.prayers.first!
+        offline.details = "added offline"
+        prayers.save(offline)
+        await sync.syncNow()
+        check("offline edit stays queued", sync.pendingCount >= 1 && prayers.prayers.first?.details == "added offline")
+        setenv("BW_API_BASE", "http://localhost:8088", 1)
+        await sync.syncNow()
+        server = await serverPrayers()
+        check("offline edit delivered and kept", sync.pendingCount == 0 && server.first?.details == "added offline" && prayers.prayers.first?.details == "added offline")
+
+        // Another account.
+        await auth.signOut()
+        let onDevice = prayers.prayers.count
+        guard await signInFreshAccount("pray2") != nil else { check("second account for prayers", false); return }
+        await sync.signedIn()
+        server = await serverPrayers()
+        check("second account received the prayer list", server.count == onDevice && onDevice == 1 && prayers.prayers.count == 1, "\(server.count) / \(prayers.prayers.count)")
+
+        // Badges that use the prayer list.
+        var input = AchievementInput()
+        input.chaptersPerBook = bibleVM.books.map { $0.chapters.count }
+        input.prayerItems = 10
+        input.answeredPrayers = 5
+        let values = AchievementMetrics.values(for: input)
+        check("prayer list badge metrics", values["prayer_items"] == 10 && values["answered"] == 5)
+        check("prayer badges are in the badge list", ["watchman", "testimony", "many-testimonies"].allSatisfy { id in AchievementsStore().badges.contains { $0.id == id } })
+
+        _ = await auth.deleteAccount()
+        prayers.removeAllLocal()
     }
 }
 #endif

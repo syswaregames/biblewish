@@ -4,7 +4,8 @@
 Usage: python3 -I tools/build_badges.py [path/to/BibleWish_Website]
 
 Only badges whose metric the app can work out on the device are kept (reading, progress through the
-Bible, study and the seasonal ones); community and leaderboard badges need an account.
+Bible, study, the private prayer list and the seasonal ones); community and leaderboard badges need
+the community features.
 Never change a badge id: earned badges are stored by id.
 """
 import json
@@ -18,7 +19,7 @@ SITE = sys.argv[1] if len(sys.argv) > 1 else os.path.join(ROOT, "..", "BibleWish
 SUPPORTED_METRICS = {
     "chapters", "streak", "morning", "evening", "plans", "sections", "books", "proverbs", "gospels",
     "paul", "psalms", "law", "nt", "ot", "favorites", "notes", "margin_notes", "highlights",
-    "season_christmas", "season_easter",
+    "season_christmas", "season_easter", "prayer_items", "answered",
 }
 
 # Website wording that doesn't fit the app.
