@@ -34,7 +34,7 @@ struct PlanProgressEntry: Codable, Hashable {
     let completedAt: Date
 }
 
-struct UserPlan: Codable, Identifiable {
+struct UserPlan: Codable, Identifiable, Equatable {
     /// The plan id.
     let id: String
     /// Local calendar day the plan was started, "yyyy-MM-dd".

@@ -10,6 +10,7 @@ import SwiftUI
 struct HomeView: View {
 
     @EnvironmentObject var viewModel: BibleViewModel
+    @EnvironmentObject var achievements: AchievementsStore
     @Environment(\.palette) private var palette
 
     @State private var passageText = ""
@@ -28,6 +29,7 @@ struct HomeView: View {
                     continueReadingCard
                     openPassageCard
                     progressCard
+                    achievementsCard
                 }
                 .padding(.horizontal, 16)
                 .padding(.bottom, 24)
@@ -230,6 +232,32 @@ struct HomeView: View {
         .frame(maxWidth: .infinity, alignment: .leading)
         .padding(20)
         .themedCard(cornerRadius: 16)
+    }
+
+    private var achievementsCard: some View {
+        NavigationLink {
+            AchievementsView()
+        } label: {
+            HStack {
+                VStack(alignment: .leading, spacing: 8) {
+                    sectionLabel("Achievements")
+                    Text("\(achievements.earned.count) of \(achievements.badges.count) badges")
+                        .font(.system(.body, design: .serif))
+                        .foregroundStyle(palette.ink)
+                    if let next = achievements.nextBadge {
+                        Text("Next: \(next.icon) \(next.name) \u{00B7} \(achievements.current(next))/\(next.target)")
+                            .font(.subheadline)
+                            .foregroundStyle(palette.inkMuted)
+                    }
+                }
+                Spacer()
+                Image(systemName: "chevron.right")
+                    .foregroundStyle(palette.gold)
+            }
+            .padding(20)
+            .themedCard(cornerRadius: 16)
+        }
+        .buttonStyle(.plain)
     }
 
     // MARK: - Actions

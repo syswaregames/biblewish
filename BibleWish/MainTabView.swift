@@ -16,6 +16,7 @@ struct MainTabView: View {
     @StateObject private var versionStore = VersionStore()
     @StateObject private var plansStore = PlansStore()
     @StateObject private var noteStore = NoteStore()
+    @StateObject private var achievements = AchievementsStore()
     @Environment(\.palette) private var palette
 
 
@@ -56,6 +57,23 @@ struct MainTabView: View {
         .environmentObject(versionStore)
         .environmentObject(plansStore)
         .environmentObject(noteStore)
+        .environmentObject(achievements)
+        .overlay(alignment: .top) {
+            if let badge = achievements.toast {
+                BadgeToast(badge: badge) { achievements.dismissToast() }
+                    .padding(.top, 8)
+                    .transition(.move(edge: .top).combined(with: .opacity))
+            }
+        }
+        .animation(.spring(duration: 0.4), value: achievements.toast)
+        .onAppear { refreshAchievements() }
+        .onChange(of: bibleVM.books.count) { refreshAchievements() }
+        .onChange(of: bibleVM.readingProgress.completedChapters) { refreshAchievements() }
+        .onChange(of: bibleVM.readingLog) { refreshAchievements() }
+        .onChange(of: plansStore.userPlans) { refreshAchievements() }
+        .onChange(of: noteStore.notes) { refreshAchievements() }
+        .onChange(of: bookmarkManager.bookmarks) { refreshAchievements() }
+        .onChange(of: highlightManager.highlights) { refreshAchievements() }
         .tint(palette.gold)
         .onAppear {
             // Sync BibleViewModel with VersionStore on launch
@@ -88,6 +106,25 @@ struct MainTabView: View {
 }
 
 
+
+extension MainTabView {
+
+    /// Gathers what the badge metrics need and lets the achievements store re-check.
+    func refreshAchievements() {
+        var input = AchievementInput()
+        input.completed = AchievementMetrics.chapterRefs(fromKeys: bibleVM.readingProgress.completedChapters)
+        input.chaptersPerBook = bibleVM.books.map { $0.chapters.count }
+        input.log = bibleVM.readingLog
+        input.readDates = bibleVM.readingLog.map(\.date)
+            + plansStore.userPlans.flatMap { $0.progress.map(\.completedAt) }
+        input.completedPlans = plansStore.catalog.filter { plansStore.summary(for: $0.id)?.status == .complete }.count
+        input.favorites = bookmarkManager.bookmarks.count
+        input.notes = noteStore.notes.count
+        input.marginNotes = noteStore.notes.filter { !$0.reference.isEmpty }.count
+        input.highlights = highlightManager.highlights.count
+        achievements.update(with: input)
+    }
+}
 
 #Preview {
     MainTabView()

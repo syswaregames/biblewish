@@ -100,6 +100,16 @@ class BibleViewModel: ObservableObject {
         }
     }
 
+    /// One chapter marked as read, with when. Feeds streaks and the time-of-day badges.
+    struct ReadingLogEntry: Codable, Equatable {
+        let bookIndex: Int
+        let chapter: Int
+        let date: Date
+    }
+
+    @Published private(set) var readingLog: [ReadingLogEntry] = []
+    private let readingLogKey = "reading_log_v1"
+
     /// Where the reader stopped, as a book position (so it survives a change of translation).
     struct LastRead: Codable, Equatable {
         var bookIndex: Int
@@ -140,6 +150,11 @@ class BibleViewModel: ObservableObject {
         if let data = UserDefaults.standard.data(forKey: lastReadKey),
            let decoded = try? JSONDecoder().decode(LastRead.self, from: data) {
             lastRead = decoded
+        }
+
+        if let data = UserDefaults.standard.data(forKey: readingLogKey),
+           let decoded = try? JSONDecoder().decode([ReadingLogEntry].self, from: data) {
+            readingLog = decoded
         }
 
         loadBible()
@@ -283,18 +298,36 @@ class BibleViewModel: ObservableObject {
 
         var progress = readingProgress
 
+        let bookIndex = books.firstIndex { $0.name == book }
+
         if progress.completedChapters.contains(key) {
             progress.completedChapters.remove(key)
+            if let bookIndex, let last = readingLog.lastIndex(where: { $0.bookIndex == bookIndex && $0.chapter == chapter }) {
+                readingLog.remove(at: last)
+                saveReadingLog()
+            }
         } else {
             progress.completedChapters.insert(key)
+            if let bookIndex {
+                readingLog.append(ReadingLogEntry(bookIndex: bookIndex, chapter: chapter, date: Date()))
+                saveReadingLog()
+            }
         }
 
         readingProgress = progress
+    }
+
+    private func saveReadingLog() {
+        if let data = try? JSONEncoder().encode(readingLog) {
+            UserDefaults.standard.set(data, forKey: readingLogKey)
+        }
     }
 
     func resetReadingProgress() {
         var progress = readingProgress
         progress.completedChapters.removeAll()
         readingProgress = progress
+        readingLog.removeAll()
+        saveReadingLog()
     }
 }
