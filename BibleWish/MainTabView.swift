@@ -21,6 +21,7 @@ struct MainTabView: View {
     @StateObject private var reminder = DailyVerseReminder()
     @StateObject private var auth = AuthStore()
     @StateObject private var sync = SyncEngine()
+    @StateObject private var community = CommunityStore()
     @Environment(\.scenePhase) private var scenePhase
     @Environment(\.palette) private var palette
 
@@ -57,10 +58,10 @@ struct MainTabView: View {
             .tabItem { Label("Study", systemImage: "text.book.closed") }
 
             NavigationStack {
-                SettingsView()
-                    .environmentObject(bibleVM)
+                CommunityView()
             }
-            .tabItem { Label("Settings", systemImage: "gear") }
+            .tabItem { Label("Community", systemImage: "person.3") }
+            .badge(community.unreadNotifications)
         }
     }
 
@@ -78,6 +79,7 @@ struct MainTabView: View {
             .environmentObject(reminder)
             .environmentObject(auth)
             .environmentObject(sync)
+            .environmentObject(community)
     }
 
     /// Signing in, syncing, and the Debug-only self-tests.
@@ -86,16 +88,20 @@ struct MainTabView: View {
             .task {
                 highlightManager.migrateLegacy(currentTranslation: bibleVM.selectedTranslation.widgetId)
                 sync.attach(auth: auth, viewModel: bibleVM, bookmarks: bookmarkManager, highlights: highlightManager, notes: noteStore, plans: plansStore, prayers: prayerStore)
+                community.onNewBadges = { badges in achievements.celebrate(badges.map(\.definition)) }
                 await auth.restore()
                 await sync.signedIn()
             }
             .onChange(of: auth.user?.id) {
-                guard auth.isSignedIn else { return }
+                guard auth.isSignedIn else { community.reset(); return }
                 Task { await sync.signedIn() }
             }
             .onChange(of: scenePhase) {
                 guard scenePhase == .active else { return }
-                Task { await sync.syncNow() }
+                Task {
+                    await sync.syncNow()
+                    if auth.isSignedIn { await community.refreshUnread() }
+                }
             }
             #if DEBUG
             .task {

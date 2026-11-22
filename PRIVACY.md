@@ -22,6 +22,12 @@ store on our server:
   enter one) the recipient's email address, so we can make the private link and, if that person
   has a BibleWish account, deliver it to them. We never tell you whether an address has an account.
 
+- if you use the Community: the prayer requests and encouragement you post, your display name, and
+  (only if you choose them) your country and photo, which other members and visitors can see on
+  biblewish.com and in the app. Anonymous requests hide your name and country, but we still keep
+  who wrote them so we can moderate. Reports and blocks you make are stored so they can be acted on.
+- how many chapters you read, for the reading leaderboard, unless you turn it off in Settings
+
 This is used only to run those features. It is never sold, shared with advertisers, used for
 tracking, or shown to anyone else. Your prayer list and notes are private. You can export
 everything we keep, or delete your account and all of it, at any time from Settings → Account.

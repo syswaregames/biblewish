@@ -155,3 +155,20 @@ Biblia Livre follows the oldest manuscripts and leaves out 15 verses (Mateus 17:
 A small pill with the open version (KJV, WEB, BLIV, HEB) sits in the reader's toolbar; its menu lists every version by language. Choosing one opens the same book, chapter and verse in it (the verse at the top of the screen is kept) and says which version it switched to. Books are matched by their place in the 66-book order, so Hebrew, which lists and names them differently, lands on the right book (`ReaderPosition`, checked for every book of every translation). Highlights are kept per translation, so the selection of the old one doesn't follow you.
 
 Not checked: opening the menu and tapping a version on a device.
+
+## Community (2026-11-22)
+
+A new tab, **Community**, with the website's prayer wall and reading leaderboard; Settings and the account moved behind a gear on Home (the tab bar has five places).
+
+- **Prayer wall** (api/community.php, reactions, replies, reports): newest or "needs prayer"; a card per request with the author (name, country flag, photo, or "Anonymous"), "I prayed" and a heart that change at once and are put right if the server says no, the number of encouragements, and an answered-prayer mark with its note. A request opens with its encouragement and a box to add yours. You can share a request (10 to 1000 characters, anonymous if you wish), mark your own as answered or delete it. Reading is open to everyone; anything that writes asks you to sign in.
+- **Keeping it safe:** every request and reply has Report (the website's four reasons; the moderator is emailed and a post reported by three members is hidden until reviewed) and Block this member (see below). The community guidelines show where you post and in Settings.
+- **Blocking** needed a website change (`api/community.php`, `api/replies.php`, no migration: it reuses the `user_blocks` table "Send a verse" already had). Blocking from a post or reply hides that author's requests and replies for you, also when they were anonymous (the server never says who), and they can no longer send you verses. Settings → Account → Community shows how many you blocked and can unblock everyone. **That change is committed in the website repo but not deployed**; until it is, Block answers with an error and the wall behaves as before.
+- **Leaderboard** (api/leaderboard.php): this week, month or year; what everyone has read together against a goal; your place (also when you are hidden or outside the top 20); top readers with medals (ties share a rank); countries. Chapters are what the app already syncs, up to 40 a day.
+- **Bell** (api/notifications.php): the website's notifications (people prayed, encouraged you, opened a verse you sent), with an unread count on the Community tab; a prayer opens in the app, a verse link opens on the website; Mark all read.
+- **Settings** (Account → Community): name, country and flag, show me on the leaderboard, prayer emails, verses from members, blocked members.
+- **Badges:** the server awards community and leaderboard badges (Shared Burden, Prayer Partner, Top Ten...); the app shows them with the same unlock toast as its own. The Achievements screen still lists only the badges that can be worked out on the device.
+
+Debug self-test: 309 checks, 53 of them for this, run with real accounts against the local server (post, pray, heart, encourage, report, block an anonymous author and a reply, unblock, bell, leaderboard, settings, delete).
+
+Not checked: tapping through the screens and the share/report sheets on a device; a request with a long text or a profile photo; the app against the production server (the block endpoint is not deployed); the Achievements list for community badges.
+

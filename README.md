@@ -41,6 +41,7 @@ consistently, or with greater understanding, then its purpose is fulfilled.
   references open the passage), and a private prayer list; cross-references;
   places and journeys on a map.
 - **Achievements:** badges that celebrate faithfulness. Nothing is ranked.
+- **Community:** the prayer wall (share a request, pray, encourage; report and block), a reading leaderboard you can opt out of, and notifications. Reading is open; taking part needs a free account.
 - **Daily verse:** an optional reminder and a Home Screen / Lock Screen widget.
 - **Themes:** Dark, Sepia, Light, or follow the device.
 

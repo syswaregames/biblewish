@@ -276,6 +276,13 @@ final class AchievementsStore: ObservableObject {
         }
     }
 
+    /// Badges the server awarded (community, leaderboard): shown like the ones earned on the device.
+    func celebrate(_ newBadges: [BadgeDefinition]) {
+        let known = Set(toastQueue.map(\.id) + [toast?.id].compactMap { $0 })
+        toastQueue.append(contentsOf: newBadges.filter { !known.contains($0.id) })
+        showNextToast()
+    }
+
     func dismissToast() {
         toast = nil
         showNextToast()

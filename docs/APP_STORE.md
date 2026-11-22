@@ -98,7 +98,8 @@ Use the largest iPhone size Apple asks for, in the warm Dark theme, plus one Sep
 ## Before submitting
 
 - [x] Website changes for sync are deployed (see `docs/PHASE4_SERVER.md`); verified file-by-file, but the authenticated endpoints were only tested locally, not yet from a phone against production
-- [ ] Update the App Privacy answers in App Store Connect as above
+- [ ] Update the App Privacy answers in App Store Connect as above (the Community adds user content that other people can see: prayers, encouragement, display name, optional country and photo)
+- [ ] User-generated content (Guideline 1.2): the app has a Report on every request and reply, Block on every member (even anonymous ones), community guidelines shown where you post and in the Community settings, and a moderator who is emailed each report and can remove content. Confirm in App Store Connect's review notes how to reach the moderator (the support address in the listing) and that reports are answered within a day
 
 - [x] Release build for a real device compiles with no errors; privacy manifests (`PrivacyInfo.xcprivacy`) added for the app and the widget (UserDefaults only, no data collected)
 - [ ] Register the App Group and the widget's App ID (see `WIDGET.md`) and archive with signing

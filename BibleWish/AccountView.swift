@@ -33,6 +33,15 @@ struct AccountView: View {
             }
             .themedRows()
 
+            Section(footer: Text("Your name, flag and place on the leaderboard, prayer emails, and the members you blocked.")) {
+                NavigationLink {
+                    CommunitySettingsView()
+                } label: {
+                    Label("Community", systemImage: "person.3")
+                }
+            }
+            .themedRows()
+
             Section(footer: Text("Notes, favorites, highlights, reading progress, plans and prayers are kept in step with biblewish.com.")) {
                 SyncStatusView()
             }

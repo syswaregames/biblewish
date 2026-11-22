@@ -84,6 +84,13 @@ final class SelfTest {
         return email
     }
 
+    /// Signs an account made earlier back in (a new code by email).
+    func signIn(email: String) async -> Bool {
+        await clearMailbox()
+        guard await auth.requestCode(email: email), let code = await latestMailCode() else { return false }
+        return await auth.verify(email: email, code: code)
+    }
+
     // MARK: - Run
 
     func run() async {
@@ -99,6 +106,7 @@ final class SelfTest {
         await runSearch()
         await runAuth()
         await runSendVerse()
+        await runCommunity()
         await runFavoritesAndReading()
         await runHighlights()
         await runNotes()
@@ -167,6 +175,176 @@ final class SelfTest {
         let again = bookmarks.save(runs: [(16...17, "x")], bookName: "John", chapter: 3, translation: "kjv")
         check("saving the same run again changes nothing", again.added == 0 && again.already == 1 && bookmarks.bookmarks.count == before + 2)
         for bookmark in bookmarks.bookmarks where bookmark.bookName == "John" && bookmark.chapterNumber == 3 { bookmarks.toggle(bookmark) }
+    }
+
+    // MARK: - Community (prayer wall, leaderboard, bell)
+
+    private func runCommunity() async {
+        check("a prayer's id is read from a notification link", NotificationsView.prayerId(in: "/community/?prayer=12") == 12 && NotificationsView.prayerId(in: "/v/abc") == nil && NotificationsView.prayerId(in: "/community/") == nil)
+        check("a country code becomes a flag", CommunityFormat.flag("BR") == "\u{1F1E7}\u{1F1F7}" && CommunityFormat.flag(nil) == "" && CommunityFormat.flag("X") == "")
+        check("an avatar path becomes an address", CommunityFormat.avatarURL("/uploads/avatars/a.jpg")?.path == "/uploads/avatars/a.jpg" && CommunityFormat.avatarURL(nil) == nil)
+        check("a leaderboard period is written out", CommunityFormat.range(start: "2026-01-04", end: "2026-01-10") == "Jan 4 \u{2013} Jan 10")
+        let sample = CommunityPrayer(id: 1, body: "x", isAnonymous: false, author: "A", authorAvatar: nil, authorCountry: nil, createdAt: Date(), prayedCount: 2, heartCount: 0, replyCount: 0, answeredAt: nil, answerNote: nil, iPrayed: false, iHearted: false, isMine: false)
+        check("tapping I prayed adds one, again takes it back", sample.toggled(.praying).prayedCount == 3 && sample.toggled(.praying).iPrayed && sample.toggled(.praying).toggled(.praying) == sample)
+        check("a count never goes below zero", sample.toggled(.heart).toggled(.heart).toggled(.heart).heartCount >= 0)
+
+        let store = CommunityStore()
+        // Reading is open to everyone; writing is not.
+        await store.refresh()
+        check("the wall can be read without an account", store.loadedOnce && store.errorMessage == nil, store.errorMessage ?? "")
+        do {
+            try await store.post(body: "Please pray for my family this week", anonymous: false)
+            check("posting needs an account", false, "it was accepted")
+        } catch APIError.unauthorized {
+            check("posting needs an account", true)
+        } catch {
+            check("posting needs an account", false, "\(error)")
+        }
+        if let guest = try? await store.leaderboard(.week) {
+            check("the leaderboard can be read without an account", guest.me == nil && guest.community.goal > 0)
+        } else { check("the leaderboard can be read without an account", false) }
+
+        let marker = "Selftest \(Int(Date().timeIntervalSince1970))"
+        do {
+            // Member A shares an anonymous request.
+            guard let emailA = await signInFreshAccount("wallA") else { check("sign in member A", false); return }
+            do {
+                try await store.post(body: "short", anonymous: false)
+                check("a request needs at least 10 characters", false, "accepted")
+            } catch { check("a request needs at least 10 characters", true) }
+            try await store.post(body: "\(marker): please pray for my family", anonymous: true)
+            let posted = store.prayers.first { $0.body.hasPrefix(marker) }
+            check("my request is on the wall, anonymous, and mine", posted?.isMine == true && posted?.isAnonymous == true && posted?.author == nil && posted?.displayName == "Anonymous")
+            guard let prayer = posted else { return }
+
+            // A can mark it answered, and take it back.
+            try await store.setAnswered(prayer, answered: true, note: "God answered")
+            check("marked as answered, with the note", store.prayers.first { $0.id == prayer.id }.map { $0.isAnswered && $0.answerNote == "God answered" } == true)
+            try await store.setAnswered(prayer, answered: false, note: "")
+            check("and back to not answered", store.prayers.first { $0.id == prayer.id }.map { !$0.isAnswered } == true)
+            do {
+                try await store.report(prayerId: prayer.id, reason: .spam, details: "")
+                check("you cannot report your own request", false, "accepted")
+            } catch { check("you cannot report your own request", true) }
+            await auth.signOut()
+
+            // Member B prays, encourages and reports.
+            guard await signInFreshAccount("wallB") != nil else { check("sign in member B", false); return }
+            await store.refresh()
+            guard let seen = store.prayers.first(where: { $0.id == prayer.id }) else { check("member B sees the request", false); return }
+            check("B sees it, anonymous and not theirs", !seen.isMine && seen.author == nil && !seen.iPrayed)
+            let prayed = try await store.react(.praying, to: seen)
+            check("I prayed counts once and is mine", prayed.prayedCount == 1 && prayed.iPrayed && store.prayers.first { $0.id == prayer.id }?.prayedCount == 1)
+            let unprayed = try await store.react(.praying, to: prayed)
+            check("tapping again takes it back", unprayed.prayedCount == 0 && !unprayed.iPrayed)
+            _ = try await store.react(.praying, to: unprayed)
+            let hearted = try await store.react(.heart, to: store.prayers.first { $0.id == prayer.id } ?? unprayed)
+            check("the heart is separate from I prayed", hearted.heartCount == 1 && hearted.iHearted && hearted.iPrayed)
+
+            let reply = try await store.reply(to: prayer.id, body: "Praying for you and your family")
+            check("encouragement is added, and mine", reply.isMine && reply.body.contains("Praying") && store.prayers.first { $0.id == prayer.id }?.replyCount == 1)
+            let thread = try await store.replies(for: prayer.id)
+            check("the thread shows it", thread.count == 1 && thread[0].id == reply.id)
+            do {
+                _ = try await store.reply(to: prayer.id, body: "x")
+                check("encouragement needs a few words", false, "accepted")
+            } catch { check("encouragement needs a few words", true) }
+
+            try await store.report(prayerId: prayer.id, reason: .inappropriate, details: "selftest")
+            check("a report is accepted", true)
+            try await store.report(prayerId: prayer.id, reason: .inappropriate, details: "selftest again")
+            check("reporting twice is harmless", true)
+
+            // Blocking an anonymous author hides their request, and unblocking brings it back.
+            try await store.block(prayerId: prayer.id)
+            check("a blocked member's request leaves the wall", !store.prayers.contains { $0.id == prayer.id } && store.blockedCount == 1, "\(store.blockedCount)")
+            do {
+                _ = try await store.prayer(id: prayer.id)
+                check("and cannot be opened by its address", false, "opened")
+            } catch { check("and cannot be opened by its address", true) }
+            await store.refreshBlockedCount()
+            check("the blocked count is kept", store.blockedCount == 1)
+            try await store.unblockEveryone()
+            check("unblocking brings it back", store.prayers.contains { $0.id == prayer.id } && store.blockedCount == 0)
+            do {
+                try await store.block(prayerId: 99_999_999)
+                check("blocking something that is gone is refused", false, "accepted")
+            } catch { check("blocking something that is gone is refused", true) }
+            await auth.signOut()
+
+            // Member A signs back in: the bell holds what B did.
+            guard await signIn(email: emailA) else { check("sign in member A again", false); return }
+            let notes = try await store.notifications()
+            check("A's bell holds B's prayer and encouragement", notes.contains { $0.kind == "prayed" } && notes.contains { $0.kind == "prayer_reply" } && store.unreadNotifications >= 2, notes.map(\.kind).joined(separator: ","))
+            check("a notification points at the request", notes.contains { NotificationsView.prayerId(in: $0.url ?? "") == prayer.id })
+            await store.markRead(id: notes.first?.id)
+            check("one can be marked read", store.unreadNotifications == notes.count - 1 || notes.count == 1, "\(store.unreadNotifications)")
+            await store.markRead()
+            check("all can be marked read", store.unreadNotifications == 0)
+
+            // A blocks B from B's encouragement: it disappears for A, the request stays.
+            let again = try await store.replies(for: prayer.id)
+            if let theirs = again.first {
+                check("A sees B's encouragement", !theirs.isMine)
+                try await store.block(prayerId: prayer.id, replyId: theirs.id)
+                let after = try await store.replies(for: prayer.id)
+                check("blocking from a reply hides that member's replies", after.isEmpty)
+                check("A's own request stays on A's wall", store.prayers.contains { $0.id == prayer.id })
+                try await store.unblockEveryone()
+            } else { check("A sees B's encouragement", false) }
+            await auth.signOut()
+        } catch {
+            check("community flow", false, "\(error)")
+        }
+
+        // A named request, and the leaderboard shapes.
+        do {
+            guard let emailC = await signInFreshAccount("wallC") else { check("sign in member C", false); return }
+            try await store.post(body: "\(marker) C: bell test, please pray", anonymous: false)
+            guard let own = store.prayers.first(where: { $0.body.hasPrefix(marker) && $0.body.contains("bell test") }) else { check("member C posts", false); return }
+            check("a named request shows its author", own.author != nil && !own.isAnonymous)
+            await auth.signOut()
+
+            guard await signInFreshAccount("wallD") != nil else { check("sign in member D", false); return }
+            await store.refresh()
+            if let theirs = store.prayers.first(where: { $0.id == own.id }) {
+                _ = try await store.react(.praying, to: theirs)
+                _ = try await store.reply(to: own.id, body: "Encouraging you today")
+            } else { check("member D sees C's request", false) }
+            await auth.signOut()
+
+            guard await signIn(email: emailC) else { check("sign in member C again", false); return }
+            let bell = try await store.notifications()
+            check("the author's bell has both, newest first", bell.count >= 2 && bell.first?.createdAt ?? .distantPast >= bell.last?.createdAt ?? .distantFuture && bell.allSatisfy { !$0.read })
+            check("each has an icon and words", bell.allSatisfy { !$0.icon.isEmpty && !$0.body.isEmpty })
+            for period in LeaderboardPeriod.allCases {
+                let board = try await store.leaderboard(period)
+                check("the \(period.rawValue) leaderboard has a goal and your place", board.community.goal > 0 && board.me != nil && board.period == period.rawValue, "\(board.period)")
+            }
+
+            // Community settings round-trip through the account.
+            let countries = CommunitySettingsView.countries
+            check("the country list loads, named and sorted", countries.count > 200 && countries.contains { $0.code == "BR" && $0.name == "Brazil" } && zip(countries, countries.dropFirst()).allSatisfy { $0.name <= $1.name })
+            check("a new account starts with the leaderboard on", auth.user?.showOnLeaderboard != false)
+            check("the name is saved", await auth.updateProfile(["display_name": "Selftest Reader"]) && auth.user?.displayName == "Selftest Reader")
+            check("the flag needs a country first", await auth.updateProfile(["country": "", "show_country": true]) == false && auth.errorMessage != nil)
+            check("a country and its flag are saved", await auth.updateProfile(["country": "BR", "show_country": true]) && auth.user?.country == "BR" && auth.user?.showCountry == true)
+            check("an unknown country is refused", await auth.updateProfile(["country": "ZZ"]) == false)
+            check("leaving the leaderboard is saved", await auth.updateProfile(["show_on_leaderboard": false]) && auth.user?.showOnLeaderboard == false)
+            let hidden = try await store.leaderboard(.week)
+            check("hidden, you still see your own place but are not listed", hidden.me?.listed == false && !hidden.leaders.contains { $0.isMe })
+            check("the other settings are saved", await auth.updateProfile(["notify_prayers": false, "allow_verses": false]) && auth.user?.notifyPrayers == false && auth.user?.allowVerses == false && auth.user?.country == "BR")
+            check("a blank name is refused", await auth.updateProfile(["display_name": "  "]) == false)
+
+            // Delete own request.
+            try await store.delete(own)
+            await store.refresh()
+            check("my request can be deleted", !store.prayers.contains { $0.id == own.id })
+            await auth.signOut()
+        } catch {
+            check("community bell and leaderboard", false, "\(error)")
+        }
+        if auth.isSignedIn { await auth.signOut() }
     }
 
     // MARK: - Changing version in the reader

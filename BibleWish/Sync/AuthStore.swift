@@ -11,6 +11,13 @@ struct ServerUser: Codable, Equatable {
     let id: Int
     let email: String
     let displayName: String?
+    // What the community shows about the member (api/account.php).
+    var avatarUrl: String? = nil
+    var country: String? = nil
+    var showCountry: Bool? = nil
+    var showOnLeaderboard: Bool? = nil
+    var notifyPrayers: Bool? = nil
+    var allowVerses: Bool? = nil
 }
 
 @MainActor
@@ -77,6 +84,26 @@ final class AuthStore: ObservableObject {
             )
             guard let signedIn = response.user else { throw APIError.badResponse }
             setUser(signedIn)
+            return true
+        } catch {
+            errorMessage = (error as? LocalizedError)?.errorDescription ?? "Something went wrong."
+            return false
+        }
+    }
+
+    private struct ProfileResponse: Decodable {
+        let user: ServerUser
+    }
+
+    /// Changes some account settings (the server keeps every field not sent): name, country, flag,
+    /// leaderboard, emails, verses. Returns whether it was saved; `errorMessage` says why not.
+    func updateProfile(_ fields: [String: Any]) async -> Bool {
+        isBusy = true
+        errorMessage = nil
+        defer { isBusy = false }
+        do {
+            let response = try await api.request(ProfileResponse.self, "PUT", "api/account.php", json: fields)
+            setUser(response.user)
             return true
         } catch {
             errorMessage = (error as? LocalizedError)?.errorDescription ?? "Something went wrong."
