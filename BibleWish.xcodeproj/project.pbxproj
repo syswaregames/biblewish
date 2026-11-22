@@ -9,6 +9,7 @@
 /* Begin PBXBuildFile section */
 		1CC74EE7915C79A3FF80F77C /* BibleWishWidgetExtension.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = AF91AF459CBACE653CB9EAD2 /* BibleWishWidgetExtension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		22934FEB281389717A8161FC /* SyncOp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5AEFCAF1079758B9FCACD125 /* SyncOp.swift */; };
+		2EEF285498396F23360455ED /* NoteInline.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B79F46A1DE423D7E4576416 /* NoteInline.swift */; };
 		33B486BC1156FC8D24972734 /* SwiftUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 79B7E44CF86DB7FED700B6ED /* SwiftUI.framework */; };
 		3673945D4F2DA9BC54E0A14F /* SyncEngine.swift in Sources */ = {isa = PBXBuildFile; fileRef = A6304D99DDDFE3371DAD0099 /* SyncEngine.swift */; };
 		41E6E796789C7F13A845176B /* SignInView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 20483F9AEB2004EB42EDF122 /* SignInView.swift */; };
@@ -95,6 +96,7 @@
 		CBA41874341E014307997991 /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = EB864C3AFF590D8698A05CA9 /* PrivacyInfo.xcprivacy */; };
 		D1C77A58355CDBC16BDD752F /* SelfTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8D26807FF18B9FCFE3092E85 /* SelfTest.swift */; };
 		EF928E9A3883CC7C91AC3E23 /* APIClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = E13CDB28A55487D545F0F5B9 /* APIClient.swift */; };
+		F46224FD10A5841D41E49FF4 /* NoteInlineFixtures.swift in Sources */ = {isa = PBXBuildFile; fileRef = 689CF0E10CFD3B0CCEC37F29 /* NoteInlineFixtures.swift */; };
 		F7303382E197140B82FFBA7C /* SharedConfig.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7E47020590BF77B69E94FADA /* SharedConfig.swift */; };
 /* End PBXBuildFile section */
 
@@ -126,10 +128,12 @@
 		0FDCC472C67F882419CA4611 /* VerseLibrary.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = VerseLibrary.swift; sourceTree = "<group>"; };
 		20483F9AEB2004EB42EDF122 /* SignInView.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = SignInView.swift; sourceTree = "<group>"; };
 		36B4C43724B3CB313115E608 /* SyncStatusView.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = SyncStatusView.swift; sourceTree = "<group>"; };
+		3B79F46A1DE423D7E4576416 /* NoteInline.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = NoteInline.swift; sourceTree = "<group>"; };
 		4AC2B1F2D8025037233D4C1E /* WidgetKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WidgetKit.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS26.0.sdk/System/Library/Frameworks/WidgetKit.framework; sourceTree = DEVELOPER_DIR; };
 		5110D69EF9E3A5C85A94E842 /* votd */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = folder; name = votd; path = Data/votd; sourceTree = "<group>"; };
 		5AEFCAF1079758B9FCACD125 /* SyncOp.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = SyncOp.swift; sourceTree = "<group>"; };
 		62FD2D2745A31B61EEA56508 /* BibleWishWidget.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = BibleWishWidget.swift; sourceTree = "<group>"; };
+		689CF0E10CFD3B0CCEC37F29 /* NoteInlineFixtures.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = NoteInlineFixtures.swift; sourceTree = "<group>"; };
 		7864A1BDC9B3944F10714BD0 /* Prayers.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = Prayers.swift; sourceTree = "<group>"; };
 		79B7E44CF86DB7FED700B6ED /* SwiftUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SwiftUI.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS26.0.sdk/System/Library/Frameworks/SwiftUI.framework; sourceTree = DEVELOPER_DIR; };
 		7E47020590BF77B69E94FADA /* SharedConfig.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = SharedConfig.swift; sourceTree = "<group>"; };
@@ -342,6 +346,7 @@
 				96F1A1032F4F111100A1B2C5 /* Theme.swift */,
 				967850612F4E499C00F93196 /* VersionStore.swift */,
 				967850632F4E4BFC00F93196 /* VersionLibraryView.swift */,
+				3B79F46A1DE423D7E4576416 /* NoteInline.swift */,
 			);
 			path = Model;
 			sourceTree = "<group>";
@@ -397,6 +402,7 @@
 				5AEFCAF1079758B9FCACD125 /* SyncOp.swift */,
 				A6304D99DDDFE3371DAD0099 /* SyncEngine.swift */,
 				36B4C43724B3CB313115E608 /* SyncStatusView.swift */,
+				689CF0E10CFD3B0CCEC37F29 /* NoteInlineFixtures.swift */,
 			);
 			name = Sync;
 			path = Sync;
@@ -613,6 +619,8 @@
 				8D5D23F7D1095A95F3F38A37 /* Prayers.swift in Sources */,
 				823CF170995770EC85ED3786 /* PrayerListView.swift in Sources */,
 				8CE5E7950CF1C906211F793A /* SyncStatusView.swift in Sources */,
+				2EEF285498396F23360455ED /* NoteInline.swift in Sources */,
+				F46224FD10A5841D41E49FF4 /* NoteInlineFixtures.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

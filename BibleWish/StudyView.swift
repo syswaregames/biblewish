@@ -158,8 +158,8 @@ struct StudyView: View {
                     .foregroundStyle(palette.goldBright)
             }
 
-            if !note.body.isEmpty, note.title.trimmingCharacters(in: .whitespaces) != "" {
-                Text(note.body)
+            if !note.preview.isEmpty {
+                Text(note.preview)
                     .font(.subheadline)
                     .foregroundStyle(palette.inkSoft)
                     .lineLimit(2)

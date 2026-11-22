@@ -97,33 +97,6 @@ indirect enum NoteBlock: Equatable {
     }
 }
 
-// MARK: - Colored spans
-
-/// A line cut into plain text, colored text ({red|words}) and highlighted text ({=gold|words}).
-enum NoteSpan: Equatable {
-    case plain(String)
-    case color(NoteColor, String)
-    case mark(NoteColor, String)
-
-    static func spans(in line: String) -> [NoteSpan] {
-        guard let regex = try? NSRegularExpression(pattern: #"\{(=?)(\#(NoteColor.pattern))\|(.+?)\}"#) else { return [.plain(line)] }
-        var result: [NoteSpan] = []
-        var last = line.startIndex
-        for match in regex.matches(in: line, range: NSRange(line.startIndex..., in: line)) {
-            guard let whole = Range(match.range, in: line),
-                  let marker = Range(match.range(at: 1), in: line),
-                  let name = Range(match.range(at: 2), in: line),
-                  let inner = Range(match.range(at: 3), in: line),
-                  let color = NoteColor(rawValue: String(line[name])) else { continue }
-            if whole.lowerBound > last { result.append(.plain(String(line[last..<whole.lowerBound]))) }
-            result.append(line[marker].isEmpty ? .color(color, String(line[inner])) : .mark(color, String(line[inner])))
-            last = whole.upperBound
-        }
-        if last < line.endIndex { result.append(.plain(String(line[last...]))) }
-        return result.isEmpty ? [.plain(line)] : result
-    }
-}
-
 // MARK: - Body
 
 struct NoteBodyView: View {
@@ -253,59 +226,71 @@ struct NoteBlocksView: View {
 
     // MARK: - Inline formatting
 
-    /// A line with colors and highlights applied, and Markdown inside each part.
+    /// What a piece of text looks like: the formatting wrapped around it so far.
+    private struct Style {
+        var bold = false
+        var italic = false
+        var color: Color?
+        var background: Color?
+    }
+
+    /// A line as styled text, built from the website's grammar (see NoteInline).
     private func inline(_ line: String) -> AttributedString {
+        attributed(NoteInline.parse(line), style: Style())
+    }
+
+    private func attributed(_ nodes: [NoteInline.Node], style: Style) -> AttributedString {
         var result = AttributedString()
-        for span in NoteSpan.spans(in: line) {
-            switch span {
-            case .plain(let text):
-                result += plainInline(text)
-            case .color(let color, let text):
-                var part = plainInline(text)
-                part.foregroundColor = color.color(in: palette)
-                result += part
-            case .mark(let color, let text):
-                var part = plainInline(text)
-                part.backgroundColor = color.color(in: palette).opacity(0.30)
-                result += part
+        for node in nodes {
+            switch node {
+            case .text(let text):
+                result += styled(withReferences(text), style)
+            case .bold(let inner):
+                var next = style
+                next.bold = true
+                result += attributed(inner, style: next)
+            case .italic(let inner):
+                var next = style
+                next.italic = true
+                result += attributed(inner, style: next)
+            case .color(let color, let inner):
+                var next = style
+                next.color = color.color(in: palette)
+                result += attributed(inner, style: next)
+            case .mark(let color, let inner):
+                var next = style
+                next.background = color.color(in: palette).opacity(0.30)
+                result += attributed(inner, style: next)
+            case .link(let label, let url):
+                var part = AttributedString(label)
+                part.link = url
+                result += styled(part, style)
             }
         }
         return result
     }
 
-    /// Bold, italic and links from Markdown, plus links for verse references and bare web addresses.
-    private func plainInline(_ line: String) -> AttributedString {
-        var attributed = (try? AttributedString(
-            markdown: line,
-            options: AttributedString.MarkdownParsingOptions(interpretedSyntax: .inlineOnlyPreservingWhitespace)
-        )) ?? AttributedString(line)
+    private func styled(_ text: AttributedString, _ style: Style) -> AttributedString {
+        var text = text
+        var intent: InlinePresentationIntent = []
+        if style.bold { intent.insert(.stronglyEmphasized) }
+        if style.italic { intent.insert(.emphasized) }
+        if !intent.isEmpty { text.inlinePresentationIntent = intent }
+        if let color = style.color { text.foregroundColor = color }
+        if let background = style.background { text.backgroundColor = background }
+        return text
+    }
 
-        let plain = String(attributed.characters)
-
-        func characterOffsets(_ range: Range<String.Index>) -> (Int, Int) {
-            (plain.distance(from: plain.startIndex, to: range.lowerBound),
-             plain.distance(from: plain.startIndex, to: range.upperBound))
-        }
-
-        func link(_ range: Range<String.Index>, to url: URL) {
-            let (start, end) = characterOffsets(range)
+    /// Plain text with verse references ("John 3:16", "Rom 8:28-30") turned into links.
+    private func withReferences(_ plain: String) -> AttributedString {
+        var attributed = AttributedString(plain)
+        for match in PassageReference.references(in: plain, books: viewModel.books) {
+            guard let url = NoteBodyView.passageURL(match.reference) else { continue }
+            let start = plain.distance(from: plain.startIndex, to: match.range.lowerBound)
+            let end = plain.distance(from: plain.startIndex, to: match.range.upperBound)
             let lower = attributed.index(attributed.startIndex, offsetByCharacters: start)
             let upper = attributed.index(attributed.startIndex, offsetByCharacters: end)
-            // Leave text that is already a Markdown link alone.
-            guard attributed[lower..<upper].runs.allSatisfy({ $0.link == nil }) else { return }
             attributed[lower..<upper].link = url
-        }
-
-        for match in PassageReference.references(in: plain, books: viewModel.books) {
-            if let url = NoteBodyView.passageURL(match.reference) { link(match.range, to: url) }
-        }
-
-        if let detector = try? NSDataDetector(types: NSTextCheckingResult.CheckingType.link.rawValue) {
-            for found in detector.matches(in: plain, range: NSRange(plain.startIndex..., in: plain)) {
-                if let range = Range(found.range, in: plain), let url = found.url, url.scheme?.hasPrefix("http") == true {
-                    link(range, to: url)
-                }
-            }
         }
         return attributed
     }

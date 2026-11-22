@@ -66,12 +66,21 @@ struct Note: Identifiable, Codable, Equatable {
         body.split(whereSeparator: \.isWhitespace).count
     }
 
-    /// The title, or the first line of the body when there is none.
+    /// The title, or the first line of the body (as plain words, without markup) when there is none.
     var displayTitle: String {
         let trimmed = title.trimmingCharacters(in: .whitespacesAndNewlines)
-        if !trimmed.isEmpty { return trimmed }
-        let firstLine = body.split(separator: "\n", omittingEmptySubsequences: true).first.map(String.init) ?? ""
-        return firstLine.isEmpty ? "Untitled note" : firstLine
+        if !trimmed.isEmpty { return NoteInline.plain(trimmed) }
+        return plainBodyLines.first ?? "Untitled note"
+    }
+
+    /// A short plain-text preview for lists: the body without markup, minus the line used as the title.
+    var preview: String {
+        let hasTitle = !title.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
+        return (hasTitle ? plainBodyLines : Array(plainBodyLines.dropFirst())).joined(separator: " ")
+    }
+
+    private var plainBodyLines: [String] {
+        NoteBlock.plainLines(NoteBlock.parse(body))
     }
 
     var isEmpty: Bool {
