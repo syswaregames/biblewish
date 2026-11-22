@@ -67,3 +67,6 @@ fastlane/test_output
 # Apple push key and its notes: secrets, never committed (see the website repo docs/PUSH.md)
 APN/
 *.p8
+
+# App Store screenshots: made locally from the simulators (about 40 MB), uploaded to App Store Connect, not committed
+AppStore/Screenshots/

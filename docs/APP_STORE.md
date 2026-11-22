@@ -1,110 +1,197 @@
-# App Store listing — draft
+# Submitting BibleWish 2.0 to the App Store
 
-Draft copy for the next release. Edit freely; limits are Apple's (name 30, subtitle 30, promotional text 170, keywords 100, description 4000, what's new 4000 characters).
+Everything the repository can do is done. This is the rest, in order. Steps marked **you** need your Apple or hosting
+login; nothing here needs a password pasted anywhere but those sites.
 
-## Name and subtitle
+Version **2.0 (build 3)**, bundle id `Sysware.BibleWish`, widget `Sysware.BibleWish.Widget`, team `3FG6EV356S`, iPhone and iPad, iOS 17.5 or later.
 
-- **Name:** BibleWish
-- **Subtitle:** Daily verse & quiet reading *(27)*
+## What is already done
 
-## Promotional text *(≤170; can change without a new build)*
+- [x] Version 2.0 (3) on the app **and** the widget (they must match); export compliance declared (`ITSAppUsesNonExemptEncryption = NO`: only standard HTTPS)
+- [x] An unsigned Release **archive** builds with no errors; the archive has the widget, both privacy manifests (`PrivacyInfo.xcprivacy`) and the app icon; no Debug-only code, test hooks or local-server exceptions are in it
+- [x] App icon: 1024 × 1024 with no transparency (Apple rejects an alpha channel)
+- [x] Capabilities in the project: App Groups (`group.Sysware.BibleWish`, app and widget), Push Notifications (`aps-environment`)
+- [x] Account deletion and data export are in the app (Settings → Account), as Apple requires (5.1.1(v))
+- [x] User-generated content (Guideline 1.2): Report on every request and reply, Block on every member (even anonymous ones), community guidelines where people post, a moderator who is emailed each report and can remove content, contact address on the site
+- [x] Push notifications working, with Apple's sandbox and production keys on the server
+- [x] Privacy policy page updated for the app (website commit, **deploy it**, step 3)
+- [x] 9 iPhone and 6 iPad screenshots at Apple's sizes, opaque PNGs, in `AppStore/Screenshots/` (git-ignored)
+- [x] 336 automated checks pass (`SelfTest`, Debug build)
 
-Read the Bible without distraction. A verse for every day, reading plans, notes and maps, free for everyone: no ads, no subscriptions, no account needed.
+## Step by step
 
-## Description
+### 1. Apple Developer account **(you)**: developer.apple.com → Certificates, Identifiers & Profiles
 
-BibleWish is a free Bible app made as a gift. There are no ads and no subscriptions, and you never need an account: everything works on your device. If you like, sign in with just your email to keep your notes, progress and prayers in step with biblewish.com.
+1. **Identifiers → `Sysware.BibleWish`**: tick **Push Notifications** and **App Groups** (select `group.Sysware.BibleWish`; create the group first under Identifiers → App Groups if it is missing). Save.
+2. **Identifiers → `Sysware.BibleWish.Widget`**: tick **App Groups**, select the same group. Save.
+3. Nothing else: signing is automatic (Xcode makes the profiles). The APNs keys are already on the server.
+
+### 2. App Store Connect: the app record **(you)**: appstoreconnect.apple.com → Apps
+
+If BibleWish is already listed, open it and skip to "version". Otherwise **+ → New App**: Platforms iOS; Name `BibleWish`; Primary language English (U.S.); Bundle ID `Sysware.BibleWish`; SKU anything unique (`biblewish`); User access Full.
+
+### 3. Website: privacy page and the review login **(you say go, I run it)**
+
+- Deploy the website (`scripts/deploy.sh`): the updated privacy page (it now covers the app, notifications and blocking) and the review sign-in. Apple opens the privacy URL, so it must be live before you submit.
+- **Review sign-in:** Apple's reviewer cannot read your sign-in email, so the app needs a demo account with a fixed code. Follow the website repo's `docs/APP_REVIEW.md`: add one `review` line to `config.php` (your own demo email and six digits). Then use the same email and digits in step 7. Test it once in the app.
+
+### 4. Archive and upload **(you)**: Xcode
+
+1. Open `BibleWish.xcodeproj`. Select the **BibleWish** scheme and **Any iOS Device (arm64)**.
+2. **Signing & Capabilities** (both targets, BibleWish and BibleWishWidgetExtension): Team = your team, "Automatically manage signing" ticked. No red errors.
+3. **Product → Archive.** When it finishes the Organizer opens: select the archive → **Distribute App → App Store Connect → Distribute** (accept the defaults: upload symbols, manage version numbers off).
+4. The build appears in App Store Connect → TestFlight after a few minutes ("Processing"). No export-compliance question will be asked.
+
+If Xcode complains about the push entitlement, check step 1.1. The `development` value in the entitlements file is correct: Xcode changes it to `production` for the App Store build.
+
+### 5. Test the TestFlight build on your phone **(you)**
+
+Install it from TestFlight (Internal Testing → add yourself). TestFlight builds use Apple's **production** push service, which is what your production key covers. Check:
+
+- Open the app, sign in, Settings → Notifications → turn push on → **Send me a test notification** arrives
+- Someone praying for your request, or a verse you send to another account, gives a notification; tapping it opens the right screen
+- Community: post, pray, report, block, unblock (Settings → Account → Community)
+- Add the widget; the Verse of the Day reminder; Settings → Account → export and (on a spare account) delete
+- Switch the Bible version in the reader; search; Original words; Send to someone
+
+### 6. App information **(you)**: App Store Connect → your app
+
+- **App Information:** Category Primary **Books** (the project already says so); Secondary optional (Reference). Content rights: "Does your app contain, show or access third-party content?" → **Yes**, you have the rights: the Bible texts are public domain or openly licensed, and the Strong's dictionaries are CC BY-SA, credited in the app (Original words screen) and in `docs/CREDITS.md`.
+- **Pricing and Availability:** Free; all countries.
+- **App Privacy:** Privacy Policy URL `https://biblewish.com/privacy.html`; then answer the questionnaire exactly as in "Privacy answers" below.
+- **Age Rating:** answer the questionnaire honestly (see "Age rating" below).
+
+### 7. Version 2.0 page **(you)**: App Store Connect → iOS App → the 2.0 version
+
+1. **Screenshots:** upload `AppStore/Screenshots/iPhone-6.9in/` (1 to 9) under the 6.9" display, and `iPad-13in/` (1 to 6) under the 13" iPad display. Apple scales them down for smaller devices.
+2. **Promotional text, Description, Keywords, What's New:** paste from "Listing text" below.
+3. **Support URL** `https://biblewish.com/about.html`; **Marketing URL** `https://biblewish.com`.
+4. **Copyright:** `2026 Sysware` (or your name).
+5. **Build:** choose the build you uploaded (2.0 (3)).
+6. **App Review Information:** contact first name, last name, phone, email (`sysware@sysware.com.br`). **Sign-in required: yes**: user name = the review email, password = the six digits (step 3). Paste the notes from "Notes for App Review".
+7. **Version Release:** "Manually release this version" lets you pick the day once it is approved; "Automatically" releases right after approval.
+8. **Add for Review → Submit for Review.**
+
+Review usually takes about a day or two. You get an email at each step.
+
+## Listing text
+
+**Name** (30): `BibleWish` · **Subtitle** (30): `Read, pray and study freely` (27)
+
+**Promotional text** (170, editable without a new build, 165 used):
+
+> Read the Bible without distraction. A verse every day, reading plans, notes, search, a prayer community and an Original-words study. Free, no ads, no account needed.
+
+**Keywords** (100, 97 used): `bible,verse of the day,scripture,devotional,reading plan,KJV,prayer,study,widget,biblia,christian`
+
+**Description:**
+
+```
+BibleWish is a free Bible app made as a gift. There are no ads and no subscriptions, and you never need an account: everything works on your device. If you like, sign in with just your email to keep your notes, progress and prayers in step with biblewish.com and to join the community.
 
 READ
 • A book-style reader: a serif page, a gold frame and an illuminated first letter
-• The words of Jesus in red, only the words he spoke, not the whole verse
+• The words of Jesus in red, only the words he spoke
+• Switch between King James, World English Bible, Biblia Livre (Portuguese) and a Hebrew Bible in one tap, staying on the same verse
+• Tap a verse to select it, press and hold to select a passage, then save, write a note, make a picture, send it, copy or share
 • Focus mode, reading time, adjustable text, and Dark, Sepia and Light themes
-• King James Version, World English Bible, Biblia Livre (Portuguese) and a Hebrew Bible
+
+FIND
+• Search every word, in any translation, in a moment: "quotes" for a phrase, love* for word starts, filter by book
+• Choose a book the way biblewish.com does: ten colored sections, recent chapters, or just type John 3:16
+
+STUDY
+• Original words: each word of a verse with the Hebrew or Greek behind it and Strong's dictionary entry
+• Cross-references for every verse, and the places named in each chapter on a map, with the journeys of Abraham, the Exodus, Jesus and Paul
+• Notes with tags, light formatting and a toolbar; verse references open the passage
+• Favorites, four highlight colors, and a private prayer list with a place to record how a prayer was answered
 
 EVERY DAY
 • A verse of the day on your Home screen, with the same verses as biblewish.com
-• An optional daily reminder, at the time you choose
+• Reading plans: the Bible in a year, the New Testament in 90 days, the Gospels, Psalms and Proverbs, with progress and streaks that encourage rather than shame
+• Optional notifications: your daily reading reminder, and a note when someone prays for you
 • A Home Screen and Lock Screen widget
 
-STAY ON TRACK
-• Reading plans: the Bible in a year, the New Testament in 90 days, the Gospels, Psalms and Proverbs
-• Progress through every book, and streaks that encourage rather than shame
-• Achievements that celebrate faithfulness. Nothing is ranked or compared
-
-STUDY
-• Save favorite verses and highlight in four colors
-• Write notes with tags (Insight, Question, Prayer, Sermon, Promise), light formatting, and verse references that open the passage
-• A private prayer list, with a place to write down how a prayer was answered
-• Cross-references for every verse
-• Places named in each chapter, and the journeys of Abraham, the Exodus, Jesus and Paul on a map
+TOGETHER (optional, with a free account)
+• Share a prayer request, pray for others, encourage them, and rejoice when a prayer is answered
+• Send a verse to someone with a private link
+• A friendly reading leaderboard you can turn off, and achievements that celebrate faithfulness
+• Report anything inappropriate and block any member. Community guidelines: biblewish.com/terms.html
 
 "Freely you have received; freely give." (Matthew 10:8)
 
-BibleWish is open source. The code, the plans and the privacy policy are on GitHub.
+BibleWish is open source. The code, the reading plans and the privacy policy are on GitHub. Privacy: biblewish.com/privacy.html
+```
 
-## Keywords *(≤100, comma separated, no spaces)*
+(2,391 of 4,000 characters)
 
-bible,verse of the day,scripture,devotional,reading plan,KJV,study,notes,widget,biblia,christian
+**What's New in 2.0:**
 
-## What's New (this release)
+```
+A new BibleWish, matching biblewish.com.
 
-A new look, matching biblewish.com: warm Dark, Sepia and Light themes and a book-style reader.
+• A new reader with select-and-act: save, note, picture, send, copy or share any verse
+• Switch Bible versions from the reader, staying on the same verse
+• Fast search in every translation, and a new way to choose a book
+• Original words: the Hebrew and Greek behind every verse
+• Community: share prayer requests, pray and encourage, with report and block
+• Reading leaderboard, notifications and a weekly recap
+• Sepia and Light themes, reading plans, notes with a formatting toolbar, and a Home Screen widget
+• Larger text, VoiceOver support and better contrast
+```
 
-• New Home: verse of the day, today's reading, and where you left off
-• Reading plans with progress and streaks
-• Study: notes with tags and formatting, cross-references, places and journey maps
-• Achievements
-• Words of Jesus in red, word by word
-• Daily verse reminder and a Verse of the Day widget
-• Larger text, VoiceOver actions in the reader, and better contrast
+## Privacy answers (App Store Connect → App Privacy)
 
-## Categories, rating, links
+"Do you or your third-party partners collect data from this app?" → **Yes.** Nothing is used for tracking (answer **No** to "Data used to track you"), there are no third-party partners or SDKs. For each type below: **linked to the user: Yes · used for tracking: No · purpose: App Functionality**.
 
-- **Primary category:** Books (the project already sets `public.app-category.books`). Reference or Lifestyle are alternatives.
-- **Age rating:** answer the questionnaire honestly; the app has no user-generated content shared with others, no web access of its own, no purchases and no ads, so it should be 4+.
-- **Support / marketing URL:** https://biblewish.com
-- **Privacy policy URL:** the policy in this repository (`PRIVACY.md`), or a page on biblewish.com that says the same.
+| Category → type | What it is |
+|---|---|
+| Contact Info → **Email Address** | the sign-in address; an optional recipient address when sending a verse |
+| Contact Info → **Name** | the display name shown with prayers and on the leaderboard |
+| Location → **Coarse Location** | only the country you choose in Settings → Account → Community, to show its flag (not your device's location) |
+| User Content → **Other User Content** | notes, highlights, favorites, prayers, community posts and encouragement, messages sent with a verse |
+| Identifiers → **User ID** | the account number |
+| Identifiers → **Device ID** | this phone's push token, only if you turn on notifications |
+| Usage Data → **Product Interaction** | reading progress and plans (chapters read), for sync and the leaderboard |
 
-## App Privacy ("nutrition label")
+This matches `NSPrivacyCollectedDataTypes` in `BibleWish/PrivacyInfo.xcprivacy`, row for row; keep the two in step. The app never uploads a profile picture (it only shows ones added on the website), so there is no Photos row. Apple's categories are the closest fit I could find, not legal advice: if you are unsure about one, declaring it is the safe side.
 
-Without signing in the app collects nothing, but the label describes the app as shipped, and signing in is a feature, so declare what it collects. All of it is **linked to the user**, used for **App Functionality** only, **not used for tracking**:
+## Age rating (App Store Connect → Age Rating)
 
-- **Contact Info → Email Address** (sign-in code, account identity)
-- **Identifiers → User ID** (the account number)
-- **User Content → Other User Content** (notes, highlights, favorites, private prayers)
-- **Usage Data → Product Interaction** (reading progress and plan progress, i.e. saved place)
+Answer the questionnaire honestly. For this app: no violence, sexual content, profanity, horror, gambling, drugs or medical content **of its own**; no unrestricted web access; no purchases; no ads. Two things need thought:
 
-Sending a verse ("Send to someone") also transmits what the sender types, including an optional recipient email address, to biblewish.com; it is user content that the sender chooses to send, covered by the same declarations (consider whether the recipient's email address needs to be called out under Contact Info in App Store Connect). This matches `NSPrivacyCollectedDataTypes` in `BibleWish/PrivacyInfo.xcprivacy`; keep the two in step. Confirm the categories yourself in App Store Connect: they are the closest fit I could find, not legal advice. Notifications are scheduled locally and the widget only shares the chosen translation with the app on the device.
+- **The Bible text** has passages that describe violence and mature themes. Answer "Infrequent/Mild" where Apple asks about those themes, as other Bible apps do.
+- **User-generated content:** the prayer wall shows posts from other people, so answer **Yes** to user-generated content and describe the safeguards (report, block, moderator, guidelines). Apple will raise the rating (expect 12+ or 13+).
 
-## Notes for App Review
+## Notes for App Review (paste into "Notes")
 
-- No account is needed; everything works offline. Signing in is optional (Settings → Account): it asks for an email, then a 6-digit code we send. For review, create an account with any address you can read. Account deletion and data export are in Settings → Account → Account.
-- The daily verse reminder is off by default. Turn it on in Settings → Daily Verse (it asks for notification permission).
-- The Verse of the Day widget is added from the Home Screen or Lock Screen widget gallery.
-- The Bible maps use Apple Maps and need a network connection to draw the map tiles; everything else works offline.
+```
+BibleWish is a free Bible reader. No account is needed to read, search, study or use reading plans; everything works offline.
 
-## Screenshots to take
+SIGNING IN (optional): Settings (the gear on the Home screen) → Account → Sign in. Use the demo account from the fields above: enter the email, then the six digits in place of the emailed code. (Normal users get the code by email; this demo account has a fixed code so you can test.) With the demo account you can test the Community tab, sync, "Send to someone", and Settings → Account → export my data / delete account.
 
-Use the largest iPhone size Apple asks for, in the warm Dark theme, plus one Sepia. Suggested order:
+COMMUNITY (user-generated content): Community tab → prayer wall. Every request and reply has a ⋯ menu with Report (four reasons) and Block this member; community guidelines are shown where you post and at the bottom of the wall; the moderator (sysware@sysware.com.br) is emailed every report and can remove content, and a post reported by three members is hidden until reviewed. Settings → Account → Community lists blocked members and can undo it. Anonymous posts hide the author from other members; blocking still works on them.
 
-1. Reader (Matthew 5 with red letters and the gold frame)
-2. Home (hero, verse of the day, today's reading)
-3. Reading plans (a started plan with a streak)
-4. A note with tags and a verse link
-5. Journey map (Paul's first journey)
-6. Achievements
-7. Widget on a Home Screen (medium)
+NOTIFICATIONS: push notifications are optional (Settings → Notifications). They tell you when someone prays for you or encourages you, and send your reading reminder and weekly recap. The daily-verse reminder (Settings → Daily Verse) is created on the device.
 
-## Before submitting
+OTHER: The Verse of the Day widget is added from the widget gallery. The Bible maps use Apple Maps and need a connection; everything else works offline. The Bible texts are public domain or openly licensed (King James Version, World English Bible, Biblia Livre, Hebrew Bible). Original words uses Strong's dictionaries (CC BY-SA, credited on that screen). No tracking, no ads, no third-party SDKs.
+```
 
-- [x] Website changes for sync are deployed (see `docs/PHASE4_SERVER.md`); verified file-by-file, but the authenticated endpoints were only tested locally, not yet from a phone against production
-- [ ] Push notifications: turn on the Push Notifications capability for the App ID, create the APNs key and give it to the server as described in the website repo's `docs/PUSH.md`, then try Settings → Notifications → Send me a test notification on a real iPhone (a TestFlight build too: it uses Apple's production service, Xcode builds the sandbox). The push token is declared as **Device ID** (linked to the user, app functionality, not tracking) in `PrivacyInfo.xcprivacy`; add it in App Store Connect too
-- [ ] Update the App Privacy answers in App Store Connect as above (the Community adds user content that other people can see: prayers, encouragement, display name, optional country and photo)
-- [ ] User-generated content (Guideline 1.2): the app has a Report on every request and reply, Block on every member (even anonymous ones), community guidelines shown where you post and in the Community settings, and a moderator who is emailed each report and can remove content. Confirm in App Store Connect's review notes how to reach the moderator (the support address in the listing) and that reports are answered within a day
+## Guidelines this app is built to meet
 
-- [x] Release build for a real device compiles with no errors; privacy manifests (`PrivacyInfo.xcprivacy`) added for the app and the widget (UserDefaults only, no data collected)
-- [ ] Register the App Group and the widget's App ID (see `WIDGET.md`) and archive with signing
-- [ ] Bump the version/build for **both** the app and the widget (they must match)
-- [ ] Try the flows the automated checks couldn't: start a plan, tick chapters, save and edit a note, long-press a verse, turn on the reminder, add the widget
-- [x] iPad: checked on an 11-inch iPad Pro simulator (portrait). Content is capped to a readable width and centered, and the Bible grid uses more columns. Landscape, split view and the 13-inch size haven't been looked at
-- [ ] VoiceOver walkthrough on a device
+| Guideline | How |
+|---|---|
+| 1.2 User-generated content | Report + block + guidelines + moderator contact + auto-hide after 3 reports |
+| 2.1 Demo account | Fixed-code review account (`docs/APP_REVIEW.md` on the website repo) |
+| 4.2 Minimum functionality | A full reader, search, plans, study tools, widget: not a website wrapper |
+| 5.1.1 Data collection | Sign-in optional; policy URL; labels filled in; no tracking |
+| 5.1.1(v) Account deletion | Settings → Account → Delete account (and export) |
+| 5.1.2 / 4.8 | No third-party or social login, so Sign in with Apple is not required; email-code sign-in is the app's own |
+| 3.1 Payments | None: free, no purchases |
+| 2.5.4 Background / push | Push is optional and only for the events listed |
+
+## After approval
+
+- The version goes live (or waits for you, if you chose manual release). Watch App Store Connect → TestFlight → crashes, and reports at sysware@sysware.com.br.
+- Keep the `review` line in `config.php` for future updates (each update is reviewed again) or delete it between releases.
+- To change the listing text later without a new build: edit **Promotional text** any time; everything else needs a new version.
