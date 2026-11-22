@@ -87,11 +87,13 @@ struct VerseListView: View {
             )
             .onAppear {
                 scrollIfNeeded(proxy)
+                viewModel.recordLastRead(bookName: book.name, chapterNumber: chapter.number)
             }
             
             
             .onChange(of: currentChapterIndex) { _ in
                 didAutoCompleteChapter = false
+                viewModel.recordLastRead(bookName: book.name, chapterNumber: chapter.number)
             }
 
         }

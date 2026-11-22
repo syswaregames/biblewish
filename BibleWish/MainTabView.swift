@@ -21,6 +21,11 @@ struct MainTabView: View {
         TabView {
 
             NavigationStack {
+                HomeView()
+            }
+            .tabItem { Label("Home", systemImage: "house") }
+
+            NavigationStack {
                 BookListView()
                     .environmentObject(bibleVM)
             }

@@ -100,6 +100,15 @@ class BibleViewModel: ObservableObject {
         }
     }
 
+    /// Where the reader stopped, as a book position (so it survives a change of translation).
+    struct LastRead: Codable, Equatable {
+        var bookIndex: Int
+        var chapterNumber: Int
+    }
+
+    @Published private(set) var lastRead: LastRead?
+    private let lastReadKey = "last_read_position"
+
     private var hasBuiltIndex = false
     private let selectedTranslationKey = "selected_bible_translation"
 
@@ -128,7 +137,22 @@ class BibleViewModel: ObservableObject {
             readingProgress = ReadingProgress(completedChapters: [])
         }
 
+        if let data = UserDefaults.standard.data(forKey: lastReadKey),
+           let decoded = try? JSONDecoder().decode(LastRead.self, from: data) {
+            lastRead = decoded
+        }
+
         loadBible()
+    }
+
+    func recordLastRead(bookName: String, chapterNumber: Int) {
+        guard let index = books.firstIndex(where: { $0.name == bookName }) else { return }
+        let position = LastRead(bookIndex: index, chapterNumber: chapterNumber)
+        guard position != lastRead else { return }
+        lastRead = position
+        if let data = try? JSONEncoder().encode(position) {
+            UserDefaults.standard.set(data, forKey: lastReadKey)
+        }
     }
 
     func progressForBook(_ book: BibleBook) -> Double {

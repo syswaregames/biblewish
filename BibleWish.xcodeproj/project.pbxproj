@@ -7,6 +7,10 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		96F1A5042F4F111100A1B2D0 /* HomeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 96F1A4042F4F111100A1B2C0 /* HomeView.swift */; };
+		96F1A5032F4F111100A1B2D0 /* PassageReference.swift in Sources */ = {isa = PBXBuildFile; fileRef = 96F1A4032F4F111100A1B2C0 /* PassageReference.swift */; };
+		96F1A5022F4F111100A1B2D0 /* VerseOfTheDay.swift in Sources */ = {isa = PBXBuildFile; fileRef = 96F1A4022F4F111100A1B2C0 /* VerseOfTheDay.swift */; };
+		96F1A5012F4F111100A1B2D0 /* votd_references.json in Resources */ = {isa = PBXBuildFile; fileRef = 96F1A4012F4F111100A1B2C0 /* votd_references.json */; };
 		96F1A2032F4F111100A1B2D3 /* Theme.swift in Sources */ = {isa = PBXBuildFile; fileRef = 96F1A1032F4F111100A1B2C5 /* Theme.swift */; };
 		9653ECD62F4E65110054C315 /* bible_en_webu.json in Resources */ = {isa = PBXBuildFile; fileRef = 9653ECD52F4E65110054C315 /* bible_en_webu.json */; };
 		9653ECDA2F4E690D0054C315 /* bible_he_heb.json in Resources */ = {isa = PBXBuildFile; fileRef = 9653ECD92F4E690D0054C315 /* bible_he_heb.json */; };
@@ -54,6 +58,10 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		96F1A4042F4F111100A1B2C0 /* HomeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeView.swift; sourceTree = "<group>"; };
+		96F1A4032F4F111100A1B2C0 /* PassageReference.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PassageReference.swift; sourceTree = "<group>"; };
+		96F1A4022F4F111100A1B2C0 /* VerseOfTheDay.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VerseOfTheDay.swift; sourceTree = "<group>"; };
+		96F1A4012F4F111100A1B2C0 /* votd_references.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = votd_references.json; sourceTree = "<group>"; };
 		96F1A1032F4F111100A1B2C5 /* Theme.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Theme.swift; sourceTree = "<group>"; };
 		9653ECD52F4E65110054C315 /* bible_en_webu.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = bible_en_webu.json; sourceTree = "<group>"; };
 		9653ECD92F4E690D0054C315 /* bible_he_heb.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = bible_he_heb.json; sourceTree = "<group>"; };
@@ -131,6 +139,7 @@
 		96A32B782F1BC78B0053CD0D /* BibleWish */ = {
 			isa = PBXGroup;
 			children = (
+				96F1A4042F4F111100A1B2C0 /* HomeView.swift */,
 				96A32BD02F1C7E1D0053CD0D /* Preview Content */,
 				96A32BCE2F1C7BA70053CD0D /* AppIcon.xcassets */,
 				96C098BF2F1C8CA900FD74E9 /* BibleIcon.xcassets */,
@@ -167,6 +176,8 @@
 		96A32BA22F1BD73B0053CD0D /* Model */ = {
 			isa = PBXGroup;
 			children = (
+				96F1A4032F4F111100A1B2C0 /* PassageReference.swift */,
+				96F1A4022F4F111100A1B2C0 /* VerseOfTheDay.swift */,
 				96A32B8C2F1BCD390053CD0D /* Verse.swift */,
 				96A32B8A2F1BCD250053CD0D /* Chapter.swift */,
 				96A32B882F1BCD050053CD0D /* BibleBook.swift */,
@@ -187,6 +198,7 @@
 		96A32BCB2F1C01520053CD0D /* Data */ = {
 			isa = PBXGroup;
 			children = (
+				96F1A4012F4F111100A1B2C0 /* votd_references.json */,
 				9653ECDB2F4E8ABC0054C315 /* red_letter_ranges.json */,
 				9653ECD92F4E690D0054C315 /* bible_he_heb.json */,
 				9653ECD52F4E65110054C315 /* bible_en_webu.json */,
@@ -261,6 +273,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				96F1A5012F4F111100A1B2D0 /* votd_references.json in Resources */,
 				96A32BCF2F1C7BA70053CD0D /* AppIcon.xcassets in Resources */,
 				96C098C02F1C8CA900FD74E9 /* BibleIcon.xcassets in Resources */,
 				96A32B972F1BCFE70053CD0D /* bible_pt_bliv.json in Resources */,
@@ -278,6 +291,9 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				96F1A5042F4F111100A1B2D0 /* HomeView.swift in Sources */,
+				96F1A5032F4F111100A1B2D0 /* PassageReference.swift in Sources */,
+				96F1A5022F4F111100A1B2D0 /* VerseOfTheDay.swift in Sources */,
 				96A32BB62F1BDEF20053CD0D /* HighlightManager.swift in Sources */,
 				967850642F4E4BFC00F93196 /* VersionLibraryView.swift in Sources */,
 				96A32BC02F1BE7930053CD0D /* ReaderFont.swift in Sources */,
