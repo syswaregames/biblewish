@@ -92,6 +92,7 @@ final class SelfTest {
         runNoteFormat()
         runNoteEditing()
         runNoteTextView()
+        runBookNavigator()
         await runAuth()
         await runFavoritesAndReading()
         await runHighlights()
@@ -114,6 +115,31 @@ final class SelfTest {
         check("junk keys are skipped", AchievementMetrics.chapterRefs(fromKeys: ["kjv|Nonsense-1", "oops", "kjv|John-x", ""]).isEmpty)
         let model = BibleViewModel()
         check("keys the app writes are the ones we read", AchievementMetrics.chapterRefs(fromKeys: [model.chapterKey(book: "John", chapter: 3)]) == [ChapterRef(book: 42, chapter: 3)], model.chapterKey(book: "John", chapter: 3))
+    }
+
+    // MARK: - Book navigator (sections, search, recents)
+
+    private func runBookNavigator() {
+        check("the ten sections cover all 66 books exactly once", BookGroup.all.count == 10 && (0..<66).allSatisfy { index in BookGroup.all.filter { $0.books.contains(index) }.count == 1 })
+        check("sections are in Bible order", BookGroup.all.map(\.books.lowerBound) == [0, 5, 17, 22, 27, 39, 43, 44, 57, 65])
+        check("Genesis is Law and Revelation is Prophecy", BookGroup.group(forBook: 0)?.label == "Law" && BookGroup.group(forBook: 65)?.label == "Prophecy")
+        check("the Gospels are red, Paul's letters green", (BookGroup.group(forBook: 40)?.red ?? 0) > 200 && (BookGroup.group(forBook: 50)?.green ?? 0) > 200)
+        check("Matthew starts the New Testament", BookGroup.testament(ofBook: 38) == .old && BookGroup.testament(ofBook: 39) == .new)
+        check("5 sections in each testament's list", BookGroup.groups(in: .old).count == 5 && BookGroup.groups(in: .new).count == 5)
+        check("paper themes darken section text, dark keeps it", ThemePalette.dark.groupDarken == 1 && ThemePalette.sepia.groupDarken == 0.58 && ThemePalette.light.groupDarken == 0.55)
+
+        let names = bibleVM.books.map(\.name)
+        check("typing 'jo' finds books starting with it first", BookSearch.matches("jo", in: names).prefix(3).map { names[$0] }.allSatisfy { $0.lowercased().hasPrefix("jo") }, "\(BookSearch.matches("jo", in: names).prefix(5).map { names[$0] })")
+        check("then books that contain it", BookSearch.matches("john", in: names).contains(names.firstIndex(of: "1 John") ?? -1) && BookSearch.matches("john", in: names).first == names.firstIndex(of: "John"), "\(BookSearch.matches("john", in: names).map { names[$0] })")
+        check("search ignores case, spaces and punctuation", BookSearch.matches("1 COR", in: names).first == names.firstIndex(of: "1 Corinthians") && BookSearch.matches("song of s", in: names).first == names.firstIndex(of: "Song of Solomon"))
+        check("no query finds nothing", BookSearch.matches("  ", in: names).isEmpty && BookSearch.matches("zzzz", in: names).isEmpty)
+
+        typealias Pos = BibleViewModel.LastRead
+        let a = Pos(bookIndex: 1, chapterNumber: 1), b = Pos(bookIndex: 2, chapterNumber: 2), c = Pos(bookIndex: 3, chapterNumber: 3)
+        check("a new chapter goes to the front", BibleViewModel.addingRecent(c, to: [a, b]) == [c, a, b])
+        check("opening a recent chapter again moves it up, no repeat", BibleViewModel.addingRecent(b, to: [a, b, c]) == [b, a, c])
+        let many = (0..<10).map { Pos(bookIndex: $0, chapterNumber: 1) }
+        check("only the last six are kept", BibleViewModel.addingRecent(Pos(bookIndex: 20, chapterNumber: 1), to: many).count == BibleViewModel.recentLimit)
     }
 
     // MARK: - The editor's text view

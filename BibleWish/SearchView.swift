@@ -12,9 +12,14 @@ struct SearchView: View {
     @EnvironmentObject var viewModel: BibleViewModel
     @Environment(\.palette) private var palette
 
-    @State private var searchText = ""
+    @State private var searchText: String
     @State private var searchTask: Task<Void, Never>?
     @State private var results: [SearchResult] = []
+
+    /// `initialQuery` starts a search straight away (the navigator's "Search the Bible for…").
+    init(initialQuery: String = "") {
+        self._searchText = State(initialValue: initialQuery)
+    }
 
 
     var body: some View {
@@ -81,6 +86,9 @@ struct SearchView: View {
             }
         }
         .themedScreen()
+        .task {
+            if !searchText.isEmpty { results = viewModel.search(query: searchText) }
+        }
         .navigationTitle("Search")
     }
 }

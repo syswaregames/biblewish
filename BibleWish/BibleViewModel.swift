@@ -144,13 +144,18 @@ class BibleViewModel: ObservableObject {
     private let readingLogKey = "reading_log_v1"
 
     /// Where the reader stopped, as a book position (so it survives a change of translation).
-    struct LastRead: Codable, Equatable {
+    struct LastRead: Codable, Hashable {
         var bookIndex: Int
         var chapterNumber: Int
     }
 
     @Published private(set) var lastRead: LastRead?
     private let lastReadKey = "last_read_position"
+
+    /// The chapters opened most recently, newest first (the navigator's "recent" chips).
+    @Published private(set) var recentChapters: [LastRead] = []
+    private let recentKey = "recent_chapters_v1"
+    static let recentLimit = 6
 
     private var hasBuiltIndex = false
     private let selectedTranslationKey = "selected_bible_translation"
@@ -184,6 +189,12 @@ class BibleViewModel: ObservableObject {
            let decoded = try? JSONDecoder().decode(LastRead.self, from: data) {
             lastRead = decoded
         }
+        if let data = UserDefaults.standard.data(forKey: recentKey),
+           let decoded = try? JSONDecoder().decode([LastRead].self, from: data) {
+            recentChapters = decoded
+        } else if let lastRead {
+            recentChapters = [lastRead]
+        }
 
         if let data = UserDefaults.standard.data(forKey: readingLogKey),
            let decoded = try? JSONDecoder().decode([ReadingLogEntry].self, from: data) {
@@ -201,6 +212,15 @@ class BibleViewModel: ObservableObject {
         if let data = try? JSONEncoder().encode(position) {
             UserDefaults.standard.set(data, forKey: lastReadKey)
         }
+        recentChapters = Self.addingRecent(position, to: recentChapters)
+        if let data = try? JSONEncoder().encode(recentChapters) {
+            UserDefaults.standard.set(data, forKey: recentKey)
+        }
+    }
+
+    /// `position` first, without a repeat of it, and at most `recentLimit` entries.
+    static func addingRecent(_ position: LastRead, to list: [LastRead]) -> [LastRead] {
+        Array(([position] + list.filter { $0 != position }).prefix(recentLimit))
     }
 
     func progressForBook(_ book: BibleBook) -> Double {

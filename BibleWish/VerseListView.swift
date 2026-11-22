@@ -9,7 +9,8 @@ import SwiftUI
 
 struct VerseListView: View {
 
-    let book: BibleBook
+    /// The open book. State, so choosing another from the navigator switches in place.
+    @State private var book: BibleBook
     let scrollToVerse: Int?
     
     @EnvironmentObject var viewModel: BibleViewModel
@@ -21,6 +22,9 @@ struct VerseListView: View {
     @State private var slideDirection: CGFloat = 0
     @State private var isAnimating = false
     @State private var showPlaces = false
+    @State private var showNavigator = false
+    /// A verse to scroll to after the navigator changed the chapter.
+    @State private var pendingVerse: Int?
     /// Focus mode: a tap on the text shows the verse numbers until the chapter changes.
     @State private var focusPeek = false
     @ScaledMetric(relativeTo: .largeTitle) private var chapterNumberSize: CGFloat = 52
@@ -31,7 +35,7 @@ struct VerseListView: View {
         chapterIndex: Int,
         scrollToVerse: Int? = nil
     ) {
-        self.book = book
+        self._book = State(initialValue: book)
         self.scrollToVerse = scrollToVerse
         self._currentChapterIndex = State(initialValue: chapterIndex)
     }
@@ -94,6 +98,11 @@ struct VerseListView: View {
                 DragGesture(minimumDistance: 20)
                     .onEnded(handleSwipe)
             )
+            .onChange(of: pendingVerse) {
+                guard let verse = pendingVerse else { return }
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.15) { proxy.scrollTo(verse, anchor: .top) }
+                pendingVerse = nil
+            }
             .onAppear {
                 scrollIfNeeded(proxy)
                 viewModel.recordLastRead(bookName: book.name, chapterNumber: chapter.number)
@@ -115,11 +124,45 @@ struct VerseListView: View {
         .sheet(isPresented: $showPlaces) {
             ChapterPlacesView(bookName: book.name, chapter: chapter.number, mentions: placesInChapter)
         }
+        .sheet(isPresented: $showNavigator) {
+            NavigationStack {
+                BookNavigatorView(onChoose: goTo, skipCurrentRecent: true)
+                    .themedScreen()
+                    .navigationTitle("Books")
+                    .navigationBarTitleDisplayMode(.inline)
+                    .toolbar {
+                        ToolbarItem(placement: .cancellationAction) {
+                            Button("Close") { showNavigator = false }
+                        }
+                    }
+            }
+            .presentationDetents([.large])
+        }
         .navigationTitle("\(book.name) \(chapter.number)")
         .navigationBarTitleDisplayMode(.inline)
         
         
         .toolbar {
+            ToolbarItem(placement: .principal) {
+                Button {
+                    showNavigator = true
+                } label: {
+                    HStack(spacing: 6) {
+                        Circle()
+                            .fill(BookGroup.group(forBook: bookPosition)?.base ?? palette.gold)
+                            .frame(width: 8, height: 8)
+                            .shadow(color: (BookGroup.group(forBook: bookPosition)?.base ?? palette.gold).opacity(0.7), radius: 4)
+                        Text("\(book.name) \(chapter.number)")
+                            .font(.headline)
+                            .lineLimit(1)
+                        Image(systemName: "chevron.down")
+                            .font(.caption.weight(.semibold))
+                            .foregroundStyle(palette.inkMuted)
+                    }
+                }
+                .accessibilityLabel("\(book.name) \(chapter.number). Choose book and chapter")
+            }
+
             ToolbarItem(placement: .navigationBarTrailing) {
                 if !placesInChapter.isEmpty {
                     Button {
@@ -159,6 +202,23 @@ struct VerseListView: View {
 
     }
     
+    // MARK: - Choosing another chapter
+
+    private var bookPosition: Int {
+        viewModel.books.firstIndex { $0.name == book.name } ?? -1
+    }
+
+    /// The navigator chose a chapter: show it here, in place.
+    private func goTo(book bookIndex: Int, chapter chapterIndex: Int, verse: Int?) {
+        guard bookIndex < viewModel.books.count, chapterIndex < viewModel.books[bookIndex].chapters.count else { return }
+        showNavigator = false
+        book = viewModel.books[bookIndex]
+        currentChapterIndex = chapterIndex
+        didAutoCompleteChapter = false
+        focusPeek = false
+        pendingVerse = verse
+    }
+
     // MARK: - Places
 
     private var placesInChapter: [PlaceMention] {

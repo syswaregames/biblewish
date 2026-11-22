@@ -43,7 +43,7 @@ struct PassageReference: Hashable {
         return PassageReference(bookName: book.name, chapterIndex: chapterIndex, verse: verse, verseEnd: verseEnd)
     }
 
-    private static func normalize(_ text: String) -> String {
+    static func normalize(_ text: String) -> String {
         text.lowercased()
             .folding(options: .diacriticInsensitive, locale: nil)
             .filter { $0.isLetter || $0.isNumber }

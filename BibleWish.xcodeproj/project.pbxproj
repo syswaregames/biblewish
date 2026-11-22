@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		1CC74EE7915C79A3FF80F77C /* BibleWishWidgetExtension.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = AF91AF459CBACE653CB9EAD2 /* BibleWishWidgetExtension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		20CF880F2B2549C81E6C90C9 /* BookNavigatorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B5820E1C1E4D99B9017FCCEC /* BookNavigatorView.swift */; };
 		22934FEB281389717A8161FC /* SyncOp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5AEFCAF1079758B9FCACD125 /* SyncOp.swift */; };
 		2EEF285498396F23360455ED /* NoteInline.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B79F46A1DE423D7E4576416 /* NoteInline.swift */; };
 		33B486BC1156FC8D24972734 /* SwiftUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 79B7E44CF86DB7FED700B6ED /* SwiftUI.framework */; };
@@ -20,6 +21,7 @@
 		781676FDAF2813B1E68783ED /* votd in Resources */ = {isa = PBXBuildFile; fileRef = 5110D69EF9E3A5C85A94E842 /* votd */; };
 		79C5EF7002B3A83EFED33FBF /* SharedConfig.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7E47020590BF77B69E94FADA /* SharedConfig.swift */; };
 		823CF170995770EC85ED3786 /* PrayerListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F0C24FFA7E1640981236637D /* PrayerListView.swift */; };
+		857895A78BC49A79D150C633 /* BookGroups.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6B5968A5A2F6B8614B0227F8 /* BookGroups.swift */; };
 		88E14ACDA1C3683DD891F874 /* AuthStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = D681B96C312819CCD0ABB420 /* AuthStore.swift */; };
 		88FE1F68E93BBC9ABA18DB5B /* AccountView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0CF4D7276E9D3CC5811425F /* AccountView.swift */; };
 		89DB1736B877F7A8C389F766 /* BibleWishWidget.swift in Sources */ = {isa = PBXBuildFile; fileRef = 62FD2D2745A31B61EEA56508 /* BibleWishWidget.swift */; };
@@ -137,6 +139,7 @@
 		5AEFCAF1079758B9FCACD125 /* SyncOp.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = SyncOp.swift; sourceTree = "<group>"; };
 		62FD2D2745A31B61EEA56508 /* BibleWishWidget.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = BibleWishWidget.swift; sourceTree = "<group>"; };
 		689CF0E10CFD3B0CCEC37F29 /* NoteInlineFixtures.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = NoteInlineFixtures.swift; sourceTree = "<group>"; };
+		6B5968A5A2F6B8614B0227F8 /* BookGroups.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = BookGroups.swift; sourceTree = "<group>"; };
 		7864A1BDC9B3944F10714BD0 /* Prayers.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = Prayers.swift; sourceTree = "<group>"; };
 		79B7E44CF86DB7FED700B6ED /* SwiftUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SwiftUI.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS26.0.sdk/System/Library/Frameworks/SwiftUI.framework; sourceTree = DEVELOPER_DIR; };
 		7E47020590BF77B69E94FADA /* SharedConfig.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = SharedConfig.swift; sourceTree = "<group>"; };
@@ -214,6 +217,7 @@
 		A6304D99DDDFE3371DAD0099 /* SyncEngine.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = SyncEngine.swift; sourceTree = "<group>"; };
 		AE2932C132042DB9030A95F1 /* BibleWish.entitlements */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.plist.entitlements; path = BibleWish.entitlements; sourceTree = "<group>"; };
 		AF91AF459CBACE653CB9EAD2 /* BibleWishWidgetExtension.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = BibleWishWidgetExtension.appex; sourceTree = BUILT_PRODUCTS_DIR; };
+		B5820E1C1E4D99B9017FCCEC /* BookNavigatorView.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = BookNavigatorView.swift; sourceTree = "<group>"; };
 		C0CF4D7276E9D3CC5811425F /* AccountView.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = AccountView.swift; sourceTree = "<group>"; };
 		D681B96C312819CCD0ABB420 /* AuthStore.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = AuthStore.swift; sourceTree = "<group>"; };
 		D7039628356A04F06010C531 /* BibleWishWidget.entitlements */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.plist.entitlements; path = BibleWishWidget.entitlements; sourceTree = "<group>"; };
@@ -324,6 +328,7 @@
 				C0CF4D7276E9D3CC5811425F /* AccountView.swift */,
 				F1CAE0100016A5836D23835C /* Prayer */,
 				831B532E71FB2B231BFD0645 /* NoteTextView.swift */,
+				B5820E1C1E4D99B9017FCCEC /* BookNavigatorView.swift */,
 			);
 			path = BibleWish;
 			sourceTree = "<group>";
@@ -353,6 +358,7 @@
 				967850632F4E4BFC00F93196 /* VersionLibraryView.swift */,
 				3B79F46A1DE423D7E4576416 /* NoteInline.swift */,
 				47BABA0DFE2B60515C7D1B4D /* NoteEditing.swift */,
+				6B5968A5A2F6B8614B0227F8 /* BookGroups.swift */,
 			);
 			path = Model;
 			sourceTree = "<group>";
@@ -629,6 +635,8 @@
 				F46224FD10A5841D41E49FF4 /* NoteInlineFixtures.swift in Sources */,
 				69B5B6423C93DF94FD639B4B /* NoteEditing.swift in Sources */,
 				7606AB7E655217D4A5050AC2 /* NoteTextView.swift in Sources */,
+				857895A78BC49A79D150C633 /* BookGroups.swift in Sources */,
+				20CF880F2B2549C81E6C90C9 /* BookNavigatorView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

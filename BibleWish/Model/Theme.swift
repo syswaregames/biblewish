@@ -40,6 +40,8 @@ struct ThemePalette {
     let violetInk: Color
     let tealInk: Color
     let roseInk: Color
+    /// How much of a section color is kept for text: the paper themes darken it (the site's --group-darken).
+    let groupDarken: Double
     let surface: Color
     let panel: Color
     let pageTop: Color
@@ -67,6 +69,7 @@ struct ThemePalette {
         violetInk: Color(hex: 0xBEA4F2),
         tealInk: Color(hex: 0x84D6CD),
         roseInk: Color(hex: 0xF4A593),
+        groupDarken: 1.0,
         surface: Color.white.opacity(0.03),
         panel: Color(hex: 0x17120E),
         pageTop: Color(hex: 0x2A1F1A),
@@ -86,6 +89,7 @@ struct ThemePalette {
         violetInk: Color(hex: 0x5B3FA8),
         tealInk: Color(hex: 0x1F6F66),
         roseInk: Color(hex: 0xA3352B),
+        groupDarken: 0.58,
         surface: Color(hex: 0x785424).opacity(0.05),
         panel: Color(hex: 0xF6ECD6),
         pageTop: Color(hex: 0xF7EEDB),
@@ -105,6 +109,7 @@ struct ThemePalette {
         violetInk: Color(hex: 0x523799),
         tealInk: Color(hex: 0x1B645C),
         roseInk: Color(hex: 0xB02E25),
+        groupDarken: 0.55,
         surface: Color(hex: 0x3C2D19).opacity(0.035),
         panel: Color.white,
         pageTop: Color(hex: 0xF6F3EE),
