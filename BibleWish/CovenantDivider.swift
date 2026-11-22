@@ -9,6 +9,8 @@ import SwiftUI
 
 struct CovenantDivider: View {
 
+    @Environment(\.palette) private var palette
+
     var body: some View {
         VStack(spacing: 6) {
 
@@ -16,21 +18,21 @@ struct CovenantDivider: View {
 
             HStack(spacing: 8) {
                 Rectangle()
+                    .fill(palette.goldLine)
                     .frame(height: 1)
-                    .opacity(0.2)
 
                 Image(systemName: "cross")
                     .font(.caption)
-                    .foregroundColor(.secondary)
+                    .foregroundStyle(palette.gold)
 
                 Rectangle()
+                    .fill(palette.goldLine)
                     .frame(height: 1)
-                    .opacity(0.2)
             }
 
             Text("The Gospel of Grace")
-                .font(.caption)
-                .foregroundColor(.secondary)
+                .font(.system(.caption, design: .serif))
+                .foregroundStyle(palette.inkMuted)
         }
         .padding(.vertical, 20)
         .frame(maxWidth: .infinity)

@@ -12,27 +12,14 @@ struct ChapterNumberView: View {
     let number: Int
     let isCompleted: Bool
 
-    private var backgroundColor: Color {
-            guard isCompleted else {
-                return  Color.primary.opacity(0.35) // not completed
-            }
-            return Color(.secondarySystemBackground) // completed
-        }
-    
+    @Environment(\.palette) private var palette
+
     var body: some View {
         Text("\(number)")
             .font(.system(size: 18, weight: .semibold, design: .rounded))
-            .foregroundColor(.primary)
+            .foregroundStyle(isCompleted ? palette.goldBright : palette.ink)
             .frame(width: 60, height: 60)
-            .background(
-                            RoundedRectangle(cornerRadius: 12)
-                                .fill(backgroundColor)
-                        )
-                        .overlay(
-                            RoundedRectangle(cornerRadius: 12)
-                                .stroke(Color.primary.opacity(0.15))
-                        )
-        
+            .themedCard(fill: isCompleted ? palette.gold.opacity(0.18) : nil)
             .animation(.easeInOut(duration: 0.2), value: isCompleted)
     }
 }

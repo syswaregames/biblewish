@@ -77,6 +77,7 @@ struct VerseListView: View {
             }
 
         }
+        .themedScreen()
         .navigationTitle("\(book.name) \(chapter.number)")
         .navigationBarTitleDisplayMode(.inline)
         

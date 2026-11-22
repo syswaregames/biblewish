@@ -46,6 +46,7 @@ struct ChapterListView: View {
             }
             .padding()
         }
+        .themedScreen()
         .navigationTitle(book.name)
         .navigationBarTitleDisplayMode(.inline)
     }

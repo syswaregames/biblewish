@@ -11,6 +11,7 @@ struct BookListView: View {
 
     @EnvironmentObject var viewModel: BibleViewModel
     @EnvironmentObject var versionStore: VersionStore
+    @Environment(\.palette) private var palette
     
     @State private var refreshID = UUID()
     @State private var showingLibrary = false
@@ -45,12 +46,13 @@ struct BookListView: View {
                     .scaledToFit()
                     .frame(width: 96, height: 96)
 
-                Text("📜 Old Testament")
-                    .font(.headline)
+                Text("Old Testament")
+                    .font(.system(.title3, design: .serif, weight: .semibold))
+                    .foregroundStyle(palette.goldBright)
 
                 Text("The Law and the Prophets")
-                    .font(.caption)
-                    .foregroundColor(.secondary)
+                    .font(.system(.caption, design: .serif))
+                    .foregroundStyle(palette.inkMuted)
 
                 LazyVGrid(columns: columns, spacing: 16) {
                     ForEach(oldTestamentBooks) { book in
@@ -58,10 +60,6 @@ struct BookListView: View {
                             ChapterListView(book: book)
                         } label: {
                             BookCardView(book: book, bookName: book.name, progress: viewModel.progressForBook(book))
-                                .background(
-                                    RoundedRectangle(cornerRadius: 12)
-                                        .fill(Color.brown.opacity(0.06))
-                                )
                                 .id(viewModel.readingProgress.completedChapters)
                         }
                     }
@@ -70,8 +68,9 @@ struct BookListView: View {
 
                 CovenantDivider()
 
-                Text("✨ New Testament")
-                    .font(.headline)
+                Text("New Testament")
+                    .font(.system(.title3, design: .serif, weight: .semibold))
+                    .foregroundStyle(palette.goldBright)
 
                 LazyVGrid(columns: columns, spacing: 16) {
                     ForEach(newTestamentBooks) { book in
@@ -79,10 +78,6 @@ struct BookListView: View {
                             ChapterListView(book: book)
                         } label: {
                             BookCardView(book: book, bookName: book.name, progress: viewModel.progressForBook(book))
-                                .background(
-                                    RoundedRectangle(cornerRadius: 12)
-                                        .fill(Color.blue.opacity(0.04))
-                                )
                                 .id(viewModel.readingProgress.completedChapters)
                         }
                     }
@@ -99,15 +94,16 @@ struct BookListView: View {
                     .font(.footnote)
                     .italic()
                     .multilineTextAlignment(.center)
-                    .foregroundColor(.secondary)
+                    .foregroundStyle(palette.inkSoft)
 
                 Text("Revelation 22:21")
                     .font(.caption)
-                    .foregroundColor(.secondary)
+                    .foregroundStyle(palette.gold)
             }
             .padding(.vertical, 32)
         }
         .ignoresSafeArea(.container, edges: .top)
+        .themedScreen()
         .navigationTitle("BibleWish")
         .navigationBarTitleDisplayMode(.inline)
         

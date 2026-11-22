@@ -12,6 +12,7 @@ struct SettingsView: View {
     @EnvironmentObject var viewModel: BibleViewModel
     @EnvironmentObject var versionStore: VersionStore
     @EnvironmentObject var readerSettings: ReaderSettings
+    @EnvironmentObject var themeStore: ThemeStore
     @State private var showResetAlert = false
     @State private var showLibrarySheet = false
 
@@ -30,7 +31,7 @@ struct SettingsView: View {
                             Text("Language & Version")
                             Text("\(versionStore.languages.first(where: { $0.code == versionStore.selectedLanguageCode })?.nativeName ?? viewModel.selectedTranslation.language) - \(versionStore.selectedVersion?.name ?? viewModel.selectedTranslation.version)")
                                 .font(.caption)
-                                .foregroundColor(.secondary)
+                                .foregroundStyle(.secondary)
                         }
                     }
                 }
@@ -45,10 +46,16 @@ struct SettingsView: View {
                             Text("Bible Library")
                             Text("Browse, download, and manage versions")
                                 .font(.caption)
-                                .foregroundColor(.secondary)
+                                .foregroundStyle(.secondary)
                         }
                     }
                 }
+            }
+
+            // MARK: - Appearance
+            Section(header: Text("Appearance")) {
+                ThemePicker()
+                    .listRowInsets(EdgeInsets(top: 12, leading: 16, bottom: 12, trailing: 16))
             }
 
             // MARK: - Reading Settings
@@ -106,11 +113,11 @@ struct SettingsView: View {
                         .font(.footnote)
                         .italic()
                         .multilineTextAlignment(.center)
-                        .foregroundColor(.secondary)
+                        .foregroundStyle(.secondary)
 
                         Text("Proverbs 9:10")
                             .font(.caption)
-                            .foregroundColor(.secondary)
+                            .foregroundStyle(.secondary)
                     }
 
                     Divider()
@@ -119,7 +126,7 @@ struct SettingsView: View {
 
                     Text("Created and designed by Patrick Carvalho")
                         .font(.footnote)
-                        .foregroundColor(.secondary)
+                        .foregroundStyle(.secondary)
                         .multilineTextAlignment(.center)
 
                     Link(destination: URL(string: "https://instagram.com/patricksysware")!) {
@@ -130,6 +137,7 @@ struct SettingsView: View {
                 .padding(.vertical, 12)
             }
         }
+        .themedList()
         .navigationTitle("Settings")
         .alert("Reset Reading Progress?", isPresented: $showResetAlert) {
             Button("Cancel", role: .cancel) {}
@@ -151,7 +159,59 @@ struct SettingsView: View {
     }
 }
 
+/// Colour swatches for Dark / Sepia / Light / Auto, like the website's theme picker.
+private struct ThemePicker: View {
+    @EnvironmentObject var themeStore: ThemeStore
+    @Environment(\.palette) private var palette
+
+    var body: some View {
+        HStack(spacing: 0) {
+            ForEach(ThemeChoice.allCases) { choice in
+                Button {
+                    themeStore.choice = choice
+                } label: {
+                    VStack(spacing: 6) {
+                        swatch(for: choice)
+                            .frame(width: 44, height: 44)
+                            .clipShape(Circle())
+                            .overlay(
+                                Circle().stroke(
+                                    themeStore.choice == choice ? palette.gold : palette.goldLine,
+                                    lineWidth: themeStore.choice == choice ? 2.5 : 1
+                                )
+                            )
+                        Text(choice.displayName)
+                            .font(.caption)
+                            .foregroundStyle(themeStore.choice == choice ? palette.goldBright : palette.inkMuted)
+                    }
+                    .frame(maxWidth: .infinity)
+                }
+                .buttonStyle(.plain)
+                .accessibilityLabel("\(choice.displayName) theme")
+                .accessibilityAddTraits(themeStore.choice == choice ? .isSelected : [])
+            }
+        }
+    }
+
+    @ViewBuilder
+    private func swatch(for choice: ThemeChoice) -> some View {
+        switch choice {
+        case .dark: ThemePalette.dark.pageGradient
+        case .sepia: ThemePalette.sepia.pageGradient
+        case .light: ThemePalette.light.pageGradient
+        case .auto:
+            HStack(spacing: 0) {
+                ThemePalette.dark.pageBottom
+                ThemePalette.light.pageTop
+            }
+        }
+    }
+}
+
 #Preview {
     SettingsView()
         .environmentObject(BibleViewModel())
+        .environmentObject(VersionStore())
+        .environmentObject(ReaderSettings())
+        .environmentObject(ThemeStore())
 }

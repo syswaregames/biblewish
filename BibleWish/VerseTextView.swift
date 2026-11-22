@@ -39,7 +39,7 @@ struct VerseTextView: View {
         (
             Text("\(verse.number) ")
                 .font(.caption2)
-                .foregroundColor(.secondary)
+                .foregroundColor(palette.gold)
             +
             verseText
         )

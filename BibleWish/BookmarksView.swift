@@ -15,7 +15,7 @@ struct BookmarksView: View {
         List {
             if bookmarkManager.bookmarks.isEmpty {
                 Text("No bookmarks yet")
-                    .foregroundColor(.secondary)
+                    .foregroundStyle(.secondary)
             } else {
                 ForEach(bookmarkManager.bookmarks) { bookmark in
                     NavigationLink {
@@ -24,7 +24,7 @@ struct BookmarksView: View {
                         VStack(alignment: .leading, spacing: 4) {
                             Text("\(bookmark.bookName) \(bookmark.chapterNumber):\(bookmark.verseNumber)")
                                 .font(.caption)
-                                .foregroundColor(.secondary)
+                                .foregroundStyle(.secondary)
 
                             Text(bookmark.verseText)
                                 .lineLimit(2)
@@ -38,6 +38,7 @@ struct BookmarksView: View {
                 
             }
         }
+        .themedList()
         .navigationTitle("Bookmarks")
     }
 }

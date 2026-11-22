@@ -14,6 +14,7 @@ struct MainTabView: View {
     @StateObject private var highlightManager = HighlightManager()
     @StateObject private var readerSettings = ReaderSettings()
     @StateObject private var versionStore = VersionStore()
+    @Environment(\.palette) private var palette
 
 
     var body: some View {
@@ -47,6 +48,7 @@ struct MainTabView: View {
         .environmentObject(highlightManager)
         .environmentObject(readerSettings)
         .environmentObject(versionStore)
+        .tint(palette.gold)
         .onAppear {
             // Sync BibleViewModel with VersionStore on launch
             if let selected = versionStore.selectedBibleTranslation(),

@@ -10,6 +10,7 @@ import SwiftUI
 struct SearchView: View {
 
     @EnvironmentObject var viewModel: BibleViewModel
+    @Environment(\.palette) private var palette
 
     @State private var searchText = ""
     @State private var searchTask: Task<Void, Never>?
@@ -20,7 +21,8 @@ struct SearchView: View {
         VStack {
 
             TextField("Search the Bible...", text: $searchText)
-                .textFieldStyle(.roundedBorder)
+                .padding(12)
+                .themedCard(cornerRadius: 10)
                 .padding()
                 .onChange(of: searchText) { newValue in
                     searchTask?.cancel()
@@ -35,12 +37,12 @@ struct SearchView: View {
 
             if searchText.isEmpty {
                 Text("Type a word or phrase to search")
-                    .foregroundColor(.secondary)
+                    .foregroundStyle(.secondary)
                     .padding()
 
             } else if results.isEmpty {
                 Text("No results found")
-                    .foregroundColor(.secondary)
+                    .foregroundStyle(.secondary)
                     .padding()
 
             } else {
@@ -64,7 +66,7 @@ struct SearchView: View {
                         VStack(alignment: .leading, spacing: 4) {
                             Text("\(result.bookName) \(result.chapterNumber):\(result.verseNumber)")
                                 .font(.caption)
-                                .foregroundColor(.secondary)
+                                .foregroundStyle(.secondary)
 
                             HighlightedText(
                                 text: result.verseText,
@@ -74,14 +76,10 @@ struct SearchView: View {
                         }
                     }
                 }
-
-
-
-
-
-
+                .themedList()
             }
         }
+        .themedScreen()
         .navigationTitle("Search")
     }
 }

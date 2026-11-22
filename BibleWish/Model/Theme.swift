@@ -143,8 +143,65 @@ struct ThemedRoot<Content: View>: View {
         content
             .environment(\.palette, palette)
             .tint(palette.gold)
+            .foregroundStyle(palette.ink)
             .preferredColorScheme(themeStore.choice == .auto ? nil : palette.colorScheme)
             .background(palette.pageGradient.ignoresSafeArea())
+    }
+}
+
+/// Page gradient behind a screen, plus bars that match the theme.
+struct ThemedScreen: ViewModifier {
+    @Environment(\.palette) private var palette
+
+    func body(content: Content) -> some View {
+        content
+            .background(palette.pageGradient.ignoresSafeArea())
+            .toolbarBackground(palette.panel, for: .navigationBar)
+            .toolbarBackground(.visible, for: .navigationBar)
+            .toolbarBackground(palette.panel, for: .tabBar)
+            .toolbarBackground(.visible, for: .tabBar)
+    }
+}
+
+/// A themed gold-hairline card, as used on the website's tiles.
+struct ThemedCard: ViewModifier {
+    @Environment(\.palette) private var palette
+    var cornerRadius: CGFloat = 12
+    var fill: Color?
+
+    func body(content: Content) -> some View {
+        content
+            .background(
+                RoundedRectangle(cornerRadius: cornerRadius)
+                    .fill(fill ?? palette.surface)
+            )
+            .overlay(
+                RoundedRectangle(cornerRadius: cornerRadius)
+                    .stroke(palette.goldLine)
+            )
+    }
+}
+
+private struct ThemedListRows: ViewModifier {
+    @Environment(\.palette) private var palette
+
+    func body(content: Content) -> some View {
+        content
+            .scrollContentBackground(.hidden)
+            .listRowBackground(palette.surface)
+            .listRowSeparatorTint(palette.goldLine)
+    }
+}
+
+extension View {
+    func themedScreen() -> some View { modifier(ThemedScreen()) }
+
+    func themedList() -> some View {
+        modifier(ThemedListRows()).modifier(ThemedScreen())
+    }
+
+    func themedCard(cornerRadius: CGFloat = 12, fill: Color? = nil) -> some View {
+        modifier(ThemedCard(cornerRadius: cornerRadius, fill: fill))
     }
 }
 

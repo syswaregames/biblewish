@@ -10,6 +10,7 @@ import SwiftUI
 struct BookCardView: View {
     
     @EnvironmentObject var viewModel: BibleViewModel
+    @Environment(\.palette) private var palette
     
     let book: BibleBook
     
@@ -22,28 +23,22 @@ struct BookCardView: View {
 
             Text(bookName)
                 .font(.system(size: 16, weight: .semibold, design: .serif))
-                .foregroundColor(.primary)
+                .foregroundStyle(palette.ink)
                 .frame(maxWidth: .infinity)
                 .multilineTextAlignment(.center)
 
             Text("\(Int(progress * 100))% read")
                 .font(.caption)
-                .foregroundColor(.secondary)
+                .foregroundStyle(palette.inkMuted)
 
             ProgressView(value: viewModel.progressForBook(book))
                 .progressViewStyle(.linear)
+                .tint(palette.gold)
                 .scaleEffect(y: 0.6)
 
         }
         .padding(12)
         .frame(minHeight: 110)
-        .background(
-            RoundedRectangle(cornerRadius: 12)
-                .fill(Color(.secondarySystemBackground))
-        )
-        .overlay(
-            RoundedRectangle(cornerRadius: 12)
-                .stroke(Color.primary.opacity(0.08))
-        )
+        .themedCard()
     }
 }

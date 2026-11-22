@@ -67,6 +67,7 @@ struct VersionLibraryView: View {
                     .help("Show downloaded only")
                 }
             }
+            .themedList()
             .navigationTitle("Bible Library")
         }
     }

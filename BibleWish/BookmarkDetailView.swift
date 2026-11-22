@@ -20,6 +20,7 @@ struct BookmarkDetailView: View {
             }
             .padding()
         }
+        .themedScreen()
         .navigationTitle("Bookmark")
         .navigationBarTitleDisplayMode(.inline)
     }

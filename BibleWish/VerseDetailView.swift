@@ -47,6 +47,7 @@ struct VerseDetailView: View {
             }
             .padding()
         }
+        .themedScreen()
         .navigationTitle("Verse")
         .navigationBarTitleDisplayMode(.inline)
     }

@@ -21,10 +21,10 @@ struct TranslationSettingsView: View {
                             VStack(alignment: .leading, spacing: 4) {
                                 Text(translation.displayName)
                                     .font(.headline)
-                                    .foregroundColor(.primary)
+                                    .foregroundStyle(.primary)
                                 Text(translation.shortDescription)
                                     .font(.caption)
-                                    .foregroundColor(.secondary)
+                                    .foregroundStyle(.secondary)
                             }
 
                             Spacer()
@@ -47,6 +47,7 @@ struct TranslationSettingsView: View {
                 Text("Changing translation also updates search and reading progress for that translation.")
             }
         }
+        .themedList()
         .navigationTitle("Language & Version")
     }
 }

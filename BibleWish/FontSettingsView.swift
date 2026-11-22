@@ -47,6 +47,7 @@ struct FontSettingsView: View {
                                 .padding(.vertical)
                         }
                     }
+                    .themedList()
                     .navigationTitle("Reading Font")
     }
 }
