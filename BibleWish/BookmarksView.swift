@@ -39,7 +39,6 @@ struct BookmarksView: View {
             }
         }
         .themedList()
-        .navigationTitle("Bookmarks")
     }
 }
 

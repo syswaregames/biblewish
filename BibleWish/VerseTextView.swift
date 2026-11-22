@@ -22,6 +22,7 @@ struct VerseTextView: View {
     @Environment(\.palette) private var palette
 
     @State private var showHighlightMenu = false
+    @State private var showNoteEditor = false
 
     var body: some View {
 
@@ -88,6 +89,10 @@ struct VerseTextView: View {
                 }
             }
 
+            Button("Add Note\u{2026}") {
+                showNoteEditor = true
+            }
+
             Button("Remove Highlight", role: .destructive) {
                 highlightManager.removeHighlight(
                     book: bookName,
@@ -95,6 +100,9 @@ struct VerseTextView: View {
                     verse: verse.number
                 )
             }
+        }
+        .sheet(isPresented: $showNoteEditor) {
+            NoteEditorView(reference: "\(bookName) \(chapterNumber):\(verse.number)")
         }
     }
 

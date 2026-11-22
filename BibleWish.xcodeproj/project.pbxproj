@@ -7,6 +7,9 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		96F1A5222F4F111100A1B2D0 /* NoteEditorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 96F1A4222F4F111100A1B2C0 /* NoteEditorView.swift */; };
+		96F1A5212F4F111100A1B2D0 /* StudyView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 96F1A4212F4F111100A1B2C0 /* StudyView.swift */; };
+		96F1A5202F4F111100A1B2D0 /* StudyNotes.swift in Sources */ = {isa = PBXBuildFile; fileRef = 96F1A4202F4F111100A1B2C0 /* StudyNotes.swift */; };
 		96F1A5132F4F111100A1B2D0 /* PlanDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 96F1A4132F4F111100A1B2C0 /* PlanDetailView.swift */; };
 		96F1A5122F4F111100A1B2D0 /* PlansView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 96F1A4122F4F111100A1B2C0 /* PlansView.swift */; };
 		96F1A5112F4F111100A1B2D0 /* ReadingPlans.swift in Sources */ = {isa = PBXBuildFile; fileRef = 96F1A4112F4F111100A1B2C0 /* ReadingPlans.swift */; };
@@ -62,6 +65,9 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		96F1A4222F4F111100A1B2C0 /* NoteEditorView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NoteEditorView.swift; sourceTree = "<group>"; };
+		96F1A4212F4F111100A1B2C0 /* StudyView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StudyView.swift; sourceTree = "<group>"; };
+		96F1A4202F4F111100A1B2C0 /* StudyNotes.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StudyNotes.swift; sourceTree = "<group>"; };
 		96F1A4132F4F111100A1B2C0 /* PlanDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlanDetailView.swift; sourceTree = "<group>"; };
 		96F1A4122F4F111100A1B2C0 /* PlansView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlansView.swift; sourceTree = "<group>"; };
 		96F1A4112F4F111100A1B2C0 /* ReadingPlans.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReadingPlans.swift; sourceTree = "<group>"; };
@@ -147,6 +153,8 @@
 		96A32B782F1BC78B0053CD0D /* BibleWish */ = {
 			isa = PBXGroup;
 			children = (
+				96F1A4222F4F111100A1B2C0 /* NoteEditorView.swift */,
+				96F1A4212F4F111100A1B2C0 /* StudyView.swift */,
 				96F1A4132F4F111100A1B2C0 /* PlanDetailView.swift */,
 				96F1A4122F4F111100A1B2C0 /* PlansView.swift */,
 				96F1A4042F4F111100A1B2C0 /* HomeView.swift */,
@@ -186,6 +194,7 @@
 		96A32BA22F1BD73B0053CD0D /* Model */ = {
 			isa = PBXGroup;
 			children = (
+				96F1A4202F4F111100A1B2C0 /* StudyNotes.swift */,
 				96F1A4112F4F111100A1B2C0 /* ReadingPlans.swift */,
 				96F1A4032F4F111100A1B2C0 /* PassageReference.swift */,
 				96F1A4022F4F111100A1B2C0 /* VerseOfTheDay.swift */,
@@ -304,6 +313,9 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				96F1A5222F4F111100A1B2D0 /* NoteEditorView.swift in Sources */,
+				96F1A5212F4F111100A1B2D0 /* StudyView.swift in Sources */,
+				96F1A5202F4F111100A1B2D0 /* StudyNotes.swift in Sources */,
 				96F1A5132F4F111100A1B2D0 /* PlanDetailView.swift in Sources */,
 				96F1A5122F4F111100A1B2D0 /* PlansView.swift in Sources */,
 				96F1A5112F4F111100A1B2D0 /* ReadingPlans.swift in Sources */,

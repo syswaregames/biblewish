@@ -33,6 +33,10 @@ struct ThemePalette {
     let goldBright: Color
     let goldLine: Color
     let jesus: Color
+    let greenInk: Color
+    let violetInk: Color
+    let tealInk: Color
+    let roseInk: Color
     let surface: Color
     let panel: Color
     let pageTop: Color
@@ -56,6 +60,10 @@ struct ThemePalette {
         goldBright: Color(hex: 0xE0BA78),
         goldLine: Color(hex: 0xFFC878).opacity(0.13),
         jesus: Color(hex: 0xC8524A),
+        greenInk: Color(hex: 0xC9E8C0),
+        violetInk: Color(hex: 0xBEA4F2),
+        tealInk: Color(hex: 0x84D6CD),
+        roseInk: Color(hex: 0xF4A593),
         surface: Color.white.opacity(0.03),
         panel: Color(hex: 0x17120E),
         pageTop: Color(hex: 0x2A1F1A),
@@ -71,6 +79,10 @@ struct ThemePalette {
         goldBright: Color(hex: 0x8A5D14),
         goldLine: Color(hex: 0x8C6224).opacity(0.2),
         jesus: Color(hex: 0x8E2A22),
+        greenInk: Color(hex: 0x2F6B2A),
+        violetInk: Color(hex: 0x5B3FA8),
+        tealInk: Color(hex: 0x1F6F66),
+        roseInk: Color(hex: 0xA3352B),
         surface: Color(hex: 0x785424).opacity(0.05),
         panel: Color(hex: 0xF6ECD6),
         pageTop: Color(hex: 0xF7EEDB),
@@ -86,6 +98,10 @@ struct ThemePalette {
         goldBright: Color(hex: 0x7D5410),
         goldLine: Color(hex: 0x826028).opacity(0.17),
         jesus: Color(hex: 0x952219),
+        greenInk: Color(hex: 0x2A6326),
+        violetInk: Color(hex: 0x523799),
+        tealInk: Color(hex: 0x1B645C),
+        roseInk: Color(hex: 0xB02E25),
         surface: Color(hex: 0x3C2D19).opacity(0.035),
         panel: Color.white,
         pageTop: Color(hex: 0xF6F3EE),
