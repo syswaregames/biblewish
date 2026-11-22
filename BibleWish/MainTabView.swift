@@ -18,6 +18,7 @@ struct MainTabView: View {
     @StateObject private var noteStore = NoteStore()
     @StateObject private var achievements = AchievementsStore()
     @StateObject private var reminder = DailyVerseReminder()
+    @StateObject private var auth = AuthStore()
     @Environment(\.scenePhase) private var scenePhase
     @Environment(\.palette) private var palette
 
@@ -61,6 +62,8 @@ struct MainTabView: View {
         .environmentObject(noteStore)
         .environmentObject(achievements)
         .environmentObject(reminder)
+        .environmentObject(auth)
+        .task { await auth.restore() }
         .task(id: bibleVM.books.count) { await reminder.reschedule(books: bibleVM.books) }
         .task(id: bibleVM.selectedTranslation) {
             WidgetSync.publish(bibleVM.selectedTranslation)

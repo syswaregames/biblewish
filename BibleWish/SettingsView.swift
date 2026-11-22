@@ -14,11 +14,36 @@ struct SettingsView: View {
     @EnvironmentObject var readerSettings: ReaderSettings
     @EnvironmentObject var themeStore: ThemeStore
     @EnvironmentObject var reminder: DailyVerseReminder
+    @EnvironmentObject var auth: AuthStore
+    @State private var showSignIn = false
     @State private var showResetAlert = false
     @State private var showLibrarySheet = false
 
     var body: some View {
         List {
+
+            // MARK: - Account
+            Section(
+                header: Text("Account"),
+                footer: Text(auth.isSignedIn
+                    ? "Signed in to biblewish.com."
+                    : "Optional. Sign in to keep your notes, favorites, progress and prayers in step with biblewish.com. Without an account everything stays on this device.")
+            ) {
+                if auth.isSignedIn {
+                    NavigationLink {
+                        AccountView()
+                    } label: {
+                        Label(auth.user?.email ?? "Account", systemImage: "person.crop.circle")
+                    }
+                } else {
+                    Button {
+                        showSignIn = true
+                    } label: {
+                        Label("Sign in to sync", systemImage: "arrow.triangle.2.circlepath")
+                    }
+                }
+            }
+            .themedRows()
 
             Section(header: Text("Bible")) {
                 NavigationLink {
@@ -183,6 +208,9 @@ struct SettingsView: View {
                 .themedRows()
         }
         .themedList()
+        .sheet(isPresented: $showSignIn) {
+            SignInView()
+        }
         .navigationTitle("Settings")
         .alert("Reset Reading Progress?", isPresented: $showResetAlert) {
             Button("Cancel", role: .cancel) {}
@@ -260,4 +288,5 @@ private struct ThemePicker: View {
         .environmentObject(ReaderSettings())
         .environmentObject(ThemeStore())
         .environmentObject(DailyVerseReminder())
+        .environmentObject(AuthStore())
 }

@@ -9,10 +9,13 @@
 /* Begin PBXBuildFile section */
 		1CC74EE7915C79A3FF80F77C /* BibleWishWidgetExtension.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = AF91AF459CBACE653CB9EAD2 /* BibleWishWidgetExtension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		33B486BC1156FC8D24972734 /* SwiftUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 79B7E44CF86DB7FED700B6ED /* SwiftUI.framework */; };
+		41E6E796789C7F13A845176B /* SignInView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 20483F9AEB2004EB42EDF122 /* SignInView.swift */; };
 		4D47D94BC818C78030DF7D7C /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F1553558A44AD513ACA31169 /* Foundation.framework */; };
 		726C62E89FD312F043E1256F /* VerseWidgetViews.swift in Sources */ = {isa = PBXBuildFile; fileRef = D809CA7C24BF42A1C821E777 /* VerseWidgetViews.swift */; };
 		781676FDAF2813B1E68783ED /* votd in Resources */ = {isa = PBXBuildFile; fileRef = 5110D69EF9E3A5C85A94E842 /* votd */; };
 		79C5EF7002B3A83EFED33FBF /* SharedConfig.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7E47020590BF77B69E94FADA /* SharedConfig.swift */; };
+		88E14ACDA1C3683DD891F874 /* AuthStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = D681B96C312819CCD0ABB420 /* AuthStore.swift */; };
+		88FE1F68E93BBC9ABA18DB5B /* AccountView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0CF4D7276E9D3CC5811425F /* AccountView.swift */; };
 		89DB1736B877F7A8C389F766 /* BibleWishWidget.swift in Sources */ = {isa = PBXBuildFile; fileRef = 62FD2D2745A31B61EEA56508 /* BibleWishWidget.swift */; };
 		9062E616B4EAB59DDC7CFA46 /* VerseWidgetViews.swift in Sources */ = {isa = PBXBuildFile; fileRef = D809CA7C24BF42A1C821E777 /* VerseWidgetViews.swift */; };
 		915D59A88B366F7F5DB002D9 /* WidgetKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4AC2B1F2D8025037233D4C1E /* WidgetKit.framework */; };
@@ -85,6 +88,7 @@
 		A6AE8E4F356088632734539F /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = 7ECDFA1553EDBAA5BEBF1E64 /* PrivacyInfo.xcprivacy */; };
 		B091D009BB4DC5768F7A4A8B /* VerseLibrary.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0FDCC472C67F882419CA4611 /* VerseLibrary.swift */; };
 		CBA41874341E014307997991 /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = EB864C3AFF590D8698A05CA9 /* PrivacyInfo.xcprivacy */; };
+		EF928E9A3883CC7C91AC3E23 /* APIClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = E13CDB28A55487D545F0F5B9 /* APIClient.swift */; };
 		F7303382E197140B82FFBA7C /* SharedConfig.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7E47020590BF77B69E94FADA /* SharedConfig.swift */; };
 /* End PBXBuildFile section */
 
@@ -114,6 +118,7 @@
 
 /* Begin PBXFileReference section */
 		0FDCC472C67F882419CA4611 /* VerseLibrary.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = VerseLibrary.swift; sourceTree = "<group>"; };
+		20483F9AEB2004EB42EDF122 /* SignInView.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = SignInView.swift; sourceTree = "<group>"; };
 		4AC2B1F2D8025037233D4C1E /* WidgetKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WidgetKit.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS26.0.sdk/System/Library/Frameworks/WidgetKit.framework; sourceTree = DEVELOPER_DIR; };
 		5110D69EF9E3A5C85A94E842 /* votd */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = folder; name = votd; path = Data/votd; sourceTree = "<group>"; };
 		62FD2D2745A31B61EEA56508 /* BibleWishWidget.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = BibleWishWidget.swift; sourceTree = "<group>"; };
@@ -190,8 +195,11 @@
 		99F7AFF39B698C61ED104BF0 /* Info.plist */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		AE2932C132042DB9030A95F1 /* BibleWish.entitlements */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.plist.entitlements; path = BibleWish.entitlements; sourceTree = "<group>"; };
 		AF91AF459CBACE653CB9EAD2 /* BibleWishWidgetExtension.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = BibleWishWidgetExtension.appex; sourceTree = BUILT_PRODUCTS_DIR; };
+		C0CF4D7276E9D3CC5811425F /* AccountView.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = AccountView.swift; sourceTree = "<group>"; };
+		D681B96C312819CCD0ABB420 /* AuthStore.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = AuthStore.swift; sourceTree = "<group>"; };
 		D7039628356A04F06010C531 /* BibleWishWidget.entitlements */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.plist.entitlements; path = BibleWishWidget.entitlements; sourceTree = "<group>"; };
 		D809CA7C24BF42A1C821E777 /* VerseWidgetViews.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = VerseWidgetViews.swift; sourceTree = "<group>"; };
+		E13CDB28A55487D545F0F5B9 /* APIClient.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = APIClient.swift; sourceTree = "<group>"; };
 		EB864C3AFF590D8698A05CA9 /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; includeInIndex = 1; path = PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
 		F1553558A44AD513ACA31169 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS26.0.sdk/System/Library/Frameworks/Foundation.framework; sourceTree = DEVELOPER_DIR; };
 /* End PBXFileReference section */
@@ -291,6 +299,9 @@
 				96A32BB72F1BE2D10053CD0D /* VerseTextView.swift */,
 				AE2932C132042DB9030A95F1 /* BibleWish.entitlements */,
 				EB864C3AFF590D8698A05CA9 /* PrivacyInfo.xcprivacy */,
+				E3ACE3C8A4974A77140AC093 /* Sync */,
+				20483F9AEB2004EB42EDF122 /* SignInView.swift */,
+				C0CF4D7276E9D3CC5811425F /* AccountView.swift */,
 			);
 			path = BibleWish;
 			sourceTree = "<group>";
@@ -362,6 +373,16 @@
 				79B7E44CF86DB7FED700B6ED /* SwiftUI.framework */,
 			);
 			name = iOS;
+			sourceTree = "<group>";
+		};
+		E3ACE3C8A4974A77140AC093 /* Sync */ = {
+			isa = PBXGroup;
+			children = (
+				E13CDB28A55487D545F0F5B9 /* APIClient.swift */,
+				D681B96C312819CCD0ABB420 /* AuthStore.swift */,
+			);
+			name = Sync;
+			path = Sync;
 			sourceTree = "<group>";
 		};
 		FBC9B7A4491DE29C01E5D085 /* BibleWishWidget */ = {
@@ -555,6 +576,10 @@
 				96A32BA12F1BD5680053CD0D /* BookListView.swift in Sources */,
 				79C5EF7002B3A83EFED33FBF /* SharedConfig.swift in Sources */,
 				9062E616B4EAB59DDC7CFA46 /* VerseWidgetViews.swift in Sources */,
+				EF928E9A3883CC7C91AC3E23 /* APIClient.swift in Sources */,
+				88E14ACDA1C3683DD891F874 /* AuthStore.swift in Sources */,
+				41E6E796789C7F13A845176B /* SignInView.swift in Sources */,
+				88FE1F68E93BBC9ABA18DB5B /* AccountView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -728,6 +753,7 @@
 				DEVELOPMENT_TEAM = 3FG6EV356S;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = "BibleWish/Info-Debug.plist";
 				INFOPLIST_KEY_CFBundleDisplayName = BibleWish;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.books";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
