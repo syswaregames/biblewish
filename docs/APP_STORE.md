@@ -97,7 +97,7 @@ Use the largest iPhone size Apple asks for, in the warm Dark theme, plus one Sep
 
 ## Before submitting
 
-- [ ] **Deploy the website changes first** (see `docs/PHASE4_SERVER.md`): highlight colors, reading import and plans import. The app works without them, but colors stay on the device and plans/reading uploaded before signing in won't sync until they're live
+- [x] Website changes for sync are deployed (see `docs/PHASE4_SERVER.md`); verified file-by-file, but the authenticated endpoints were only tested locally, not yet from a phone against production
 - [ ] Update the App Privacy answers in App Store Connect as above
 
 - [x] Release build for a real device compiles with no errors; privacy manifests (`PrivacyInfo.xcprivacy`) added for the app and the widget (UserDefaults only, no data collected)
