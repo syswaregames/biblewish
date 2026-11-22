@@ -13,6 +13,8 @@ struct VerseListView: View {
     let scrollToVerse: Int?
     
     @EnvironmentObject var viewModel: BibleViewModel
+    @EnvironmentObject var readerSettings: ReaderSettings
+    @Environment(\.palette) private var palette
 
     @State private var didAutoCompleteChapter = false
     @State private var currentChapterIndex: Int
@@ -36,12 +38,16 @@ struct VerseListView: View {
     var body: some View {
         ScrollViewReader { proxy in
             ScrollView {
-                LazyVStack(alignment: .leading, spacing: 4) {
+                VStack(spacing: 0) {
+                    chapterHeading
+
+                    LazyVStack(alignment: .leading, spacing: 4) {
                     ForEach(chapter.verses) { verse in
                         VerseTextView(
                             verse: verse,
                             bookName: book.name,
-                            chapterNumber: chapter.number
+                            chapterNumber: chapter.number,
+                            dropCap: readerSettings.bookPage && verse.number == 1
                         )
                         .id(verse.number)
                         
@@ -51,8 +57,20 @@ struct VerseListView: View {
                             }
                         }
                     }
+                    }
+
+                    if readerSettings.bookPage {
+                        Text("\u{2766}")
+                            .font(.system(size: 22, design: .serif))
+                            .foregroundStyle(palette.gold)
+                            .padding(.top, 20)
+                    }
                 }
-                .padding(.horizontal, 12)
+                .padding(readerSettings.bookPage ? 20 : 0)
+                .background(readerSettings.bookPage ? palette.surface : Color.clear)
+                .overlay(pageFrame)
+                .padding(.horizontal, readerSettings.bookPage ? 10 : 12)
+                .padding(.vertical, readerSettings.bookPage ? 12 : 0)
                 .padding(.top, 8)
                 
                 .opacity(isAnimating ? 0 : 1)
@@ -85,6 +103,15 @@ struct VerseListView: View {
         .toolbar {
             ToolbarItem(placement: .navigationBarTrailing) {
                 Button {
+                    readerSettings.focusMode.toggle()
+                } label: {
+                    Image(systemName: readerSettings.focusMode ? "eye.fill" : "eye")
+                }
+                .accessibilityLabel(readerSettings.focusMode ? "Turn focus mode off" : "Turn focus mode on")
+            }
+
+            ToolbarItem(placement: .navigationBarTrailing) {
+                Button {
                     toggleChapterCompleted()
                 } label: {
                     Image(systemName: isChapterCompleted
@@ -102,6 +129,65 @@ struct VerseListView: View {
 
     }
     
+    // MARK: - Book page
+
+    /// Book name, big chapter number, reading time and an ornamental divider.
+    @ViewBuilder
+    private var chapterHeading: some View {
+        if readerSettings.bookPage {
+            VStack(spacing: 6) {
+                Text(book.name.uppercased())
+                    .font(.system(.caption, design: .serif, weight: .semibold))
+                    .tracking(3)
+                    .foregroundStyle(palette.gold)
+
+                Text("\(chapter.number)")
+                    .font(.system(size: 52, weight: .regular, design: .serif))
+                    .foregroundStyle(palette.goldBright)
+
+                if !readerSettings.focusMode {
+                    Text("~\(readingMinutes) min read")
+                        .font(.system(.caption, design: .serif))
+                        .foregroundStyle(palette.inkMuted)
+                }
+
+                HStack(spacing: 8) {
+                    Rectangle().fill(palette.goldLine).frame(height: 1)
+                    Image(systemName: "diamond.fill")
+                        .font(.system(size: 6))
+                        .foregroundStyle(palette.gold)
+                    Rectangle().fill(palette.goldLine).frame(height: 1)
+                }
+                .padding(.vertical, 12)
+            }
+            .accessibilityElement(children: .combine)
+        } else if !readerSettings.focusMode {
+            Text("~\(readingMinutes) min read")
+                .font(.caption)
+                .foregroundStyle(.secondary)
+                .frame(maxWidth: .infinity, alignment: .leading)
+                .padding(.bottom, 6)
+        }
+    }
+
+    /// A double gold border, as on the website's book page.
+    @ViewBuilder
+    private var pageFrame: some View {
+        if readerSettings.bookPage {
+            ZStack {
+                RoundedRectangle(cornerRadius: 14).stroke(palette.gold.opacity(0.55), lineWidth: 1)
+                RoundedRectangle(cornerRadius: 10).stroke(palette.goldLine, lineWidth: 1).padding(5)
+            }
+            .allowsHitTesting(false)
+        }
+    }
+
+    /// Reading time at 200 words a minute, never less than one.
+    private var readingMinutes: Int {
+        let words = chapter.verses.reduce(0) { $0 + $1.text.split(whereSeparator: \.isWhitespace).count }
+        return max(1, Int((Double(words) / 200).rounded()))
+    }
+
     private func autoCompleteChapterIfNeeded() {
         // Prevent repeated execution in the same lifecycle
         guard !didAutoCompleteChapter else { return }

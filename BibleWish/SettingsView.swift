@@ -66,6 +66,14 @@ struct SettingsView: View {
                     Label("Reading Font", systemImage: "textformat.size")
                 }
 
+                Toggle(isOn: $readerSettings.bookPage) {
+                    Label("Book Page", systemImage: "book.pages")
+                }
+
+                Toggle(isOn: $readerSettings.focusMode) {
+                    Label("Focus Mode", systemImage: "eye")
+                }
+
                 Toggle(isOn: $readerSettings.redLetterEnabled) {
                     Label("Words of Jesus in Red", systemImage: "text.quote")
                 }

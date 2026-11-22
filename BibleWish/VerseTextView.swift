@@ -12,6 +12,8 @@ struct VerseTextView: View {
     let verse: Verse
     let bookName: String
     let chapterNumber: Int
+    /// Verse 1 of a book-page chapter: its first letter is drawn as a large gold initial.
+    var dropCap = false
 
     @EnvironmentObject var bookmarkManager: BookmarkManager
     @EnvironmentObject var highlightManager: HighlightManager
@@ -37,9 +39,7 @@ struct VerseTextView: View {
         )
 
         (
-            Text("\(verse.number) ")
-                .font(.caption2)
-                .foregroundColor(palette.gold)
+            numberText
             +
             verseText
         )
@@ -98,38 +98,66 @@ struct VerseTextView: View {
         }
     }
 
+    /// The verse number. Hidden in focus mode, and for a drop-cap verse, where the initial stands in.
+    private var numberText: Text {
+        if readerSettings.focusMode || dropCap {
+            return Text("")
+        }
+        return Text("\(verse.number) ")
+            .font(.caption2)
+            .foregroundColor(palette.gold)
+    }
+
     /// The verse text, with the words of Jesus in red when the reader has turned that on.
     private var verseText: Text {
-        guard readerSettings.redLetterEnabled,
-              let translationId = viewModel.selectedTranslation.redLetterId else {
-            return Text(verse.text)
-        }
-
-        let spans = RedLetterRanges.shared.spans(
-            translation: translationId,
-            bookName: bookName,
-            chapter: chapterNumber,
-            verse: verse.number,
-            includeExtras: readerSettings.redLetterIncludeActsRevelation
-        )
-
         let utf16 = Array(verse.text.utf16)
-        var result = Text("")
-        var position = 0
 
-        func plain(_ range: Range<Int>) -> Text {
-            Text(String(decoding: utf16[range], as: UTF16.self))
+        var spans: [Range<Int>] = []
+        if readerSettings.redLetterEnabled,
+           let translationId = viewModel.selectedTranslation.redLetterId {
+            spans = RedLetterRanges.shared.spans(
+                translation: translationId,
+                bookName: bookName,
+                chapter: chapterNumber,
+                verse: verse.number,
+                includeExtras: readerSettings.redLetterIncludeActsRevelation
+            )
         }
 
+        // Cut the text into runs: plain or red, with the drop-cap letter split off the front.
+        var runs: [(range: Range<Int>, red: Bool)] = []
+        var position = 0
         for span in spans where span.lowerBound >= position && span.upperBound <= utf16.count {
-            if span.lowerBound > position {
-                result = result + plain(position..<span.lowerBound)
-            }
-            result = result + plain(span).foregroundColor(palette.jesus)
+            if span.lowerBound > position { runs.append((position..<span.lowerBound, false)) }
+            runs.append((span, true))
             position = span.upperBound
         }
-        if position < utf16.count {
-            result = result + plain(position..<utf16.count)
+        if position < utf16.count { runs.append((position..<utf16.count, false)) }
+
+        var initialEnd = 0
+        if dropCap, let first = verse.text.first {
+            initialEnd = min(String(first).utf16.count, utf16.count)
+        }
+
+        var result = Text("")
+        for run in runs {
+            var pieces: [(Range<Int>, Bool)] = []
+            if run.range.lowerBound < initialEnd && initialEnd < run.range.upperBound {
+                pieces = [(run.range.lowerBound..<initialEnd, true), (initialEnd..<run.range.upperBound, false)]
+            } else {
+                pieces = [(run.range, run.range.upperBound <= initialEnd)]
+            }
+            for (range, isInitial) in pieces {
+                var piece = Text(String(decoding: utf16[range], as: UTF16.self))
+                if isInitial {
+                    piece = piece
+                        .font(.system(size: readerSettings.fontSize * 1.9, weight: .semibold, design: .serif))
+                        .foregroundColor(palette.goldBright)
+                } else if run.red {
+                    piece = piece.foregroundColor(palette.jesus)
+                }
+                result = result + piece
+            }
         }
         return result
     }

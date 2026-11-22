@@ -25,6 +25,18 @@ class ReaderSettings: ObservableObject {
         didSet { save() }
     }
 
+    /// "Book" frames the chapter like a printed page; "plain" is the bare reading column.
+    @Published var bookPage: Bool {
+        didSet { save() }
+    }
+
+    /// Hides verse numbers and the reading time so only the text is left.
+    @Published var focusMode: Bool {
+        didSet { save() }
+    }
+
+    private let bookPageKey = "reader_book_page"
+    private let focusModeKey = "reader_focus_mode"
     private let fontSizeKey = "reader_font_size"
     private let fontKey = "reader_font"
     private let redLetterEnabledKey = "reader_red_letter_enabled"
@@ -37,6 +49,9 @@ class ReaderSettings: ObservableObject {
         let savedFontRaw = UserDefaults.standard.string(forKey: fontKey)
         self.font = ReaderFont(rawValue: savedFontRaw ?? "serif") ?? .serif
 
+        self.bookPage = UserDefaults.standard.object(forKey: bookPageKey) as? Bool ?? true
+        self.focusMode = UserDefaults.standard.object(forKey: focusModeKey) as? Bool ?? false
+
         let savedRedLetter = UserDefaults.standard.object(forKey: redLetterEnabledKey) as? Bool
         self.redLetterEnabled = savedRedLetter ?? false
 
@@ -47,6 +62,8 @@ class ReaderSettings: ObservableObject {
     private func save() {
         UserDefaults.standard.set(fontSize, forKey: fontSizeKey)
         UserDefaults.standard.set(font.rawValue, forKey: fontKey)
+        UserDefaults.standard.set(bookPage, forKey: bookPageKey)
+        UserDefaults.standard.set(focusMode, forKey: focusModeKey)
         UserDefaults.standard.set(redLetterEnabled, forKey: redLetterEnabledKey)
         UserDefaults.standard.set(
             redLetterIncludeActsRevelation,
