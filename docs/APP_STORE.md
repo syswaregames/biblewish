@@ -14,7 +14,7 @@ Version **2.0 (build 3)**, bundle id `Sysware.BibleWish`, widget `Sysware.BibleW
 - [x] Account deletion and data export are in the app (Settings → Account), as Apple requires (5.1.1(v))
 - [x] User-generated content (Guideline 1.2): Report on every request and reply, Block on every member (even anonymous ones), community guidelines where people post, a moderator who is emailed each report and can remove content, contact address on the site
 - [x] Push notifications working, with Apple's sandbox and production keys on the server
-- [x] Privacy policy page updated for the app (website commit, **deploy it**, step 3)
+- [x] Privacy policy page updated for the app and live; review sign-in live and tested (step 3)
 - [x] 9 iPhone and 6 iPad screenshots at Apple's sizes, opaque PNGs, in `AppStore/Screenshots/` (git-ignored)
 - [x] 336 automated checks pass (`SelfTest`, Debug build)
 
@@ -30,10 +30,11 @@ Version **2.0 (build 3)**, bundle id `Sysware.BibleWish`, widget `Sysware.BibleW
 
 If BibleWish is already listed, open it and skip to "version". Otherwise **+ → New App**: Platforms iOS; Name `BibleWish`; Primary language English (U.S.); Bundle ID `Sysware.BibleWish`; SKU anything unique (`biblewish`); User access Full.
 
-### 3. Website: privacy page and the review login **(you say go, I run it)**
+### 3. Website: privacy page and the review login (done)
 
-- Deploy the website (`scripts/deploy.sh`): the updated privacy page (it now covers the app, notifications and blocking) and the review sign-in. Apple opens the privacy URL, so it must be live before you submit.
-- **Review sign-in:** Apple's reviewer cannot read your sign-in email, so the app needs a demo account with a fixed code. Follow the website repo's `docs/APP_REVIEW.md`: add one `review` line to `config.php` (your own demo email and six digits). Then use the same email and digits in step 7. Test it once in the app.
+- **Done:** the updated privacy page is live (https://biblewish.com/privacy.html) and the review sign-in is configured on the server and tested on production (ask for a code, wrong code refused, right code signs in, not a moderator).
+- **The demo credentials** are in `AppStore/review-login.txt` (private, not in git): a demo email and a six-digit code. You paste them into App Store Connect in step 7.6. In the app the reviewer enters that email, then the six digits in place of the emailed code.
+- To change the code or turn it off, edit or delete the `review` line in `domains/biblewish.com/config.php` (details: the website repo's `docs/APP_REVIEW.md`).
 
 ### 4. Archive and upload **(you)**: Xcode
 
@@ -68,7 +69,7 @@ Install it from TestFlight (Internal Testing → add yourself). TestFlight build
 3. **Support URL** `https://biblewish.com/about.html`; **Marketing URL** `https://biblewish.com`.
 4. **Copyright:** `2026 Sysware` (or your name).
 5. **Build:** choose the build you uploaded (2.0 (3)).
-6. **App Review Information:** contact first name, last name, phone, email (`sysware@sysware.com.br`). **Sign-in required: yes**: user name = the review email, password = the six digits (step 3). Paste the notes from "Notes for App Review".
+6. **App Review Information:** contact first name, last name, phone, email (`sysware@sysware.com.br`). **Sign-in required: yes**: user name and password from `AppStore/review-login.txt` (step 3). Paste the notes from "Notes for App Review".
 7. **Version Release:** "Manually release this version" lets you pick the day once it is approved; "Automatically" releases right after approval.
 8. **Add for Review → Submit for Review.**
 

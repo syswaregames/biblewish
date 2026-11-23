@@ -70,3 +70,6 @@ APN/
 
 # App Store screenshots: made locally from the simulators (about 40 MB), uploaded to App Store Connect, not committed
 AppStore/Screenshots/
+
+# The App Review demo login (email and code): private
+AppStore/review-login.txt
