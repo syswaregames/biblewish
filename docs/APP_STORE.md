@@ -15,7 +15,7 @@ Version **2.0 (build 3)**, bundle id `Sysware.BibleWish`, widget `Sysware.BibleW
 - [x] User-generated content (Guideline 1.2): Report on every request and reply, Block on every member (even anonymous ones), community guidelines where people post, a moderator who is emailed each report and can remove content, contact address on the site
 - [x] Push notifications working, with Apple's sandbox and production keys on the server
 - [x] Privacy policy page updated for the app and live; review sign-in live and tested (step 3)
-- [x] 9 iPhone and 6 iPad screenshots at Apple's sizes, opaque PNGs, in `AppStore/Screenshots/` (git-ignored)
+- [x] 9 iPhone (6.3" and 6.9" sets) and 6 iPad screenshots at Apple's sizes, opaque PNGs, in `AppStore/Screenshots/` (git-ignored)
 - [x] 336 automated checks pass (`SelfTest`, Debug build)
 
 ## Step by step
@@ -64,7 +64,11 @@ Install it from TestFlight (Internal Testing → add yourself). TestFlight build
 
 ### 7. Version 2.0 page **(you)**: App Store Connect → iOS App → the 2.0 version
 
-1. **Screenshots:** upload `AppStore/Screenshots/iPhone-6.9in/` (1 to 9) under the 6.9" display, and `iPad-13in/` (1 to 6) under the 13" iPad display. Apple scales them down for smaller devices.
+1. **Screenshots:** each device tab accepts only its own size, so use the matching folder in `AppStore/Screenshots/`:
+   - tab **iPhone with Dynamic Island (medium display)** (6.1"/6.3", the one App Store Connect shows first): `iPhone-6.3in/` (1206 × 2622), files 1 to 9;
+   - tab **iPad 13" display**: `iPad-13in/` (2064 × 2752), files 1 to 6;
+   - `iPhone-6.9in/` (1320 × 2868) is for the 6.9" slot (View All Sizes in Media Manager); it is optional, because Apple scales the screenshots down.
+   Uploading a size to the wrong tab gives "File dimensions are invalid".
 2. **Promotional text, Description, Keywords, What's New:** paste from "Listing text" below.
 3. **Support URL** `https://biblewish.com/about.html`; **Marketing URL** `https://biblewish.com`.
 4. **Copyright:** `2026 Sysware` (or your name).
